@@ -10,10 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/css/app.css">
-<link rel="stylesheet" href="/css/theme-irhea.css">
+<link rel="stylesheet" href="/irhea-light-demo/css/app.css">
+<link rel="stylesheet" href="/irhea-light-demo/css/theme-irhea.css">
 
-  <script> window.BASE_PATH = ""; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = "/irhea-light-demo"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
 <body>
   <div class="app-shell">
@@ -40,10 +40,10 @@
 
 <div class="ir-shell">
   <div class="ir-tabs">
-    <a class="ir-tab "     href="/settings/general">설정</a>
-    <a class="ir-tab "      href="/settings/backup">백업/복구</a>
-    <a class="ir-tab is-active" href="/settings/engineering">엔지니어링<br>메뉴</a>
-    <a class="ir-tab "    href="/settings/firmware">펌웨어<br>업그레이드</a>
+    <a class="ir-tab "     href="/irhea-light-demo/settings/general">설정</a>
+    <a class="ir-tab "      href="/irhea-light-demo/settings/backup">백업/복구</a>
+    <a class="ir-tab is-active" href="/irhea-light-demo/settings/engineering">엔지니어링<br>메뉴</a>
+    <a class="ir-tab "    href="/irhea-light-demo/settings/firmware">펌웨어<br>업그레이드</a>
 
     <div style="flex:1;"></div>
 
@@ -51,7 +51,7 @@
       
         <button class="ir-btn" data-ir-save>저장</button>
       
-      <a class="ir-btn" href="/main">복귀</a>
+      <a class="ir-btn" href="/irhea-light-demo/main">복귀</a>
     </div>
   </div>
 
@@ -63,8 +63,8 @@
   <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
 
     <aside class="ir-side-menu">
-      <a class="ir-tab" href="/settings/engineering/factory-reset">공장초기화</a>
-      <a class="ir-tab is-active" href="/settings/engineering/connection">장비 연결 설정</a>
+      <a class="ir-tab" href="/irhea-light-demo/settings/engineering/factory-reset">공장초기화</a>
+      <a class="ir-tab is-active" href="/irhea-light-demo/settings/engineering/connection">장비 연결 설정</a>
     </aside>
 
     <section class="ir-row ir-grow" style="gap:18px;">
@@ -169,19 +169,19 @@
       </div>
     </main>
     <nav class="bottom-nav" id="bottom-nav">
-  <a href="/" class="bnav-item ">
+  <a href="/irhea-light-demo/" class="bnav-item ">
     <span class="bnav-icon">&#9632;</span>
     <span class="bnav-label">Control</span>
   </a>
-  <a href="/recipes" class="bnav-item ">
+  <a href="/irhea-light-demo/recipes" class="bnav-item ">
     <span class="bnav-icon">&#9749;</span>
     <span class="bnav-label">Recipes</span>
   </a>
-  <a href="/brewing" class="bnav-item ">
+  <a href="/irhea-light-demo/brewing" class="bnav-item ">
     <span class="bnav-icon">&#9200;</span>
     <span class="bnav-label">Brewing</span>
   </a>
-  <a href="/favorites" class="bnav-item ">
+  <a href="/irhea-light-demo/favorites" class="bnav-item ">
     <span class="bnav-icon">&#9733;</span>
     <span class="bnav-label">Favorites</span>
   </a>
@@ -200,28 +200,28 @@
       <span>System</span>
       <button class="more-menu-close" onclick="closeMoreMenu()">&times;</button>
     </div>
-    <a href="/alarms" class="more-menu-item ">
+    <a href="/irhea-light-demo/alarms" class="more-menu-item ">
       <span class="more-icon">&#9888;</span>
       <span>Alarms</span>
       <span class="nav-badge" id="alarm-badge-more">3</span>
     </a>
-    <a href="/usage" class="more-menu-item ">
+    <a href="/irhea-light-demo/usage" class="more-menu-item ">
       <span class="more-icon">&#9636;</span>
       <span>Usage History</span>
     </a>
-    <a href="/settings" class="more-menu-item ">
+    <a href="/irhea-light-demo/settings" class="more-menu-item ">
       <span class="more-icon">&#9881;</span>
       <span>Settings</span>
     </a>
-    <a href="/calibration" class="more-menu-item ">
+    <a href="/irhea-light-demo/calibration" class="more-menu-item ">
       <span class="more-icon">&#8982;</span>
       <span>Calibration</span>
     </a>
-    <a href="/firmware" class="more-menu-item ">
+    <a href="/irhea-light-demo/firmware" class="more-menu-item ">
       <span class="more-icon">&#8635;</span>
       <span>Firmware</span>
     </a>
-    <a href="/system-info" class="more-menu-item ">
+    <a href="/irhea-light-demo/system-info" class="more-menu-item ">
       <span class="more-icon">&#9432;</span>
       <span>System Info</span>
     </a>
@@ -356,12 +356,12 @@
 
 
   <!-- Global JS -->
-  <script src="/js/app.js"></script>
+  <script src="/irhea-light-demo/js/app.js"></script>
 
   <!-- Component JS -->
-  <script src="/js/components/gauge.js"></script>
-  <script src="/js/components/progress-ring.js"></script>
-  <script src="/js/components/timeline.js"></script>
+  <script src="/irhea-light-demo/js/components/gauge.js"></script>
+  <script src="/irhea-light-demo/js/components/progress-ring.js"></script>
+  <script src="/irhea-light-demo/js/components/timeline.js"></script>
 
   <!-- Page JS -->
   
