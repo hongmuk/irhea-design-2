@@ -1,0 +1,153 @@
+<!-- 레시피 통합 화면 (목록 + 상세 + 편집) -->
+<div class="ir-shell">
+
+  <!-- Header row -->
+  <header style="display:flex;align-items:center;padding:18px 28px 8px;gap:12px;">
+    <a class="ir-btn-fab" href="/main" style="width:54px;height:54px;background:var(--ir-yellow);color:var(--ir-fg);font-size:13px;">홈</a>
+    <div style="flex:1;text-align:center;">
+      <span class="ir-page-sub">Pour-over · saved profiles</span>
+      <h1 id="recipes-mode-title" class="ir-page-title" style="font-size:24px;margin:2px 0 0;">레시피 <em>상세내용.</em></h1>
+    </div>
+    <a class="ir-btn" href="/settings/general">설정</a>
+    <a class="ir-btn" href="javascript:history.back();">이전</a>
+    <a class="ir-btn" href="/recipes?fav=1">즐겨찾기</a>
+  </header>
+
+  <div style="display:flex;flex:1;padding:0 16px 14px;gap:14px;min-height:0;">
+
+    <!-- Left rail — recipe list -->
+    <aside id="recipe-rail" style="flex:0 0 220px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;"></aside>
+
+    <!-- Center — Main + Description -->
+    <section style="flex:1.1;display:flex;flex-direction:column;gap:10px;min-width:0;">
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">레시피 - Main</div>
+        <table class="ir-table" id="rcp-main"></table>
+      </div>
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">레시피 - Description</div>
+        <table class="ir-table" id="rcp-desc"></table>
+      </div>
+    </section>
+
+    <!-- Right — Stage table -->
+    <section style="flex:1.4;min-width:0;">
+      <div class="ir-card" style="padding:0;height:100%;">
+        <div class="ir-card-header">레시피 - Stage</div>
+        <table class="ir-table" id="rcp-stage" style="font-size:13px;"></table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Bottom action bar -->
+  <footer style="display:flex;align-items:center;padding:8px 24px 16px;gap:12px;">
+    <button class="ir-btn" id="rcp-add">추가</button>
+    <button class="ir-btn ir-btn-primary" id="rcp-edit">편집</button>
+    <button class="ir-btn ir-btn-danger" id="rcp-delete">삭제</button>
+    <div style="flex:1;"></div>
+    <button class="ir-btn-fab" id="rcp-extract" style="background:var(--ir-orange);">추출</button>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var FAV_ONLY = location.search.indexOf('fav=1') >= 0;
+  var recipes = [];
+  var current = null;
+
+  function renderRail() {
+    var rail = document.getElementById('recipe-rail');
+    rail.innerHTML = '';
+    var list = FAV_ONLY ? recipes.filter(function (r) { return (r.favoriteSpouts || []).length > 0; }) : recipes;
+    list.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'spout-rail-row';
+      var isCurrent = current && current.id === r.id;
+      row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:9px 12px;background:' + (isCurrent ? 'var(--ir-orange)' : 'var(--ir-bg-2)') + ';color:' + (isCurrent ? 'var(--ir-bg-2)' : 'var(--ir-fg)') + ';border:1px solid ' + (isCurrent ? 'var(--ir-orange)' : 'var(--ir-line)') + ';border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;';
+      row.innerHTML =
+        '<span style="flex:1;">' + r.name + '</span>' +
+        (r.favoriteSpouts || []).slice(0, 3).map(function (id) {
+          return '<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--ir-orange);color:var(--ir-bg-2);font-size:11px;font-weight:700;font-family:JetBrains Mono, monospace;">' + id + '</span>';
+        }).join('');
+      row.addEventListener('click', function () { current = r; render(); });
+      rail.appendChild(row);
+    });
+  }
+
+  function row(label, value) {
+    return '<tr><td style="text-align:left;padding-left:14px;">' + label + '</td><td><strong>' + (value || '—') + '</strong></td></tr>';
+  }
+
+  function render() {
+    if (!current) return;
+    renderRail();
+
+    // Main
+    var m = current.main || {};
+    var pr = m.pourRange || {};
+    document.getElementById('rcp-main').innerHTML =
+      row('레시피명 :', current.name) +
+      row('원두명:',    m.beanName) +
+      row('원두량:',    m.beanWeight) +
+      row('추출 비율 :', m.extractRatio) +
+      '<tr><td style="text-align:left;padding-left:14px;">물 붓기 범위 :</td><td>뜸들이기 <strong>' + (pr.bloomCup || '—') + '</strong> cup &nbsp;·&nbsp; 추출 <strong>' + (pr.extractCup || '—') + '</strong> cup</td></tr>' +
+      '<tr><td style="text-align:left;padding-left:14px;">추출 단위:</td><td><strong>' + (m.extractionUnit || '—') + '</strong> &nbsp;·&nbsp; 온수온도 (도) <strong>' + (m.waterTemp || '—') + '</strong></td></tr>';
+
+    // Description
+    var d = current.description || {};
+    document.getElementById('rcp-desc').innerHTML =
+      row('드립퍼:',  d.dripper) +
+      row('분쇄도:',  d.grindSize) +
+      row('배전도:',  d.roastLevel) +
+      '<tr><td style="text-align:left;padding-left:14px;vertical-align:top;">레시피 - Description</td><td style="text-align:left;font-style:italic;line-height:1.5;font-size:12px;">' + (d.tastingNote || '') + '</td></tr>';
+
+    // Stage
+    var st = current.stages || { bloom: {}, steps: [] };
+    var b = st.bloom || {};
+    var head =
+      '<thead><tr><th>단계</th><th>물붓기 양 (ml)</th><th>휴지시간(sec)</th><th>유속(ml/sec)</th><th>물붓기 비율(%)</th></tr></thead>';
+    var bloomTr = '<tr><td>뜸들이기</td><td>' + (b.waterMl || '—') + '</td><td>' + (b.holdSec || '—') + '</td><td>' + (b.flowRate || '—') + '</td><td>' + (b.ratioPct || '—') + '%</td></tr>';
+    var headerStep =
+      '<tr style="background:rgba(255,255,255,0.06);"><th>추출단계</th><th>추출비율 (%)</th><th>휴지시간(sec)</th><th>유속(ml/sec)</th><th>물붓기 비율(%)</th></tr>';
+    var stepsTr = (st.steps || []).map(function (s) {
+      return '<tr><td>' + s.name + '</td><td>' + s.extractRatioPct + '</td><td>' + s.holdSec + '</td><td>' + s.flowRate + '</td><td>' + s.ratioPct + '</td></tr>';
+    }).join('');
+    document.getElementById('rcp-stage').innerHTML = head + '<tbody>' + bloomTr + headerStep + stepsTr + '</tbody>';
+  }
+
+  fetch('/api/recipes').then(function (r) { return r.json(); }).then(function (rs) {
+    recipes = rs;
+    current = recipes[0];
+    if (FAV_ONLY) {
+      document.getElementById('recipes-mode-title').innerHTML = '<em style="color:var(--ir-orange-deep);">즐겨찾기.</em>';
+    }
+    render();
+  });
+
+  document.getElementById('rcp-add').addEventListener('click', function () {
+    window.IRModal.info({ body: '레시피 추가는 준비 중입니다.', bodyClass: 'is-info' });
+  });
+  document.getElementById('rcp-edit').addEventListener('click', function () {
+    window.IRModal.info({ body: '레시피 편집은 준비 중입니다.', bodyClass: 'is-info' });
+  });
+  document.getElementById('rcp-delete').addEventListener('click', function () {
+    if (!current) return;
+    window.IRModal.confirm({
+      body: current.name + ' 을 삭제할까요?',
+      onOk: function () {
+        recipes = recipes.filter(function (r) { return r.id !== current.id; });
+        current = recipes[0] || null;
+        render();
+      }
+    });
+  });
+  document.getElementById('rcp-extract').addEventListener('click', function () {
+    window.IRModal.info({
+      body: '추출 진행<br>추출구의 버튼을 눌러주세요',
+      buttons: [{ label: '확인', primary: true }],
+      onClose: function () { window.location.href = '/brewing'; }
+    });
+  });
+})();
+</script>

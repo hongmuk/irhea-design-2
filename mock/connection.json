@@ -1,0 +1,11 @@
+{
+  "deviceIp": "192.168.1.100",
+  "connected": true,
+  "cloud": {
+    "store": "CafénobleT",
+    "device": "1f3c5a8a",
+    "role": "admin",
+    "username": "Nobletree",
+    "authenticated": true
+  }
+}

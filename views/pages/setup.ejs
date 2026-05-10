@@ -1,0 +1,53 @@
+<!-- 최초 장비 정보 설정 (장비 최초 1회) -->
+<div class="ir-shell">
+  <div class="ir-content" style="justify-content:flex-start;padding:36px 48px;">
+
+    <div style="margin-bottom:24px;">
+      <span class="ir-page-sub">First-time setup · 장비 최초 1회</span>
+      <h1 class="ir-page-title" style="margin:6px 0 0;">최초 장비 <em>정보 설정.</em></h1>
+    </div>
+
+    <div class="ir-card" style="padding:42px 64px;max-width:780px;margin:24px auto 0;width:100%;">
+      <div style="text-align:center;font-family:var(--ir-font-display);font-style:italic;font-size:20px;color:var(--ir-fg);margin-bottom:28px;">장비 정보 설정</div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr;column-gap:24px;row-gap:14px;font-size:15px;font-family:var(--ir-font);max-width:520px;margin:0 auto;color:var(--ir-fg);">
+        <div style="text-align:right;color:var(--ir-fg-muted);">일련 번호:</div>
+        <div><strong id="setup-serial">R5KrW2600001</strong></div>
+
+        <div style="text-align:right;color:var(--ir-fg-muted);">모델 번호:</div>
+        <div><strong id="setup-model">iRHEA-Light-M5</strong></div>
+
+        <div style="text-align:right;color:var(--ir-fg-muted);">펌웨어 버전:</div>
+        <div id="setup-fw">1.0</div>
+
+        <div style="text-align:right;color:var(--ir-fg-muted);">펌웨어 업데이트 일자:</div>
+        <div id="setup-fwdate">2026.03.01</div>
+
+        <div style="text-align:right;color:var(--ir-fg-muted);">타임존:</div>
+        <div><strong id="setup-tz">아시아/서울</strong></div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:36px;">
+        <button class="ir-btn ir-btn-primary" id="setup-save">저장</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  fetch('/api/system-config').then(function (r) { return r.json(); }).then(function (cfg) {
+    document.getElementById('setup-serial').textContent  = cfg.serialNumber;
+    document.getElementById('setup-model').textContent   = cfg.modelNumber;
+    document.getElementById('setup-fw').textContent      = cfg.firmwareVersion;
+    document.getElementById('setup-fwdate').textContent  = (cfg.firmwareDate || '').replace(/-/g, '.');
+    document.getElementById('setup-tz').textContent      = cfg.timezone;
+  });
+
+  document.getElementById('setup-save').addEventListener('click', function () {
+    fetch('/api/system-config/configure', { method: 'POST' })
+      .then(function () { window.location.href = '/connect'; });
+  });
+})();
+</script>

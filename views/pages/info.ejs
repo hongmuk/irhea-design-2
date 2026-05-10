@@ -1,0 +1,126 @@
+<!-- 정보 — 일반 정보 6패널 -->
+<div class="ir-shell">
+  <div class="ir-content" style="padding:24px 28px 18px;">
+
+    <div style="margin-bottom:16px;">
+      <span class="ir-page-sub">Specification</span>
+      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">장비 <em>정보.</em></h1>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;">
+
+      <!-- 장비 정보 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">장비 정보</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
+          <div>· 일련 번호: <strong id="dev-serial">—</strong></div>
+          <div>· 모델 번호: <strong id="dev-model">—</strong></div>
+          <div>· 펌웨어 버전: <span id="dev-fw">—</span></div>
+          <div>· 펌웨어 업데이트 일자: <span id="dev-fw-date">—</span></div>
+          <div>· 타임존: <strong id="dev-tz">—</strong></div>
+          <div>· 최초 설치일: <span id="dev-install">—</span></div>
+        </div>
+      </div>
+
+      <!-- 보일러 정보 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">보일러 정보</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
+          <div>· 일련 번호: <strong id="b-serial">—</strong></div>
+          <div>· 모델 번호: <strong id="b-model">—</strong></div>
+          <div>· 펌웨어 버전: <span id="b-fw">—</span></div>
+          <div>· 펌웨어 업데이트 일자: <span id="b-fw-date">—</span></div>
+          <div>· 워터펌프 모델: <span id="b-pump">—</span></div>
+          <div>· 솔 밸브: <span id="b-valve">—</span></div>
+          <div>· 온도: 최고 <span id="b-temp">—</span>도</div>
+        </div>
+      </div>
+
+      <!-- 물붓기 범위 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">물붓기 범위</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
+          <div style="display:flex;gap:24px;color:var(--ir-fg-muted);font-weight:700;font-size:11px;letter-spacing:0.06em;">
+            <span style="flex:1;">범위</span><span style="flex:1;">반지름</span>
+          </div>
+          <div id="info-pour"></div>
+        </div>
+      </div>
+
+      <!-- 사용 실적 (yellow header) -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header is-yellow">사용 실적</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.65;">
+          <div>· 총 추출횟수: <strong id="us-total">—</strong> 회</div>
+          <div style="margin-top:8px;font-size:12px;color:var(--ir-fg-muted);">· 레시피별 추출실적</div>
+          <table class="ir-table" id="us-table" style="margin-top:6px;font-size:12px;"></table>
+          <div style="margin-top:6px;font-size:12px;color:var(--ir-fg-muted);">· 부품 사용 실적 정보</div>
+        </div>
+      </div>
+
+      <!-- 환경 설정 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">환경 설정</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
+          <div>· 추출 단위 (%, g): <strong id="g-unit-v">—</strong></div>
+          <div>· 알람: <strong id="g-alarm-v">—</strong></div>
+          <div>· 드립퍼 종류: <strong id="g-dripper-v">—</strong></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer actions -->
+    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:12px;">
+      <a class="ir-btn ir-btn-pill" href="/main">복귀</a>
+      <a class="ir-btn ir-btn-pill ir-btn-primary" href="/info/security">보안 정보</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  Promise.all([
+    fetch('/api/system-config').then(function (r) { return r.json(); }),
+    fetch('/api/boiler-info').then(function (r) { return r.json(); }),
+    fetch('/api/pour-range').then(function (r) { return r.json(); }),
+    fetch('/api/usage-stats').then(function (r) { return r.json(); }),
+    fetch('/api/general-config').then(function (r) { return r.json(); })
+  ]).then(function (rs) {
+    var d = rs[0] || {}, b = rs[1] || {}, pr = rs[2] || [], us = rs[3] || {}, g = rs[4] || {};
+
+    document.getElementById('dev-serial').textContent  = d.serialNumber || '—';
+    document.getElementById('dev-model').textContent   = d.modelNumber || '—';
+    document.getElementById('dev-fw').textContent      = d.firmwareVersion || '—';
+    document.getElementById('dev-fw-date').textContent = d.firmwareDate || '—';
+    document.getElementById('dev-tz').textContent      = d.timezone || '—';
+    document.getElementById('dev-install').textContent = d.firstInstalledAt || '—';
+
+    document.getElementById('b-serial').textContent  = b.serialNumber || '—';
+    document.getElementById('b-model').textContent   = b.modelNumber || '—';
+    document.getElementById('b-fw').textContent      = b.firmwareVersion || '—';
+    document.getElementById('b-fw-date').textContent = b.firmwareDate || '—';
+    document.getElementById('b-pump').textContent    = b.waterPump || '—';
+    document.getElementById('b-valve').textContent   = b.valve || '—';
+    document.getElementById('b-temp').textContent    = b.tempMax || '—';
+
+    var pourBox = document.getElementById('info-pour');
+    pourBox.innerHTML = (pr || []).map(function (row) {
+      return '<div style="display:flex;gap:24px;align-items:center;padding:2px 0;">' +
+             '<span style="flex:1;font-weight:700;">' + row.cup + ' cup</span>' +
+             '<span style="flex:1;font-weight:700;">' + row.radius + 'mm</span></div>';
+    }).join('');
+
+    document.getElementById('us-total').textContent = us.totalBrews || '—';
+    var tbl = document.getElementById('us-table');
+    tbl.innerHTML = '<thead><tr><th>레시피명</th><th>추출횟수</th><th>사용원두량</th></tr></thead><tbody>' +
+      (us.perRecipe || []).map(function (r) {
+        return '<tr><td>' + r.name + '</td><td>' + r.count + '회</td><td>' + r.beanGrams + 'g</td></tr>';
+      }).join('') + '</tbody>';
+
+    document.getElementById('g-unit-v').textContent    = g.extractionUnit || '—';
+    document.getElementById('g-alarm-v').textContent   = (g.alarm === '예' ? 'YES' : (g.alarm === '아니오' ? 'NO' : '—'));
+    document.getElementById('g-dripper-v').textContent = g.defaultDripper || '—';
+  });
+})();
+</script>

@@ -1,0 +1,83 @@
+<%- include('../partials/settings-shell', { activeTab: 'engineering' }) %>
+
+  <!-- Side menu + content (Admin 인증 후) -->
+  <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
+
+    <!-- Side menu — 공장초기화 / 장비 연결 설정 -->
+    <aside class="ir-side-menu">
+      <a class="ir-tab" href="/settings/engineering/factory-reset">공장초기화</a>
+      <a class="ir-tab" href="/settings/engineering/connection">장비 연결 설정</a>
+    </aside>
+
+    <!-- Content area — Admin 인증 전 안내 -->
+    <section class="ir-grow ir-center" style="min-height:380px;flex-direction:column;gap:16px;color:var(--ir-fg-muted);">
+      <p style="font-size:18px;font-weight:600;color:var(--ir-fg);">엔지니어링 메뉴</p>
+      <p style="font-size:13px;">관리자 보안 연결 후 좌측 항목을 선택해 주세요.</p>
+    </section>
+
+  </div>
+
+<%- include('../partials/settings-shell-close') %>
+
+<script>
+(function () {
+  // Admin login is required on first entry per session.
+  if (sessionStorage.getItem('ir-admin-ok') === '1') return;
+  setTimeout(openAdminLogin, 50);
+
+  function openAdminLogin() {
+    var overlay = document.getElementById('ir-modal-overlay');
+    var title = document.getElementById('ir-modal-title');
+    var body = document.getElementById('ir-modal-body');
+    var actions = document.getElementById('ir-modal-actions');
+    title.textContent = '관리자 보안 연결';
+    body.className = 'ir-modal-body is-info';
+    body.innerHTML = '' +
+      '<div style="display:grid;grid-template-columns:auto 1fr;column-gap:16px;row-gap:14px;align-items:center;justify-items:start;font-size:16px;font-weight:600;">' +
+      '  <div>아이디:</div>' +
+      '  <input class="ir-input" id="login-id" value="Admin" style="min-width:160px;" autocomplete="off"/>' +
+      '  <div>비밀번호:</div>' +
+      '  <input class="ir-input" id="login-pw" type="password" value="" style="min-width:160px;" autocomplete="off" placeholder="********"/>' +
+      '</div>';
+    actions.innerHTML = '';
+    var btnConn = document.createElement('button');
+    btnConn.className = 'ir-modal-btn is-primary';
+    btnConn.textContent = '연결';
+    actions.appendChild(btnConn);
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'ir-modal-btn';
+    btnCancel.textContent = '취소';
+    actions.appendChild(btnCancel);
+
+    btnCancel.addEventListener('click', function () {
+      overlay.classList.remove('is-open');
+      window.location.href = '/main';
+    });
+
+    btnConn.addEventListener('click', function () {
+      var u = document.getElementById('login-id').value;
+      var p = document.getElementById('login-pw').value;
+      fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      }).then(function (r) {
+        if (r.ok) {
+          sessionStorage.setItem('ir-admin-ok', '1');
+          overlay.classList.remove('is-open');
+        } else {
+          overlay.classList.remove('is-open');
+          window.IRModal.open('alert-password-error', function () {
+            openAdminLogin();
+          });
+        }
+      });
+    });
+
+    overlay.classList.add('is-open');
+    setTimeout(function () { document.getElementById('login-pw').focus(); }, 60);
+  }
+
+  // Helper: ensure side menu links pass through admin-ok flag (no extra check needed since pages also check)
+})();
+</script>

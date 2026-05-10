@@ -1,0 +1,135 @@
+<!-- 보안 정보 — 4 패널 -->
+<div class="ir-shell">
+  <div class="ir-content" style="padding:24px 28px 18px;">
+
+    <div style="margin-bottom:16px;">
+      <span class="ir-page-sub">Engineering · audit</span>
+      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">보안 <em>정보.</em></h1>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px;flex:1;">
+
+      <!-- 로그 정보 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">로그 정보</div>
+        <div style="padding:14px 18px;font-family:var(--ir-font-mono);font-size:11px;line-height:1.55;height:200px;overflow:auto;" id="sec-log"></div>
+        <div style="display:flex;justify-content:flex-end;padding:8px 18px 14px;">
+          <button class="ir-btn ir-btn-pill" id="sec-log-backup" style="font-size:13px;padding:8px 18px;">로그 백업</button>
+        </div>
+      </div>
+
+      <!-- 오류 발생 정보 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">오류 발생 정보</div>
+        <div style="padding:14px 18px;">
+          <table class="ir-table" id="sec-err"></table>
+        </div>
+      </div>
+
+      <!-- 사용 실적 정보 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">사용 실적 정보</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.65;">
+          <div style="margin-bottom:8px;font-weight:700;">1) 펌프 사용량 :</div>
+          <div id="sec-pump" style="margin-bottom:14px;color:var(--ir-fg-muted);"></div>
+          <div style="margin-bottom:8px;font-weight:700;">2) 추출 실적</div>
+          <div id="sec-extract" style="color:var(--ir-fg-muted);"></div>
+          <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">
+            <button class="ir-btn ir-btn-pill" id="sec-reset-one"   style="font-size:12px;padding:8px 16px;">초기화</button>
+            <button class="ir-btn ir-btn-pill" id="sec-reset-all"   style="font-size:12px;padding:8px 16px;">전체 초기화</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오류 상세 정보 -1 -->
+      <div class="ir-card" style="padding:0;">
+        <div class="ir-card-header">오류 상세 정보 -1</div>
+        <div style="padding:14px 18px;font-size:13px;line-height:1.85;" id="sec-detail">
+          <div>· 에러 발생 일시: <strong id="ed-date">—</strong></div>
+          <div>· 오류코드: <strong id="ed-code">—</strong></div>
+          <div>· 발생소스: <strong id="ed-source">—</strong></div>
+          <div>· 상세 에러 메시지: <strong id="ed-message">—</strong></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;padding-top:12px;">
+      <a class="ir-btn ir-btn-pill" href="/info">복귀</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  Promise.all([
+    fetch('/api/system-log').then(function (r) { return r.json(); }),
+    fetch('/api/error-log').then(function (r) { return r.json(); }),
+    fetch('/api/usage-stats').then(function (r) { return r.json(); })
+  ]).then(function (rs) {
+    var sysLog = rs[0] || [], errs = rs[1] || [], us = rs[2] || {};
+
+    document.getElementById('sec-log').innerHTML = sysLog.map(function (l) {
+      return '<div>' + l.replace(/</g, '&lt;') + '</div>';
+    }).join('');
+
+    var tbl = document.getElementById('sec-err');
+    tbl.innerHTML = '<thead><tr><th>일시</th><th>오류코드</th></tr></thead><tbody>' +
+      errs.map(function (e, i) {
+        var hl = e.highlight ? 'style="color:var(--ir-status-error);font-weight:800;cursor:pointer;" data-i="' + i + '"'
+                             : 'style="cursor:pointer;" data-i="' + i + '"';
+        return '<tr ' + hl + '><td>' + e.date + '</td><td>' + e.code + '</td></tr>';
+      }).join('') + '</tbody>';
+    tbl.querySelectorAll('tr[data-i]').forEach(function (tr) {
+      tr.addEventListener('click', function () {
+        var idx = parseInt(tr.dataset.i, 10);
+        var e = errs[idx];
+        document.getElementById('ed-date').textContent    = e.date;
+        document.getElementById('ed-code').textContent    = e.code;
+        document.getElementById('ed-source').textContent  = e.source;
+        document.getElementById('ed-message').textContent = e.message;
+      });
+    });
+    // Auto-select first
+    if (errs.length) {
+      var e = errs[0];
+      document.getElementById('ed-date').textContent    = e.date;
+      document.getElementById('ed-code').textContent    = e.code;
+      document.getElementById('ed-source').textContent  = e.source;
+      document.getElementById('ed-message').textContent = e.message;
+    }
+
+    var pump = us.pumpUsage || {};
+    document.getElementById('sec-pump').innerHTML =
+      ['1st','2nd','3rd','4th','5th'].map(function (k) {
+        return '<span style="margin-right:14px;color:var(--ir-fg);">' + k + ':' +
+               '<strong style="color:var(--ir-orange);"> ' + (pump[k] || 0) + '회</strong></span>';
+      }).join('');
+
+    var extract = us.extractCount || {};
+    document.getElementById('sec-extract').innerHTML =
+      ['1st','2nd','3rd','4th','5th'].map(function (k) {
+        return '<span style="margin-right:14px;color:var(--ir-fg);">' + k + ':' +
+               '<strong style="color:var(--ir-orange);"> ' + (extract[k] || 0) + '회</strong></span>';
+      }).join('');
+  });
+
+  document.getElementById('sec-log-backup').addEventListener('click', function () {
+    window.IRModal.info({ body: '로그 백업 시작', bodyClass: 'is-info' });
+  });
+  document.getElementById('sec-reset-one').addEventListener('click', function () {
+    window.IRModal.confirm({
+      body: '복구불가<br>진행하시겠습니까?',
+      bodyClass: 'is-error',
+      onOk: function () { window.IRModal.info({ body: '초기화 완료' }); }
+    });
+  });
+  document.getElementById('sec-reset-all').addEventListener('click', function () {
+    window.IRModal.confirm({
+      body: '복구불가<br>진행하시겠습니까?',
+      bodyClass: 'is-error',
+      onOk: function () { window.IRModal.info({ body: '전체 초기화 완료' }); }
+    });
+  });
+})();
+</script>

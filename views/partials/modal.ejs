@@ -1,0 +1,124 @@
+<!--
+  iRHEA-Light — 표준 알림 모달 컨테이너 + 8 사전정의 알림.
+  공통 트리거: window.IRModal.open(id) / window.IRModal.confirm({...})
+  표준 ID:
+    alert-password-error
+    alert-extract-press
+    alert-shutdown
+    alert-shutdown-done
+    confirm-firmware
+    confirm-connection-change
+    confirm-connection-fail
+    confirm-irreversible
+  ad-hoc 모달은 confirm({title, body, ok, cancel, onOk, onCancel}) 사용.
+-->
+
+<div class="ir-modal-overlay" id="ir-modal-overlay" data-modal-root>
+  <div class="ir-modal" id="ir-modal" role="dialog" aria-modal="true" aria-labelledby="ir-modal-title">
+    <div class="ir-modal-header" id="ir-modal-title">알림</div>
+    <div class="ir-modal-body" id="ir-modal-body">메시지</div>
+    <div class="ir-modal-actions" id="ir-modal-actions"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Standard preset alerts — name, body, buttons[], optional class
+  var PRESETS = {
+    'alert-password-error':     { body: '암호 오류',                                       bodyClass: 'is-error', buttons: [{ label: 'X' }] },
+    'alert-extract-press':      { body: '추출 진행<br>추출구의 버튼을 눌러주세요',         buttons: [{ label: 'X' }] },
+    'alert-shutdown':           { body: '장비를 종료합니다.<br>기다려 주세요',             buttons: [] },
+    'alert-shutdown-done':      { body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',        buttons: [{ label: '확인', primary: true }] },
+    'confirm-firmware':         { body: '펌웨어를 업그레이드 합니다.',                      buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
+    'confirm-connection-change':{ body: '장치 연결 설정을 변경 합니다.',                    buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
+    'confirm-connection-fail':  { body: '연결 실패<br>재시도?',                              bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
+    'confirm-irreversible':     { body: '복구불가<br>진행하시겠습니까?',                    bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] }
+  };
+
+  function el(id) { return document.getElementById(id); }
+
+  function renderActions(buttons, onClick) {
+    var actions = el('ir-modal-actions');
+    actions.innerHTML = '';
+    buttons.forEach(function (b) {
+      var btn = document.createElement('button');
+      btn.className = 'ir-modal-btn' + (b.primary ? ' is-primary' : '');
+      btn.textContent = b.label;
+      btn.dataset.value = b.value || b.label;
+      btn.addEventListener('click', function () { onClick(b.value || b.label); });
+      actions.appendChild(btn);
+    });
+  }
+
+  function openWith(opts) {
+    var overlay = el('ir-modal-overlay');
+    el('ir-modal-title').textContent = opts.title || '알림';
+    var body = el('ir-modal-body');
+    body.innerHTML = opts.body || '';
+    body.className = 'ir-modal-body' + (opts.bodyClass ? ' ' + opts.bodyClass : '');
+    renderActions(opts.buttons || [{ label: '확인', primary: true }], function (val) {
+      overlay.classList.remove('is-open');
+      if (typeof opts.onClose === 'function') opts.onClose(val);
+    });
+    overlay.classList.add('is-open');
+  }
+
+  window.IRModal = {
+    open: function (id, onClose) {
+      var p = PRESETS[id];
+      if (!p) {
+        console.warn('IRModal: unknown preset', id);
+        return;
+      }
+      openWith({
+        title: p.title || '알림',
+        body: p.body,
+        bodyClass: p.bodyClass,
+        buttons: p.buttons,
+        onClose: onClose
+      });
+    },
+    confirm: function (opts) {
+      // opts: { title, body, bodyClass, ok = 'O', cancel = 'X', onOk, onCancel }
+      var buttons = [
+        { label: opts.ok || 'O', primary: true, value: 'ok' },
+        { label: opts.cancel || 'X', value: 'cancel' }
+      ];
+      openWith({
+        title: opts.title || '알림',
+        body: opts.body || '',
+        bodyClass: opts.bodyClass,
+        buttons: buttons,
+        onClose: function (v) {
+          if (v === 'ok' && typeof opts.onOk === 'function') opts.onOk();
+          if (v === 'cancel' && typeof opts.onCancel === 'function') opts.onCancel();
+        }
+      });
+    },
+    info: function (opts) {
+      openWith({
+        title: opts.title || '알림',
+        body: opts.body || '',
+        bodyClass: opts.bodyClass,
+        buttons: opts.buttons || [{ label: '확인', primary: true }],
+        onClose: opts.onClose
+      });
+    },
+    close: function () {
+      var overlay = el('ir-modal-overlay');
+      if (overlay) overlay.classList.remove('is-open');
+    }
+  };
+
+  // Close on overlay click (only when click target is overlay itself)
+  document.addEventListener('click', function (ev) {
+    var overlay = el('ir-modal-overlay');
+    if (!overlay || !overlay.classList.contains('is-open')) return;
+    if (ev.target === overlay) {
+      // Don't auto-close if there are no buttons (forced wait modal)
+      var hasButtons = el('ir-modal-actions').children.length > 0;
+      if (hasButtons) overlay.classList.remove('is-open');
+    }
+  });
+})();
+</script>

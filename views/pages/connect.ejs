@@ -1,0 +1,113 @@
+<!-- 장치 연결 (태블릿 ↔ 장비) — Cinema editorial -->
+<div class="ir-shell">
+
+  <!-- Top bar -->
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:18px 28px 10px;">
+    <button onclick="history.back()" class="ir-btn ir-btn-ghost" style="min-width:0;padding:6px 12px;font-size:18px;">←</button>
+    <span class="ir-page-sub">
+      Connection Status &nbsp;·&nbsp;
+      <span id="conn-status-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ir-status-error);vertical-align:middle;margin:0 6px;"></span>
+      <span id="conn-status-label">Disconnected</span>
+    </span>
+    <span style="width:40px;"></span>
+  </header>
+
+  <main style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+
+    <!-- Hero copy -->
+    <span class="ir-page-sub" style="margin-bottom:8px;">First handshake</span>
+    <h1 class="ir-page-title" style="margin:0 0 24px;">Find <em>the machine.</em></h1>
+
+    <!-- Tablet + Machine illustration in cinema strokes -->
+    <svg viewBox="0 0 360 220" width="320" height="200" aria-label="태블릿과 장비" style="margin-bottom:18px;">
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(60,40,20,0.06)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="360" height="220" fill="url(#grid)"/>
+
+      <!-- Tablet -->
+      <rect x="40" y="30" width="180" height="130" rx="12" fill="var(--ir-bg-2)" stroke="var(--ir-fg)" stroke-width="1.6"/>
+      <rect x="56" y="46" width="148" height="98" rx="4" fill="var(--ir-bg)" stroke="var(--ir-fg)" stroke-width="1"/>
+
+      <!-- Spinner dots -->
+      <g id="conn-spinner" transform="translate(130 95)" stroke="var(--ir-fg)" stroke-width="0.6">
+        <circle cx="0"   cy="-22" r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0s"    repeatCount="indefinite"/></circle>
+        <circle cx="15"  cy="-15" r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.15s" repeatCount="indefinite"/></circle>
+        <circle cx="22"  cy="0"   r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.30s" repeatCount="indefinite"/></circle>
+        <circle cx="15"  cy="15"  r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.45s" repeatCount="indefinite"/></circle>
+        <circle cx="0"   cy="22"  r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.60s" repeatCount="indefinite"/></circle>
+        <circle cx="-15" cy="15"  r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.75s" repeatCount="indefinite"/></circle>
+        <circle cx="-22" cy="0"   r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="0.90s" repeatCount="indefinite"/></circle>
+        <circle cx="-15" cy="-15" r="3" fill="var(--ir-orange-deep)"><animate attributeName="opacity" values="1;0.2;1" dur="1.2s" begin="1.05s" repeatCount="indefinite"/></circle>
+      </g>
+      <circle cx="130" cy="166" r="3" fill="var(--ir-fg)"/>
+
+      <!-- Machine: gooseneck kettle silhouette -->
+      <g transform="translate(240 50)" stroke="var(--ir-fg)" stroke-width="1.6" fill="var(--ir-bg-2)" stroke-linejoin="round">
+        <rect x="0" y="0" width="80" height="100" rx="6"/>
+        <rect x="10" y="10" width="60" height="22" rx="2" fill="var(--ir-bg)"/>
+        <rect x="22" y="40" width="36" height="22" fill="none"/>
+        <path d="M22 62 Q40 80 58 62 L58 70 L22 70 Z" fill="var(--ir-orange-deep)" stroke="none"/>
+        <rect x="14" y="80" width="52" height="6" rx="1" fill="var(--ir-fg)" stroke="none"/>
+      </g>
+
+      <!-- Editorial corner ticks -->
+      <g stroke="var(--ir-fg)" stroke-width="1">
+        <line x1="6" y1="6" x2="22" y2="6"/><line x1="6" y1="6" x2="6" y2="22"/>
+        <line x1="354" y1="6" x2="338" y2="6"/><line x1="354" y1="6" x2="354" y2="22"/>
+        <line x1="6" y1="214" x2="22" y2="214"/><line x1="6" y1="214" x2="6" y2="198"/>
+        <line x1="354" y1="214" x2="338" y2="214"/><line x1="354" y1="214" x2="354" y2="198"/>
+      </g>
+    </svg>
+
+    <p style="font-family:var(--ir-font-display);font-style:italic;font-size:20px;color:var(--ir-fg-muted);margin:0 0 32px;">— Not yet connected to the machine.</p>
+
+    <button id="conn-btn-connect" class="ir-btn ir-btn-primary ir-btn-pill" style="padding:14px 56px;font-size:16px;">연결</button>
+
+  </main>
+
+  <!-- 설정 변경 FAB -->
+  <button id="conn-btn-config" title="설정 변경" class="ir-btn-fab" style="position:absolute;left:36px;bottom:36px;width:78px;height:78px;font-size:13px;line-height:1.2;">설정<br>변경</button>
+
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('conn-btn-connect');
+  var statusDot = document.getElementById('conn-status-dot');
+  var statusLabel = document.getElementById('conn-status-label');
+  var failNext = false;
+
+  btn.addEventListener('click', function () {
+    btn.disabled = true;
+    btn.textContent = '연결 중…';
+    setTimeout(function () {
+      if (failNext) {
+        failNext = false;
+        btn.disabled = false;
+        btn.textContent = '연결';
+        window.IRModal.confirm({
+          body: '연결 실패<br>재시도?',
+          bodyClass: 'is-error',
+          onOk: function () { btn.click(); }
+        });
+      } else {
+        statusDot.style.background = 'var(--ir-status-ok)';
+        statusLabel.textContent = 'Connected';
+        btn.textContent = '연결됨';
+        setTimeout(function () { window.location.href = '/main'; }, 700);
+      }
+    }, 900);
+  });
+
+  document.getElementById('conn-btn-config').addEventListener('click', function () {
+    failNext = !failNext;
+    window.IRModal.info({
+      body: failNext ? '다음 연결은 실패하도록<br>설정했습니다.' : '연결 모드 정상',
+      bodyClass: 'is-info'
+    });
+  });
+})();
+</script>

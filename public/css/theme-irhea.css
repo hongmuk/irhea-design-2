@@ -1,0 +1,486 @@
+/* iRHEA-Light theme — Hand-Drip Cinema palette + 한국어 임베디드 키오스크 구조
+ * --ir-* 토큰은 Cinema 팔레트(warm cream + noble gold + deep charcoal)에 매핑됨.
+ * Cinema 시각 언어를 유지하면서, 명세 구조에 맞춘 새 화면을 렌더한다.
+ */
+
+:root {
+  /* Surfaces — warm cream */
+  --ir-bg:        #f6f4f1;
+  --ir-bg-2:      #fdfcfa;
+  --ir-bg-3:      #eae7e2;
+  --ir-panel:     #fdfcfa;
+  --ir-panel-hover: #f4f2ee;
+
+  /* Foreground — deep charcoal */
+  --ir-fg:        #1d1d1f;
+  --ir-fg-muted:  #48484a;
+  --ir-fg-subtle: #8a8580;
+
+  /* Lines / borders — soft brown hairlines */
+  --ir-line:        rgba(80, 50, 20, 0.18);
+  --ir-line-strong: rgba(60, 40, 20, 0.55);
+  --ir-line-soft:   rgba(80, 50, 20, 0.10);
+
+  /* Accents — noble gold */
+  --ir-orange:        #c5a059;            /* primary accent (active tab / 실행 / 추출) */
+  --ir-orange-hover:  #d6b067;
+  --ir-orange-deep:   #6A5B48;            /* gold-deep (eyebrow type) */
+  --ir-yellow:        #e0c896;             /* soft gold (header band / 알림) */
+  --ir-yellow-soft:   #efd9a8;
+
+  /* Status — apple-system tones */
+  --ir-status-error: #ff3b30;
+  --ir-status-warn:  #ff9500;
+  --ir-status-ok:    #34c759;
+  --ir-status-info:  #007aff;
+
+  /* Spout / 상태 칩 — muted earth/cool palette so it harmonizes with cream */
+  --ir-state-extracting: #1B3A4B;
+  --ir-state-complete:   #34c759;
+  --ir-state-rinsing:    #8a6cb6;
+  --ir-state-watering:   #007aff;
+  --ir-state-ready:      #c5a059;
+
+  /* Modal — cream paper with gold trim */
+  --ir-modal-overlay: rgba(40, 30, 20, 0.35);
+  --ir-modal-bg:      #fdfcfa;
+  --ir-modal-border:  rgba(60, 40, 20, 0.18);
+
+  /* Sizing */
+  --ir-radius-sm: 6px;
+  --ir-radius:    10px;
+  --ir-radius-lg: 16px;
+  --ir-radius-pill: 999px;
+
+  /* Type */
+  --ir-font:      'Pretendard Variable', Pretendard, 'Inter', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --ir-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --ir-font-display: 'Playfair Display', Georgia, serif;
+}
+
+/* ── Base ── */
+.ir, .ir * { box-sizing: border-box; }
+
+body.ir-theme {
+  margin: 0;
+  background: var(--ir-bg);
+  color: var(--ir-fg);
+  font-family: var(--ir-font);
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.ir-theme .stage  { background: var(--ir-bg); }
+body.ir-theme .canvas {
+  background: var(--ir-bg);
+  color: var(--ir-fg);
+  width: 1280px;
+  height: 800px;
+}
+
+/* Hide cinema legacy navrail when ir-theme rendering */
+body.ir-theme .navrail { display: none !important; }
+body.ir-theme .app-shell { padding: 0; }
+
+/* ── Layout shell ── */
+.ir-shell {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 800px;
+  position: relative;
+}
+
+.ir-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px 28px;
+  overflow: hidden;
+}
+
+/* ── Top tab bar (4-탭) ── */
+.ir-tabs {
+  display: flex;
+  gap: 16px;
+  padding: 18px 28px 0;
+}
+
+.ir-tab {
+  min-width: 140px;
+  padding: 12px 18px;
+  background: var(--ir-bg-2);
+  border: 1px solid var(--ir-line);
+  border-radius: var(--ir-radius);
+  color: var(--ir-fg);
+  font-family: var(--ir-font);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  box-shadow: 0 1px 2px rgba(50,30,10,0.04);
+}
+.ir-tab:hover {
+  background: var(--ir-panel-hover);
+  border-color: var(--ir-orange);
+}
+.ir-tab.is-active {
+  background: var(--ir-orange);
+  border-color: var(--ir-orange);
+  color: var(--ir-bg-2);
+  box-shadow: 0 4px 14px rgba(197,160,89,0.22);
+}
+
+/* Subtle gold divider under the tabs */
+.ir-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ir-orange) 12%, var(--ir-orange) 88%, transparent);
+  opacity: 0.55;
+  margin: 24px 0 18px;
+}
+
+/* ── Buttons ── */
+.ir-action-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.ir-btn {
+  min-width: 96px;
+  padding: 10px 20px;
+  background: var(--ir-bg-2);
+  border: 1px solid var(--ir-line);
+  border-radius: var(--ir-radius);
+  color: var(--ir-fg);
+  font-family: var(--ir-font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  box-shadow: 0 1px 2px rgba(50,30,10,0.04);
+}
+.ir-btn:hover { border-color: var(--ir-orange); background: var(--ir-panel-hover); }
+.ir-btn-primary {
+  background: var(--ir-orange);
+  border-color: var(--ir-orange);
+  color: var(--ir-bg-2);
+}
+.ir-btn-primary:hover { background: var(--ir-orange-hover); border-color: var(--ir-orange-hover); }
+
+.ir-btn-danger {
+  border-color: var(--ir-status-error);
+  color: var(--ir-status-error);
+}
+.ir-btn-danger:hover { background: rgba(255,59,48,0.06); }
+
+.ir-btn-ghost { background: transparent; }
+
+.ir-btn-pill {
+  border-radius: var(--ir-radius-pill);
+  padding: 12px 28px;
+}
+
+.ir-btn-fab {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ir-orange);
+  border: none;
+  color: var(--ir-bg-2);
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(197,160,89,0.30);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.ir-btn-fab:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(197,160,89,0.36); }
+
+/* ── Cards / panels ── */
+.ir-card {
+  background: var(--ir-bg-2);
+  border: 1px solid var(--ir-line);
+  border-radius: var(--ir-radius);
+  padding: 16px 18px;
+  color: var(--ir-fg);
+  box-shadow: 0 2px 8px rgba(50,30,10,0.04);
+}
+
+.ir-card-header {
+  font-family: var(--ir-font-display);
+  font-size: 16px;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  text-align: center;
+  padding: 10px 0 12px;
+  border-bottom: 1px solid var(--ir-line);
+  margin: -16px -18px 14px;
+  background: var(--ir-bg-3);
+  border-top-left-radius: var(--ir-radius);
+  border-top-right-radius: var(--ir-radius);
+  color: var(--ir-fg);
+}
+.ir-card-header.is-yellow {
+  background: var(--ir-yellow);
+  color: #3a2d1c;
+}
+
+/* Tables */
+.ir-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  color: var(--ir-fg);
+}
+.ir-table th, .ir-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--ir-line-soft);
+  text-align: center;
+}
+.ir-table th {
+  background: var(--ir-bg-3);
+  font-weight: 700;
+  font-family: var(--ir-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ir-orange-deep);
+}
+
+/* Form rows */
+.ir-form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ir-line-soft);
+}
+.ir-form-row:last-child { border-bottom: none; }
+
+.ir-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ir-line-strong);
+  color: var(--ir-fg);
+  font-family: var(--ir-font);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 4px 6px;
+  outline: none;
+  text-align: center;
+}
+.ir-input:focus { border-color: var(--ir-orange); }
+
+.ir-select {
+  background: var(--ir-bg-2);
+  border: 1px solid var(--ir-line);
+  border-radius: var(--ir-radius-sm);
+  color: var(--ir-fg);
+  font-family: var(--ir-font);
+  font-size: 13px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.ir-toggle {
+  display: inline-flex;
+  background: var(--ir-bg-3);
+  border: 1px solid var(--ir-line);
+  border-radius: var(--ir-radius-pill);
+  padding: 2px;
+}
+.ir-toggle-opt {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--ir-radius-pill);
+  cursor: pointer;
+  color: var(--ir-fg-muted);
+  user-select: none;
+}
+.ir-toggle-opt.is-active {
+  background: var(--ir-orange);
+  color: var(--ir-bg-2);
+}
+
+/* ── Modal / 알림 ── */
+.ir-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--ir-modal-overlay);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+.ir-modal-overlay.is-open { display: flex; }
+
+.ir-modal {
+  min-width: 320px;
+  max-width: 540px;
+  background: var(--ir-modal-bg);
+  border: 1px solid var(--ir-modal-border);
+  border-radius: var(--ir-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(40,30,10,0.18);
+  color: var(--ir-fg);
+}
+
+.ir-modal-header {
+  background: var(--ir-yellow);
+  color: #3a2d1c;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 14px;
+  font-family: var(--ir-font);
+  text-transform: uppercase;
+}
+
+.ir-modal-body {
+  padding: 28px 22px;
+  text-align: center;
+  font-family: var(--ir-font-display);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ir-orange);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.ir-modal-body.is-error { color: var(--ir-status-error); }
+.ir-modal-body.is-info  { color: var(--ir-fg); font-style: normal; font-family: var(--ir-font); font-weight: 600; font-size: 18px; }
+
+.ir-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 6px 22px 22px;
+}
+
+.ir-modal-btn {
+  min-width: 64px;
+  height: 36px;
+  border-radius: var(--ir-radius-pill);
+  border: 1px solid var(--ir-line);
+  background: var(--ir-bg-2);
+  color: var(--ir-fg);
+  font-family: var(--ir-font);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+.ir-modal-btn:hover { border-color: var(--ir-orange); }
+.ir-modal-btn.is-primary { background: var(--ir-orange); border-color: var(--ir-orange); color: var(--ir-bg-2); }
+
+/* ── Status chips ── */
+.ir-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: var(--ir-radius-sm);
+  font-family: var(--ir-font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--ir-bg-3);
+  color: var(--ir-fg);
+  border: 1px solid var(--ir-line);
+}
+.ir-chip.is-ready    { background: rgba(197,160,89,0.16); color: var(--ir-orange-deep); border-color: rgba(197,160,89,0.40); }
+.ir-chip.is-extract  { background: rgba(27,58,75,0.10);   color: var(--ir-state-extracting); border-color: rgba(27,58,75,0.30); }
+.ir-chip.is-complete { background: rgba(52,199,89,0.12);  color: var(--ir-status-ok); border-color: rgba(52,199,89,0.32); }
+.ir-chip.is-rinse    { background: rgba(138,108,182,0.12); color: var(--ir-state-rinsing); border-color: rgba(138,108,182,0.32); }
+.ir-chip.is-water    { background: rgba(0,122,255,0.10);  color: var(--ir-state-watering); border-color: rgba(0,122,255,0.30); }
+.ir-chip.is-recipe   { background: var(--ir-yellow); color: #3a2d1c; border-color: rgba(60,40,20,0.18); letter-spacing: 0.06em; }
+
+/* ── Page header ── */
+.ir-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 18px;
+}
+.ir-page-title {
+  font-family: var(--ir-font-display);
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.ir-page-title em {
+  color: var(--ir-orange-deep);
+  font-style: italic;
+}
+.ir-page-sub {
+  font-size: 11px;
+  color: var(--ir-fg-subtle);
+  font-family: var(--ir-font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Progress ring shell (펌웨어/백업/공장초기화에서 공용) ── */
+.ir-progress-ring {
+  width: 84px;
+  height: 84px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: var(--ir-font-mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ir-fg);
+  background: var(--ir-bg-2);
+  border: 4px solid var(--ir-status-ok);
+  border-radius: 50%;
+}
+.ir-progress-ring::after {
+  content: 'PROGRESS';
+  position: absolute;
+  bottom: 14px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--ir-fg-subtle);
+}
+
+/* ── Side menu ── */
+.ir-side-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 160px;
+}
+.ir-side-menu .ir-tab {
+  width: 100%;
+  min-width: 0;
+  font-size: 13px;
+  padding: 10px 12px;
+}
+
+/* Utility */
+.ir-grow   { flex: 1; }
+.ir-row    { display: flex; gap: 16px; }
+.ir-col    { display: flex; flex-direction: column; gap: 16px; }
+.ir-center { display: flex; align-items: center; justify-content: center; }
+.ir-spacer { flex: 1; }
+.ir-mt-auto { margin-top: auto; }

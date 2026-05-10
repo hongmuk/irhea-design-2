@@ -1,0 +1,95 @@
+<%- include('../partials/settings-shell', { activeTab: 'backup' }) %>
+
+  <section class="ir-grow ir-center" style="min-height:420px;">
+    <div class="ir-card" style="max-width:520px;width:100%;padding:28px 32px;">
+
+      <!-- Direction toggle: Machine ↔ USB -->
+      <div style="display:flex;justify-content:center;margin-bottom:14px;">
+        <div class="ir-toggle">
+          <span class="ir-toggle-opt is-active" data-dir="backup">Machine → USB</span>
+          <span class="ir-toggle-opt" data-dir="restore">USB → Machine</span>
+        </div>
+      </div>
+
+      <div style="text-align:center;font-family:var(--ir-font-display);font-style:italic;font-size:22px;margin-bottom:24px;color:var(--ir-fg);">USB <em style="color:var(--ir-orange-deep);">백업/복구.</em></div>
+
+      <div id="bk-list" style="display:flex;flex-direction:column;gap:14px;font-size:16px;font-weight:600;">
+        <% var __items = [
+          { id: 'recipe', label: '1. 레시피 데이터',     sel: false },
+          { id: 'user',   label: '2. 사용자 데이터',     sel: true },
+          { id: 'device', label: '3. 장비 설정 데이터',  sel: false }
+        ]; %>
+        <% __items.forEach(function (c) { %>
+          <label class="bk-row" data-cat="<%= c.id %>" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
+            <span style="flex:1;"><%= c.label %></span>
+            <span class="bk-dot" data-on="<%= c.sel %>" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:<%= c.sel ? 'var(--ir-status-ok)' : 'transparent' %>;"></span>
+          </label>
+        <% }) %>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;gap:12px;">
+        <button class="ir-btn ir-btn-primary" id="bk-run">실행</button>
+        <div class="ir-progress-ring" id="bk-progress" style="display:none;">20%</div>
+        <button class="ir-btn" id="bk-cancel">취소</button>
+      </div>
+    </div>
+  </section>
+
+<%- include('../partials/settings-shell-close') %>
+
+<script>
+(function () {
+  var dir = 'backup';
+  document.querySelectorAll('.ir-toggle-opt').forEach(function (o) {
+    o.addEventListener('click', function () {
+      document.querySelectorAll('.ir-toggle-opt').forEach(function (x) { x.classList.remove('is-active'); });
+      o.classList.add('is-active');
+      dir = o.dataset.dir;
+    });
+  });
+
+  document.querySelectorAll('.bk-row').forEach(function (row) {
+    row.addEventListener('click', function () {
+      var dot = row.querySelector('.bk-dot');
+      var on = dot.dataset.on === 'true';
+      dot.dataset.on = (!on).toString();
+      dot.style.background = !on ? 'var(--ir-status-ok)' : 'transparent';
+    });
+  });
+
+  document.getElementById('bk-cancel').addEventListener('click', function () {
+    history.back();
+  });
+
+  document.getElementById('bk-run').addEventListener('click', function () {
+    var items = [];
+    document.querySelectorAll('.bk-row').forEach(function (row) {
+      if (row.querySelector('.bk-dot').dataset.on === 'true') items.push(row.dataset.cat);
+    });
+    if (items.length === 0) {
+      window.IRModal.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
+      return;
+    }
+    var ring = document.getElementById('bk-progress');
+    ring.style.display = 'inline-flex';
+    ring.textContent = '0%';
+    var p = 0;
+    var iv = setInterval(function () {
+      p += 10;
+      ring.textContent = Math.min(p, 100) + '%';
+      if (p >= 100) {
+        clearInterval(iv);
+        var endpoint = dir === 'restore' ? '/api/restore' : '/api/backup';
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: items })
+        }).then(function () {
+          ring.style.display = 'none';
+          window.IRModal.info({ body: (dir === 'restore' ? '복구' : '백업') + ' 완료', bodyClass: 'is-info' });
+        });
+      }
+    }, 110);
+  });
+})();
+</script>

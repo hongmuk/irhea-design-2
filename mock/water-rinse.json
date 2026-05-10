@@ -1,0 +1,4 @@
+{
+  "water": { "speed": 6, "temp": 85, "amount": 50 },
+  "rinse": { "speed": 6, "temp": 85, "amount": 60 }
+}

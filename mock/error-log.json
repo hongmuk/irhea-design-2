@@ -1,0 +1,9 @@
+[
+  { "date": "2025-11-23", "code": "37RDF", "source": "Spout1", "message": "No working motor.", "highlight": true },
+  { "date": "2025-10-11", "code": "33RDF", "source": "Spout3", "message": "Flow timeout" },
+  { "date": "2025-10-10", "code": "34RDF", "source": "Spout2", "message": "Boiler temp drift" },
+  { "date": "2025-10-09", "code": "37RDF", "source": "Spout1", "message": "No working motor." },
+  { "date": "2025-09-03", "code": "37RDF", "source": "Spout5", "message": "No working motor." },
+  { "date": "2025-08-21", "code": "33RDF", "source": "Spout4", "message": "Flow timeout" },
+  { "date": "2025-03-23", "code": "32RDF", "source": "Spout2", "message": "Pump under-current" }
+]

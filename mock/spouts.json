@@ -2,74 +2,76 @@
   {
     "id": 1,
     "name": "Spout 1",
-    "status": "idle",
-    "currentRecipe": null,
+    "label": "Spout 1",
+    "status": "extracting",
+    "currentRecipe": "Ethiopia Yirgacheffe",
+    "currentRecipeId": 3,
+    "elapsedSec": 225,
+    "totalSec": 480,
+    "extractCount": 150,
+    "progressPct": 45,
+    "favoriteRecipeIds": [3, 5, 1, 4, 8, 3],
     "totalBrews": 1247,
-    "calibration": {
-      "pumpGain1": 1.000,
-      "pumpGain2": 1.012,
-      "pumpGain3": 0.998,
-      "pumpGain4": 1.005,
-      "pumpGain5": 0.995
-    }
+    "calibration": { "pumpGain1": 1.000, "pumpGain2": 1.012, "pumpGain3": 0.998, "pumpGain4": 1.005, "pumpGain5": 0.995 }
   },
   {
     "id": 2,
     "name": "Spout 2",
-    "status": "active",
-    "currentRecipe": "Ethiopia Yirgacheffe",
+    "label": "Spout 2",
+    "status": "complete",
+    "currentRecipe": "Colombia Supremo",
+    "currentRecipeId": 5,
+    "elapsedSec": 225,
+    "totalSec": 480,
+    "extractCount": 150,
+    "progressPct": 45,
+    "favoriteRecipeIds": [5, 8, 1, 7, 6, 12],
     "totalBrews": 985,
-    "calibration": {
-      "pumpGain1": 1.002,
-      "pumpGain2": 1.008,
-      "pumpGain3": 1.001,
-      "pumpGain4": 0.997,
-      "pumpGain5": 1.003
-    }
+    "calibration": { "pumpGain1": 1.002, "pumpGain2": 1.008, "pumpGain3": 1.001, "pumpGain4": 0.997, "pumpGain5": 1.003 }
   },
   {
     "id": 3,
     "name": "Spout 3",
-    "status": "idle",
-    "currentRecipe": null,
+    "label": "Spout 3",
+    "status": "rinsing",
+    "currentRecipe": "Ethiopia Yirgacheffe",
+    "currentRecipeId": 1,
+    "elapsedSec": 225,
+    "totalSec": 480,
+    "extractCount": 150,
+    "progressPct": 45,
+    "favoriteRecipeIds": [1, 5, 7, 1, 2, 9],
     "totalBrews": 1102,
-    "calibration": {
-      "pumpGain1": 0.999,
-      "pumpGain2": 1.015,
-      "pumpGain3": 1.003,
-      "pumpGain4": 1.001,
-      "pumpGain5": 0.998
-    }
+    "calibration": { "pumpGain1": 0.999, "pumpGain2": 1.015, "pumpGain3": 1.003, "pumpGain4": 1.001, "pumpGain5": 0.998 }
   },
   {
     "id": 4,
     "name": "Spout 4",
-    "status": "error",
-    "currentRecipe": null,
-    "errorCode": "MCP0001",
-    "errorCodeName": "NOZZLE-ERR-01",
-    "errorMessage": "Extraction Timeout Error",
+    "label": "Spout 4",
+    "status": "watering",
+    "currentRecipe": "Colombia Supremo",
+    "currentRecipeId": 2,
+    "elapsedSec": 225,
+    "totalSec": 480,
+    "extractCount": 150,
+    "progressPct": 45,
+    "favoriteRecipeIds": [2, 4, 9, 7, 3, 10],
     "totalBrews": 876,
-    "calibration": {
-      "pumpGain1": 1.005,
-      "pumpGain2": 0.992,
-      "pumpGain3": 1.010,
-      "pumpGain4": 1.002,
-      "pumpGain5": 0.997
-    }
+    "calibration": { "pumpGain1": 1.005, "pumpGain2": 0.992, "pumpGain3": 1.010, "pumpGain4": 1.002, "pumpGain5": 0.997 }
   },
   {
     "id": 5,
     "name": "Spout 5",
-    "status": "idle",
-    "currentRecipe": null,
+    "label": "Spout 5",
+    "status": "complete",
+    "currentRecipe": "Kenya AA Peaberry",
+    "currentRecipeId": 4,
+    "elapsedSec": 225,
+    "totalSec": 480,
+    "extractCount": 150,
+    "progressPct": 45,
+    "favoriteRecipeIds": [4, 5, 1, 11, 9, 11],
     "totalBrews": 1340,
-    "calibration": {
-      "pumpGain1": 0.998,
-      "pumpGain2": 1.004,
-      "pumpGain3": 1.001,
-      "pumpGain4": 1.007,
-      "pumpGain5": 1.000
-    }
+    "calibration": { "pumpGain1": 0.998, "pumpGain2": 1.004, "pumpGain3": 1.001, "pumpGain4": 1.007, "pumpGain5": 1.000 }
   }
 ]

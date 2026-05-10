@@ -1,0 +1,154 @@
+<!-- 메인 — 5 추출구 -->
+<div class="ir-shell">
+
+  <!-- Top header -->
+  <header style="display:flex;align-items:center;padding:16px 28px 12px;gap:16px;">
+    <div>
+      <span class="ir-page-sub">Counter · 5 spouts</span>
+      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">NT-iRhea <em>1호기.</em></h1>
+    </div>
+    <div style="flex:1;display:flex;justify-content:center;">
+      <span class="ir-chip is-ready" style="font-size:13px;padding:7px 22px;">추출 가능</span>
+    </div>
+    <div style="font-family:JetBrains Mono, monospace;font-size:13px;color:var(--ir-fg-muted);letter-spacing:0.08em;">BOILER · <span style="font-weight:700;color:var(--ir-fg);">95°</span></div>
+    <a class="ir-btn-fab" href="javascript:void(0);" id="btn-shutdown" style="width:64px;height:64px;font-size:12px;margin-left:8px;letter-spacing:0.04em;">종료</a>
+  </header>
+
+  <div style="display:flex;flex:1;padding:0 16px 12px;gap:8px;align-items:stretch;min-height:0;">
+
+    <!-- Spout grid (5 columns) -->
+    <div style="flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+      <% for (var i = 1; i <= 5; i++) { %>
+        <div class="ir-card spout-card" data-spout="<%= i %>" style="padding:10px;display:flex;flex-direction:column;gap:8px;">
+
+          <!-- Progress ring -->
+          <div style="display:flex;justify-content:center;">
+            <svg viewBox="0 0 120 120" width="100" height="100">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(60,40,20,0.10)" stroke-width="6"/>
+              <circle class="spout-ring" cx="60" cy="60" r="50" fill="none" stroke="var(--ir-state-extracting)" stroke-width="6"
+                stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
+              <text class="spout-time"  x="60" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="var(--ir-fg)">--:--</text>
+              <text class="spout-total" x="60" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ir-fg-muted)">/ --:--</text>
+              <text class="spout-pct"   x="60" y="96" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="var(--ir-orange)">--%</text>
+            </svg>
+          </div>
+
+          <div class="spout-count" style="text-align:center;font-size:11px;color:var(--ir-fg-muted);">추출횟수 : <span class="spout-count-val" style="color:var(--ir-fg);font-weight:700;">--</span>회</div>
+
+          <!-- Status chip -->
+          <div style="display:flex;justify-content:center;">
+            <span class="ir-chip spout-status">— —</span>
+          </div>
+
+          <!-- Currently selected recipe -->
+          <div style="display:flex;justify-content:center;">
+            <span class="ir-chip is-recipe spout-recipe" style="font-size:12px;">레시피 —</span>
+          </div>
+
+          <!-- Recipe shortlist (favorites for this spout) -->
+          <div class="spout-faves" style="display:flex;flex-direction:column;gap:4px;margin-top:4px;flex:1;font-size:11px;"></div>
+
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Right: 정보 vertical button -->
+    <button class="ir-btn-fab" id="btn-info" style="align-self:flex-start;margin-top:8px;width:60px;height:60px;font-size:13px;">정보</button>
+  </div>
+
+  <!-- Bottom action bar -->
+  <footer style="display:flex;justify-content:space-between;padding:8px 24px 14px;gap:8px;">
+    <a class="ir-btn ir-btn-pill" href="/settings/general" style="flex:1;max-width:240px;">설정</a>
+    <a class="ir-btn ir-btn-pill" href="/recipes" style="flex:1;max-width:240px;">레시피</a>
+    <a class="ir-btn ir-btn-pill" href="/recipes?fav=1" style="flex:1;max-width:240px;">즐겨찾기</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var STATUS = {
+    idle:       { label: '추출 가능', cls: 'is-ready',    color: 'var(--ir-state-ready)' },
+    extracting: { label: '추출 중',   cls: 'is-extract',  color: 'var(--ir-state-extracting)' },
+    complete:   { label: '추출 완료', cls: 'is-complete', color: 'var(--ir-state-complete)' },
+    rinsing:    { label: '린스 중',   cls: 'is-rinse',    color: 'var(--ir-state-rinsing)' },
+    watering:   { label: '워터 중',   cls: 'is-water',    color: 'var(--ir-state-watering)' }
+  };
+
+  function fmt(s) {
+    var m = Math.floor(s / 60), sec = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+  }
+
+  Promise.all([
+    fetch('/api/spouts').then(function (r) { return r.json(); }),
+    fetch('/api/recipes').then(function (r) { return r.json(); })
+  ]).then(function (rs) {
+    var spouts = rs[0], recipes = rs[1];
+    var rmap = {};
+    recipes.forEach(function (r) { rmap[r.id] = r.name || ('레시피 ' + r.id); });
+
+    spouts.forEach(function (s) {
+      var card = document.querySelector('.spout-card[data-spout="' + s.id + '"]');
+      if (!card) return;
+      var st = STATUS[s.status] || STATUS.idle;
+
+      var time = card.querySelector('.spout-time');
+      var total = card.querySelector('.spout-total');
+      var pct  = card.querySelector('.spout-pct');
+      var ring = card.querySelector('.spout-ring');
+      var chip = card.querySelector('.spout-status');
+      var rec  = card.querySelector('.spout-recipe');
+
+      time.textContent = fmt(s.elapsedSec);
+      total.textContent = '/ ' + fmt(s.totalSec);
+      pct.textContent = (s.progressPct || 0) + '%';
+      ring.setAttribute('stroke', st.color);
+      ring.setAttribute('stroke-dashoffset', String(314 * (1 - (s.progressPct || 0) / 100)));
+
+      chip.textContent = st.label;
+      chip.className = 'ir-chip spout-status ' + st.cls;
+
+      rec.textContent = '레시피 ' + (s.currentRecipeId || '—');
+
+      card.querySelector('.spout-count-val').textContent = s.extractCount;
+
+      var fav = card.querySelector('.spout-faves');
+      fav.innerHTML = '';
+      (s.favoriteRecipeIds || []).slice(0, 6).forEach(function (rid, idx) {
+        var row = document.createElement('div');
+        var active = (idx === 0 || rid === s.currentRecipeId);
+        row.className = 'ir-chip' + (active ? ' is-recipe' : '');
+        row.style.justifyContent = 'flex-start';
+        row.style.padding = '5px 10px';
+        row.style.fontSize = '11px';
+        row.style.letterSpacing = '0.06em';
+        if (!active) {
+          row.style.background = 'transparent';
+          row.style.color = 'var(--ir-fg-muted)';
+          row.style.borderColor = 'var(--ir-line)';
+        }
+        row.textContent = '레시피 ' + rid;
+        fav.appendChild(row);
+      });
+    });
+  });
+
+  document.getElementById('btn-shutdown').addEventListener('click', function () {
+    window.IRModal.info({
+      body: '장비를 종료합니다.<br>기다려 주세요',
+      buttons: []
+    });
+    setTimeout(function () {
+      window.IRModal.info({
+        body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',
+        buttons: [{ label: '확인', primary: true }]
+      });
+    }, 1800);
+  });
+
+  document.getElementById('btn-info').addEventListener('click', function () {
+    window.location.href = '/info';
+  });
+})();
+</script>

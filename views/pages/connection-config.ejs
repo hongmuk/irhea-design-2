@@ -1,0 +1,105 @@
+<%- include('../partials/settings-shell', { activeTab: 'engineering', showSave: true }) %>
+
+  <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
+
+    <aside class="ir-side-menu">
+      <a class="ir-tab" href="/settings/engineering/factory-reset">공장초기화</a>
+      <a class="ir-tab is-active" href="/settings/engineering/connection">장비 연결 설정</a>
+    </aside>
+
+    <section class="ir-row ir-grow" style="gap:18px;">
+
+      <!-- 장비 연결 설정 -->
+      <div class="ir-card" style="flex:1;min-height:300px;">
+        <div class="ir-card-header">장비 연결 설정</div>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;align-items:center;text-align:center;padding-top:18px;">
+          <label style="font-size:15px;">장비 IP address:</label>
+          <input class="ir-input" id="dev-ip" value="192.168.1.100" style="min-width:200px;font-size:18px;font-weight:700;"/>
+          <button class="ir-btn ir-btn-primary" id="dev-connect" style="margin-top:18px;">연결</button>
+          <div id="dev-status" style="font-size:12px;color:var(--ir-fg-muted);height:16px;"></div>
+        </div>
+      </div>
+
+      <!-- 클라우드 인증 -->
+      <div class="ir-card" style="flex:1;min-height:300px;">
+        <div class="ir-card-header">클라우드 인증</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;column-gap:18px;row-gap:12px;font-size:15px;font-weight:600;align-items:center;padding-top:14px;">
+          <div>매장:</div>      <input class="ir-input" id="cl-store"  value="CafénobleT"/>
+          <div>장비:</div>      <input class="ir-input" id="cl-device" value="1f3c5a8a"/>
+          <div>권한:</div>      <select class="ir-select" id="cl-role">
+            <option value="admin">admin</option>
+            <option value="operator">operator</option>
+          </select>
+          <div>아이디:</div>    <input class="ir-input" id="cl-user"   value="Nobletree"/>
+          <div>비밀번호:</div>  <input class="ir-input" id="cl-pw"     type="password" value="********"/>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:18px;">
+          <button class="ir-btn ir-btn-primary" id="cl-auth">인증</button>
+        </div>
+        <div id="cl-status" style="font-size:12px;color:var(--ir-fg-muted);text-align:center;margin-top:8px;height:16px;"></div>
+      </div>
+
+    </section>
+  </div>
+
+<%- include('../partials/settings-shell-close') %>
+
+<script>
+(function () {
+  if (location.search.indexOf('dev=1') >= 0) sessionStorage.setItem('ir-admin-ok', '1');
+  if (sessionStorage.getItem('ir-admin-ok') !== '1') {
+    window.location.href = '/settings/engineering';
+    return;
+  }
+
+  fetch('/api/connection').then(function (r) { return r.json(); }).then(function (cfg) {
+    if (!cfg) return;
+    if (cfg.deviceIp) document.getElementById('dev-ip').value = cfg.deviceIp;
+    if (cfg.cloud) {
+      document.getElementById('cl-store').value = cfg.cloud.store || '';
+      document.getElementById('cl-device').value = cfg.cloud.device || '';
+      document.getElementById('cl-role').value = cfg.cloud.role || 'admin';
+      document.getElementById('cl-user').value = cfg.cloud.username || '';
+    }
+  });
+
+  document.getElementById('dev-connect').addEventListener('click', function () {
+    var s = document.getElementById('dev-status');
+    s.textContent = '연결 중…';
+    fetch('/api/connection/test', { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { s.textContent = j.ok ? '연결 성공 (' + j.latencyMs + 'ms)' : '연결 실패'; });
+  });
+
+  document.getElementById('cl-auth').addEventListener('click', function () {
+    var s = document.getElementById('cl-status');
+    s.textContent = '인증 중…';
+    setTimeout(function () { s.textContent = '인증 성공'; }, 600);
+  });
+
+  // Save → confirm before applying
+  document.querySelector('[data-ir-save]').addEventListener('click', function () {
+    window.IRModal.confirm({
+      body: '장치 연결 설정을 변경 합니다.',
+      onOk: function () {
+        var payload = {
+          deviceIp: document.getElementById('dev-ip').value,
+          cloud: {
+            store:    document.getElementById('cl-store').value,
+            device:   document.getElementById('cl-device').value,
+            role:     document.getElementById('cl-role').value,
+            username: document.getElementById('cl-user').value
+          }
+        };
+        fetch('/api/connection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function () {
+          window.IRModal.info({ body: '저장 완료', bodyClass: 'is-info' });
+        });
+      }
+    });
+  });
+})();
+</script>

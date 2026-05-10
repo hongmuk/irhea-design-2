@@ -1,0 +1,178 @@
+<%- include('../partials/settings-shell', { activeTab: 'general', showSave: true }) %>
+
+  <div class="ir-row" style="gap:14px;flex:1;align-items:flex-start;flex-wrap:nowrap;">
+
+    <!-- 환경설정 -->
+    <div class="ir-card" style="flex:0 0 232px;">
+      <div class="ir-card-header">환경설정</div>
+      <table class="ir-table">
+        <thead><tr><th>항목</th><th>선택</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>추출단위 (%, g)</td>
+            <td>
+              <select class="ir-select" id="g-unit">
+                <option value="Percent (%)">Percent (%)</option>
+                <option value="Gram (g)">Gram (g)</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>알람</td>
+            <td>
+              <select class="ir-select" id="g-alarm">
+                <option value="예">예</option>
+                <option value="아니오">아니오</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>기본 드립퍼</td>
+            <td>
+              <select class="ir-select" id="g-dripper">
+                <option>Kalita</option>
+                <option>Hario</option>
+                <option>Kalita Wave</option>
+                <option>Kono</option>
+                <option>Chemax</option>
+                <option>December</option>
+                <option>Melita</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 보일러 -->
+    <div class="ir-card" style="flex:0 0 178px;">
+      <div class="ir-card-header">보일러</div>
+      <table class="ir-table">
+        <thead><tr><th>항목</th><th>선택</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>설정온도</td>
+            <td>
+              <input class="ir-input" id="b-temp" value="95" style="width:50px;"/> 도
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color:var(--ir-fg-muted);font-size:11px;margin-top:8px;text-align:center;">최고 95도</p>
+    </div>
+
+    <!-- 물붓기 범위 -->
+    <div class="ir-card" style="flex:0 0 200px;">
+      <div class="ir-card-header">물붓기 범위</div>
+      <table class="ir-table" id="pour-table">
+        <thead><tr><th>범위</th><th>반지름</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- 펌프 교정 -->
+    <div class="ir-card" style="flex:0 0 196px;">
+      <div class="ir-card-header">펌프 교정</div>
+      <style>#pump-table td, #pump-table th { padding:6px 6px; font-size:12px; }</style>
+      <table class="ir-table" id="pump-table">
+        <thead><tr><th>기존 유속</th><th>교정 유속</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- 워터/린스 -->
+    <div class="ir-card" style="flex:1;min-width:0;">
+      <div class="ir-card-header">워터/린스</div>
+      <style>.ir-card .ir-table.wr-table td, .ir-card .ir-table.wr-table th { padding:5px 6px; font-size:11px; } .wr-table .ir-input.wr { width:30px !important; }</style>
+      <table class="ir-table wr-table">
+        <thead><tr><th>항목</th><th>워터</th><th>린스</th></tr></thead>
+        <tbody>
+          <tr><td>속도</td><td><input class="ir-input wr" data-k="water.speed"  value="6"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml/s</span></td><td><input class="ir-input wr" data-k="rinse.speed"  value="6"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml/s</span></td></tr>
+          <tr><td>온도</td><td><input class="ir-input wr" data-k="water.temp"   value="85"/> <span style="font-size:10px;color:var(--ir-fg-muted);">°C</span></td><td><input class="ir-input wr" data-k="rinse.temp"   value="85"/> <span style="font-size:10px;color:var(--ir-fg-muted);">°C</span></td></tr>
+          <tr><td>온수량</td><td><input class="ir-input wr" data-k="water.amount" value="50"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml</span></td><td><input class="ir-input wr" data-k="rinse.amount" value="60"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+<%- include('../partials/settings-shell-close') %>
+
+<script>
+(function () {
+  // Hydrate from mocks
+  Promise.all([
+    fetch('/api/general-config').then(function (r) { return r.json(); }),
+    fetch('/api/boiler-info').then(function (r) { return r.json(); }),
+    fetch('/api/pour-range').then(function (r) { return r.json(); }),
+    fetch('/api/pump-calibration').then(function (r) { return r.json(); }),
+    fetch('/api/water-rinse').then(function (r) { return r.json(); })
+  ]).then(function (rs) {
+    var g = rs[0] || {}, b = rs[1] || {}, pr = rs[2] || [], pc = rs[3] || [], wr = rs[4] || {};
+
+    if (g.extractionUnit) document.getElementById('g-unit').value = g.extractionUnit;
+    if (g.alarm)          document.getElementById('g-alarm').value = g.alarm;
+    if (g.defaultDripper) document.getElementById('g-dripper').value = g.defaultDripper;
+
+    if (b.tempSet) document.getElementById('b-temp').value = b.tempSet;
+
+    var pourBody = document.querySelector('#pour-table tbody');
+    pourBody.innerHTML = pr.map(function (row) {
+      return '<tr><td>' + row.cup + ' Cup</td><td><input class="ir-input pr" data-cup="' + row.cup + '" value="' + row.radius + '" style="width:38px;"/> mm</td></tr>';
+    }).join('');
+
+    var pumpBody = document.querySelector('#pump-table tbody');
+    pumpBody.innerHTML = pc.map(function (row, i) {
+      return '<tr><td>' + row.base.toFixed(1) + ' g/sec</td><td><input class="ir-input pc" data-i="' + i + '" value="' + row.calibrated.toFixed(1) + '" style="width:42px;"/> g/sec</td></tr>';
+    }).join('');
+
+    if (wr.water) {
+      document.querySelector('[data-k="water.speed"]').value  = wr.water.speed;
+      document.querySelector('[data-k="water.temp"]').value   = wr.water.temp;
+      document.querySelector('[data-k="water.amount"]').value = wr.water.amount;
+    }
+    if (wr.rinse) {
+      document.querySelector('[data-k="rinse.speed"]').value  = wr.rinse.speed;
+      document.querySelector('[data-k="rinse.temp"]').value   = wr.rinse.temp;
+      document.querySelector('[data-k="rinse.amount"]').value = wr.rinse.amount;
+    }
+  });
+
+  document.querySelector('[data-ir-save]').addEventListener('click', function () {
+    var general = {
+      extractionUnit: document.getElementById('g-unit').value,
+      alarm: document.getElementById('g-alarm').value,
+      defaultDripper: document.getElementById('g-dripper').value
+    };
+    var boiler = { tempSet: parseInt(document.getElementById('b-temp').value, 10) };
+    var pour = Array.prototype.map.call(document.querySelectorAll('.pr'), function (el) {
+      return { cup: parseInt(el.dataset.cup, 10), radius: parseInt(el.value, 10) };
+    });
+    var pump = Array.prototype.map.call(document.querySelectorAll('.pc'), function (el, i) {
+      return { base: i + 1, calibrated: parseFloat(el.value) };
+    });
+    var wr = {
+      water: {
+        speed:  parseInt(document.querySelector('[data-k="water.speed"]').value, 10),
+        temp:   parseInt(document.querySelector('[data-k="water.temp"]').value, 10),
+        amount: parseInt(document.querySelector('[data-k="water.amount"]').value, 10)
+      },
+      rinse: {
+        speed:  parseInt(document.querySelector('[data-k="rinse.speed"]').value, 10),
+        temp:   parseInt(document.querySelector('[data-k="rinse.temp"]').value, 10),
+        amount: parseInt(document.querySelector('[data-k="rinse.amount"]').value, 10)
+      }
+    };
+
+    Promise.all([
+      fetch('/api/general-config',    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(general) }),
+      fetch('/api/boiler-info',       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(boiler) }),
+      fetch('/api/pour-range',        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: pour }) }),
+      fetch('/api/pump-calibration',  { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: pump }) }),
+      fetch('/api/water-rinse',       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(wr) })
+    ]).then(function () {
+      window.IRModal.info({ body: '저장 완료', bodyClass: 'is-info' });
+    });
+  });
+})();
+</script>

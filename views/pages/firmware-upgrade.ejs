@@ -1,0 +1,110 @@
+<%- include('../partials/settings-shell', { activeTab: 'firmware' }) %>
+
+  <section class="ir-grow ir-center" style="min-height:420px;">
+    <div class="ir-card" style="max-width:560px;width:100%;padding:24px 28px;">
+
+      <div style="text-align:center;font-size:18px;font-weight:800;margin-bottom:18px;">펌웨어 업그레이드</div>
+
+      <!-- Version row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;font-size:14px;text-align:center;margin-bottom:18px;">
+        <div>
+          <div style="color:var(--ir-fg-muted);font-size:12px;letter-spacing:0.05em;">현재 버전</div>
+          <div id="fw-current" style="font-size:22px;font-weight:800;font-family:var(--ir-font-mono);">v1.0</div>
+        </div>
+        <div>
+          <div style="color:var(--ir-fg-muted);font-size:12px;letter-spacing:0.05em;">최신 버전</div>
+          <div id="fw-latest" style="font-size:22px;font-weight:800;font-family:var(--ir-font-mono);">—</div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div style="display:flex;justify-content:center;margin:14px 0;">
+        <div class="ir-progress-ring" id="fw-progress">0%</div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;justify-content:center;gap:14px;margin-bottom:24px;">
+        <button class="ir-btn" id="fw-check">버전 체크</button>
+        <button class="ir-btn ir-btn-primary" id="fw-upgrade" disabled style="opacity:0.55;">업그레이드</button>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--ir-line-soft);margin:18px 0;"/>
+
+      <!-- Policy -->
+      <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">업데이트 확인 정책</div>
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
+        <span class="ir-toggle-opt is-active" data-policy="always" style="border:1.5px solid var(--ir-line-strong);">항상 체크</span>
+        <span class="ir-toggle-opt" data-policy="once" style="border:1.5px solid var(--ir-line-strong);">한번만</span>
+        <span class="ir-toggle-opt" data-policy="never" style="border:1.5px solid var(--ir-line-strong);">절대 안함</span>
+      </div>
+
+      <!-- Mode -->
+      <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">설치 방식</div>
+      <div style="display:flex;gap:8px;">
+        <span class="ir-toggle-opt is-active" data-mode="manual" style="border:1.5px solid var(--ir-line-strong);">수동</span>
+        <span class="ir-toggle-opt" data-mode="auto" style="border:1.5px solid var(--ir-line-strong);">자동</span>
+      </div>
+
+    </div>
+  </section>
+
+<%- include('../partials/settings-shell-close') %>
+
+<script>
+(function () {
+  var policy = 'always';
+  var mode = 'manual';
+
+  document.querySelectorAll('[data-policy]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('[data-policy]').forEach(function (x) { x.classList.remove('is-active'); });
+      el.classList.add('is-active');
+      policy = el.dataset.policy;
+    });
+  });
+  document.querySelectorAll('[data-mode]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('[data-mode]').forEach(function (x) { x.classList.remove('is-active'); });
+      el.classList.add('is-active');
+      mode = el.dataset.mode;
+    });
+  });
+
+  document.getElementById('fw-check').addEventListener('click', function () {
+    var btn = document.getElementById('fw-upgrade');
+    btn.disabled = true;
+    btn.style.opacity = '0.55';
+    fetch('/api/firmware/check', { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        document.getElementById('fw-current').textContent = 'v' + j.current;
+        document.getElementById('fw-latest').textContent  = 'v' + j.latest;
+        if (j.updateAvailable) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+        }
+      });
+  });
+
+  document.getElementById('fw-upgrade').addEventListener('click', function () {
+    window.IRModal.confirm({
+      body: '펌웨어를 업그레이드 합니다.',
+      onOk: function () {
+        var ring = document.getElementById('fw-progress');
+        var p = 0;
+        var iv = setInterval(function () {
+          p += 5;
+          ring.textContent = Math.min(p, 100) + '%';
+          if (p >= 100) {
+            clearInterval(iv);
+            fetch('/api/firmware/upgrade', { method: 'POST' })
+              .then(function () {
+                window.IRModal.info({ body: '펌웨어 업그레이드 완료', bodyClass: 'is-info' });
+              });
+          }
+        }, 80);
+      }
+    });
+  });
+})();
+</script>

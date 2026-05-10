@@ -1,0 +1,11 @@
+<!-- Reusable stub for in-progress IR pages -->
+<div class="ir-shell">
+  <div class="ir-content ir-center" style="flex-direction:column;gap:18px;">
+    <h1 class="ir-page-title" style="font-size:28px;"><%= typeof stubTitle !== 'undefined' ? stubTitle : '준비 중' %></h1>
+    <p style="color:var(--ir-fg-muted);font-size:14px;font-family:var(--ir-font-mono);letter-spacing:0.1em;">PAGE WIP · <%= typeof stubKey !== 'undefined' ? stubKey : (typeof page !== 'undefined' ? page : '') %></p>
+    <div style="display:flex;gap:12px;margin-top:18px;">
+      <a class="ir-btn" href="/main">메인으로</a>
+      <a class="ir-btn ir-btn-ghost" href="javascript:history.back()">이전</a>
+    </div>
+  </div>
+</div>
