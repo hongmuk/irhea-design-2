@@ -44,12 +44,25 @@
     --hairline: rgba(60, 40, 20, 0.14);
     --hairline-strong: rgba(60, 40, 20, 0.28);
   }
-  html, body { margin: 0; padding: 0; background: #1a1610; height: 100%; overflow: hidden; }
+  /* The design is a 1280×800 kiosk canvas. We scale-to-fit on landscape
+     screens (matching the native LCD) and width-fit + vertical scroll on
+     phones / tall portrait windows so the content stays readable rather
+     than disappearing into a tiny scaled-down rectangle. */
+  html, body { margin: 0; padding: 0; background: #1a1610; min-height: 100%; }
   body { font-family: Inter, system-ui, sans-serif; color: #2C2317; }
+  /* portrait / phone: cream background, allow vertical scroll, no centering */
+  body.portrait { background: #F5EDE0; }
+  body.landscape { overflow: hidden; }
   .stage {
     position: fixed; inset: 0;
     display: grid; place-items: center;
     background: #1a1610;
+  }
+  body.portrait .stage {
+    position: static;
+    display: block;
+    background: #F5EDE0;
+    padding: 0;
   }
   .canvas {
     width: 1280px; height: 800px;
@@ -171,14 +184,35 @@
 </div>
 
 <script>
-  // Fit-to-viewport scale for the 1280×800 canvas.
+  // Landscape ≈ kiosk aspect → transform: scale() centered (original kiosk frame).
+  // Portrait / narrow → CSS zoom (shrinks layout box too, so document flows
+  // naturally and no horizontal scroll). zoom is supported in all current
+  // Chrome/Edge/Safari and Firefox 126+.
   function fit() {
     const c = document.getElementById('canvas');
+    const stage = document.getElementById('stage');
     const w = window.innerWidth, h = window.innerHeight;
-    const s = Math.min(w / 1280, h / 800);
-    c.style.transform = 'scale(' + s + ')';
+    const portrait = (w / h) < 0.95;
+    document.body.classList.toggle('portrait',  portrait);
+    document.body.classList.toggle('landscape', !portrait);
+    if (portrait) {
+      const s = Math.min(w / 1280, 1);
+      c.style.transform = '';
+      c.style.transformOrigin = '';
+      c.style.zoom = String(s);
+      stage.style.minHeight = '';
+      stage.style.height = '';
+    } else {
+      const s = Math.min(w / 1280, h / 800);
+      c.style.zoom = '';
+      c.style.transform = 'scale(' + s + ')';
+      c.style.transformOrigin = 'center center';
+      stage.style.minHeight = '';
+      stage.style.height = '';
+    }
   }
   window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
   fit();
 </script>
 
