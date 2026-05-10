@@ -15,7 +15,7 @@ const DOCS = path.join(SRC, 'docs');
 
 // Pages to render
 const pages = [
-  { page: 'dashboard', title: 'Spout Control', activeNav: 'dashboard', outPath: 'index.html' },
+  { page: 'dashboard', title: 'Spout Control', activeNav: 'dashboard', outPath: 'dashboard/index.html' },
   { page: 'recipe-list', title: 'Recipes', activeNav: 'recipes', outPath: 'recipes/index.html' },
   { page: 'recipe-detail', title: 'Recipe Detail', activeNav: 'recipes', outDir: 'recipe', idRange: [1, 10] },
   { page: 'recipe-edit', title: 'Edit Recipe', activeNav: 'recipes', outDir: 'recipe-edit', idRange: [1, 10] },
@@ -175,7 +175,24 @@ for (const file of fs.readdirSync(path.join(SRC, 'mock'))) {
   );
 }
 
-// Create 404.html (same as index for SPA-like behavior)
+// docs/index.html — landing page redirects to the Hand-Drip Cinema prototype
+// at /preview/ (the design that was actually shipped). Legacy dashboard moved
+// to /dashboard/. Use a relative redirect so it works under any BASE_PATH.
+fs.writeFileSync(path.join(DOCS, 'index.html'),
+  `<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<title>iRHEA-Light</title>
+<meta http-equiv="refresh" content="0; url=preview/">
+<link rel="canonical" href="preview/">
+<style>body{margin:0;background:#1a1610;color:#F5EDE0;font-family:Inter,system-ui,sans-serif;display:grid;place-items:center;min-height:100vh}</style>
+</head><body>
+<noscript>Loading <a href="preview/" style="color:#C5A059">/preview/</a>…</noscript>
+<script>location.replace('preview/');</script>
+</body></html>
+`);
+
+// Create 404.html (same as redirect index — keeps legacy SPA behavior alive)
 fs.copyFileSync(path.join(DOCS, 'index.html'), path.join(DOCS, '404.html'));
 
-console.log(`Done! Built ${pageCount} pages to docs/`);
+console.log(`Done! Built ${pageCount} pages to docs/ (root → preview/ redirect, legacy dashboard at /dashboard/)`);
