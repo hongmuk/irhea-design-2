@@ -67,8 +67,8 @@
   // Inject picker styles once
   var style = document.createElement('style');
   style.textContent =
-    '.picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:480px;}' +
-    '.picker-i{display:grid;grid-template-columns:32px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--hair,#ECECEC);background:var(--bg,#fff);cursor:pointer;text-align:left;font-family:inherit;font-size:12px;color:var(--ink,#111);}' +
+    '.picker-grid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:8px;max-width:520px;}' +
+    '.picker-i{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--hair,#ECECEC);background:var(--bg,#fff);cursor:pointer;text-align:left;font-family:inherit;font-size:12px;color:var(--ink,#111);white-space:nowrap;}' +
     '.picker-i:hover{border-color:var(--ink,#111);}' +
     '.picker-i.is-selected{border-color:var(--brand,#E60012);background:var(--brand-dim,rgba(230,0,18,0.06));}' +
     '.picker-num{font-weight:700;color:var(--ink-3,#999);font-variant-numeric:tabular-nums;font-size:11px;}' +
