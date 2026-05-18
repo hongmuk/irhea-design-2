@@ -111,12 +111,14 @@
 <script>
 (function() {
   // Spec: designs/02-cinema-gold.html. State labels match the spec exactly.
+  // Prefix media paths with BASE_PATH so static export (GitHub Pages) resolves correctly.
+  const B = (window.BASE_PATH || '');
   const STATUS = {
-    idle:       { label: 'Idle',    sub: '대기',     stage: '마지막 추출', active: false, vid: '/video/idle.mp4',     ring: 'idle',    progPct: 0 },
-    extracting: { label: 'Brewing', sub: '진행 중',  stage: '현 단계',     active: true,  vid: '/video/brewing.mp4',  ring: 'brewing' },
-    complete:   { label: 'Done',    sub: '완료',     stage: '추출 완료',   active: true,  vid: '/video/complete.mp4', ring: 'done' },
-    rinsing:    { label: 'Rinse',   sub: '린스 중',  stage: '자동 린스',   active: true,  vid: '/video/rinse.mp4',    ring: 'rinse' },
-    watering:   { label: 'Water',   sub: '워터 중',  stage: '온수 공급',   active: true,  vid: '/video/water.mp4',    ring: 'water' }
+    idle:       { label: 'Idle',    sub: '대기',     stage: '마지막 추출', active: false, vid: B + '/video/idle.mp4',     ring: 'idle',    progPct: 0 },
+    extracting: { label: 'Brewing', sub: '진행 중',  stage: '현 단계',     active: true,  vid: B + '/video/brewing.mp4',  ring: 'brewing' },
+    complete:   { label: 'Done',    sub: '완료',     stage: '추출 완료',   active: true,  vid: B + '/video/complete.mp4', ring: 'done' },
+    rinsing:    { label: 'Rinse',   sub: '린스 중',  stage: '자동 린스',   active: true,  vid: B + '/video/rinse.mp4',    ring: 'rinse' },
+    watering:   { label: 'Water',   sub: '워터 중',  stage: '온수 공급',   active: true,  vid: B + '/video/water.mp4',    ring: 'water' }
   };
   function fmt(s) {
     var m = Math.floor(s / 60), sec = s % 60;

@@ -1,0 +1,164 @@
+<!-- 기기 등록 · AP 스캔 (S1.3) — designs/02-ap-scan.html 정합. Topbar는 layout.ejs. -->
+
+<div class="aps-sub-h">
+  <div class="aps-sub-h-l">
+    <button class="aps-back" onclick="history.back()">← 메인</button>
+    <div class="aps-sub-title">기기 등록<em>S1.3 · AP 스캔</em></div>
+  </div>
+  <div class="aps-stepper">
+    <span class="aps-step active">1</span>
+    <span class="aps-step-bar"></span>
+    <span class="aps-step">2</span>
+    <span class="aps-step-bar"></span>
+    <span class="aps-step">3</span>
+    <span class="aps-step-bar"></span>
+    <span class="aps-step">4</span>
+  </div>
+</div>
+
+<div class="aps-body">
+
+  <div class="aps-col">
+    <div class="aps-col-h">
+      <span class="aps-col-title">발견된 머신<em>3대 · 5초 간격 자동 재스캔</em></span>
+      <button class="aps-refresh" id="aps-refresh">↻ 새로고침</button>
+    </div>
+    <div class="ap-list" id="aps-list">
+      <div class="ap" data-ssid="iRHEA-A3F7B219">
+        <div class="ap-icon">📡</div>
+        <div class="ap-info">
+          <div class="ap-ssid">iRHEA-A3F7B219</div>
+          <div class="ap-meta"><span class="ap-badge">등록됨</span><span>NT-iRhea 1호기</span><span>· 2026.03.17 ~</span></div>
+        </div>
+        <div class="ap-signal"><span class="b"></span><span class="b"></span><span class="b"></span><span class="b"></span></div>
+        <span class="ap-dbm">−42 dBm</span>
+      </div>
+      <div class="ap selected" data-ssid="iRHEA-C0F824D1">
+        <div class="ap-icon">📡</div>
+        <div class="ap-info">
+          <div class="ap-ssid">iRHEA-C0F824D1</div>
+          <div class="ap-meta"><span class="ap-badge new">NEW</span><span>WiFi PW 입력 필요</span></div>
+        </div>
+        <div class="ap-signal"><span class="b"></span><span class="b"></span><span class="b"></span><span class="b off"></span></div>
+        <span class="ap-dbm">−58 dBm</span>
+      </div>
+      <div class="ap weak" data-ssid="iRHEA-F1A26C03">
+        <div class="ap-icon">📡</div>
+        <div class="ap-info">
+          <div class="ap-ssid">iRHEA-F1A26C03</div>
+          <div class="ap-meta"><span>신호 약함 · 연결 시 경고</span></div>
+        </div>
+        <div class="ap-signal"><span class="b"></span><span class="b off"></span><span class="b off"></span><span class="b off"></span></div>
+        <span class="ap-dbm">−82 dBm</span>
+      </div>
+    </div>
+    <div class="aps-hint">머신 본체 라벨의 <b style="color:var(--ink);">8자리 ID</b>를 확인하세요. SSID 마지막 8자리와 일치하는 항목을 선택합니다.</div>
+  </div>
+
+  <aside class="aps-info-panel">
+    <div class="aps-info-h">안내</div>
+    <div class="aps-info-row"><span class="num">1</span><div>머신 <b>전원</b>이 켜져 있어야 합니다.</div></div>
+    <div class="aps-info-row"><span class="num">2</span><div>AP SSID는 <b>iRHEA-{XXXXXXXX}</b> 형식입니다.</div></div>
+    <div class="aps-info-row"><span class="num">3</span><div>라벨의 <b>마지막 8자리</b>와 일치하는 SSID를 선택하세요.</div></div>
+    <div class="aps-info-row priv"><span class="num">4</span><div><b>WiFi 비밀번호 = 운용 권한.</b> 설치자/구매자만 알고 있는 정보입니다.</div></div>
+  </aside>
+
+</div>
+
+<div class="aps-action-bar">
+  <div class="aps-ab-l">
+    <button class="aps-ab-btn" onclick="history.back()">취소</button>
+    <span class="aps-ab-status">선택됨: <b id="aps-selected">iRHEA-C0F824D1</b> · <span id="aps-state">신규 등록</span></span>
+  </div>
+  <button class="aps-ab-btn primary" id="aps-next">다음 → WiFi 비밀번호</button>
+</div>
+
+<style>
+  /* AP 스캔 (S1.3) — designs/02-ap-scan.html 정합 */
+  .aps-sub-h { height: 52px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
+  .aps-sub-h-l { display: inline-flex; align-items: baseline; gap: 14px; }
+  .aps-back { font-size: 12px; padding: 6px 12px; border: 1px solid var(--hair-2); color: var(--ink-2); cursor: pointer; background: var(--bg); font-family: inherit; }
+  .aps-sub-title { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .aps-sub-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
+  .aps-stepper { display: inline-flex; align-items: center; gap: 6px; }
+  .aps-step { width: 22px; height: 22px; border: 1px solid var(--hair-2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: var(--ink-3); font-weight: 700; }
+  .aps-step.active { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  .aps-step-bar { width: 22px; height: 1px; background: var(--hair-2); }
+
+  .aps-body { flex: 1; display: grid; grid-template-columns: 1fr 280px; gap: 14px; padding: 18px 24px; min-height: 0; }
+  .aps-col { display: flex; flex-direction: column; min-height: 0; gap: 10px; }
+
+  .aps-col-h { display: flex; align-items: baseline; justify-content: space-between; }
+  .aps-col-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .aps-col-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 6px; font-size: 11px; }
+  .aps-refresh { font-size: 11px; padding: 5px 10px; border: 1px dashed var(--hair-2); color: var(--ink-2); cursor: pointer; background: var(--bg); font-family: inherit; }
+  .aps-refresh:hover { border-color: var(--brand); color: var(--brand); }
+
+  .ap-list { border: 1px solid var(--hair); }
+  .ap { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--hair); cursor: pointer; transition: background 0.15s; position: relative; }
+  .ap:last-child { border-bottom: none; }
+  .ap:hover { background: #FAFAFA; }
+  .ap.selected { background: var(--brand-dim); }
+  .ap.selected::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand); }
+  .ap.weak { opacity: 0.55; }
+  .ap-icon { width: 36px; height: 36px; border: 1px solid var(--hair-2); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .ap.selected .ap-icon { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  .ap-info { flex: 1; }
+  .ap-ssid { font-size: 14px; font-weight: 600; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
+  .ap-meta { font-size: 10.5px; color: var(--ink-3); margin-top: 3px; display: inline-flex; gap: 10px; align-items: center; }
+  .ap-badge { font-size: 9px; padding: 2px 6px; background: var(--ink); color: #FFF; font-weight: 700; letter-spacing: 0.4px; }
+  .ap-badge.new { background: var(--brand); }
+  .ap-signal { display: inline-flex; align-items: flex-end; gap: 2px; height: 18px; }
+  .ap-signal .b { width: 4px; background: var(--ink); }
+  .ap-signal .b:nth-child(1) { height: 5px; }
+  .ap-signal .b:nth-child(2) { height: 9px; }
+  .ap-signal .b:nth-child(3) { height: 13px; }
+  .ap-signal .b:nth-child(4) { height: 18px; }
+  .ap-signal .b.off { background: var(--hair-2); }
+  .ap-dbm { font-size: 10px; color: var(--ink-3); font-variant-numeric: tabular-nums; font-weight: 600; margin-left: 6px; }
+  .aps-hint { font-size: 11px; color: var(--ink-3); font-weight: 500; padding-top: 4px; }
+
+  .aps-info-panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+  .aps-info-h { font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--hair); }
+  .aps-info-row { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: var(--ink-2); line-height: 1.55; }
+  .aps-info-row .num { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); color: #FFF; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .aps-info-row.priv .num { background: var(--brand); }
+  .aps-info-row.priv { padding: 8px; background: var(--brand-dim); border-left: 3px solid var(--brand); }
+  .aps-info-row b { color: var(--ink); font-weight: 700; }
+
+  .aps-action-bar { height: 60px; padding: 0 24px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #FCFCFC; }
+  .aps-ab-l { display: inline-flex; gap: 10px; align-items: center; }
+  .aps-ab-btn { padding: 10px 20px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .aps-ab-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .aps-ab-btn.primary { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  .aps-ab-btn.primary:hover { background: #C8000F; }
+  .aps-ab-status { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .aps-ab-status b { color: var(--ink); font-weight: 700; }
+</style>
+
+<script>
+(function () {
+  function selectAp(ap) {
+    document.querySelectorAll('.ap').forEach(function (a) { a.classList.remove('selected'); });
+    ap.classList.add('selected');
+    document.getElementById('aps-selected').textContent = ap.dataset.ssid;
+    var state = ap.classList.contains('weak') ? '신호 약함 (경고)' :
+                ap.querySelector('.ap-badge.new') ? '신규 등록' : '기존 머신';
+    document.getElementById('aps-state').textContent = state;
+  }
+  document.querySelectorAll('.ap').forEach(function (ap) {
+    ap.addEventListener('click', function () { selectAp(ap); });
+  });
+  document.getElementById('aps-refresh').addEventListener('click', function () {
+    window.IRToast?.show('AP 재스캔 중…');
+  });
+  document.getElementById('aps-next').addEventListener('click', function () {
+    var ssid = document.getElementById('aps-selected').textContent;
+    window.IRModal?.confirm({
+      title: '알림',
+      body: ssid + '<br>WiFi 비밀번호 입력 단계로 진행',
+      onOk: function () { window.IRToast?.show('S1.4 WiFi PW 단계 (mock)'); }
+    });
+  });
+})();
+</script>

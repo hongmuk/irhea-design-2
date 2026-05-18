@@ -19,6 +19,7 @@ const DOCS = path.join(SRC, 'docs');
 const pages = [
   { page: 'setup',                title: '최초 설정',         activeNav: 'setup',         outPath: 'setup/index.html' },
   { page: 'connect',              title: '장치 연결',         activeNav: 'connect',       outPath: 'connect/index.html' },
+  { page: 'connect-ap-scan',      title: 'AP 스캔',           activeNav: 'connect',       outPath: 'connect/ap-scan/index.html' },
   { page: 'main',                 title: '메인',              activeNav: 'main',          outPath: 'main/index.html' },
   { page: 'recipes',              title: '레시피',            activeNav: 'recipes',       outPath: 'recipes/index.html' },
   { page: 'favorites',            title: '즐겨찾기',          activeNav: 'favorites',     outPath: 'favorites/index.html' },

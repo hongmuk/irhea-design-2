@@ -132,11 +132,8 @@
   });
 
   document.getElementById('conn-manual').addEventListener('click', function () {
-    window.IRModal?.confirm({
-      title: '수동 모드 (AP 스캔)',
-      body: '엔지니어링 메뉴의 장비 연결 설정으로 이동하시겠습니까?',
-      onOk: function () { window.location.href = '/settings/engineering'; }
-    });
+    // Per spec: S1.1 → S1.3 AP 스캔 화면.
+    window.location.href = '/connect/ap-scan';
   });
 
   var fail = document.getElementById('conn-fail-toggle');

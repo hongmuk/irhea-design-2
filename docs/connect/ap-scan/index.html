@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iRHEA-Light | 정보</title>
+<title>iRHEA-Light | AP 스캔</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -97,162 +97,167 @@
 
     
     <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-      <!-- 정보 (S8.1) — designs/02-info.html 정합 (v1.1: 4 패널 2×2 + 실적 → S8.3 분리). Topbar는 layout.ejs. -->
+      <!-- 기기 등록 · AP 스캔 (S1.3) — designs/02-ap-scan.html 정합. Topbar는 layout.ejs. -->
 
-<div class="sub-h">
-  <div class="sub-h-l">정보<em>S8.1 · 일반 (관리자 인증 후)</em></div>
-  <div class="sub-h-r">
-    <span>인증 <span class="ok">완료</span></span>
-    <span>로그인 <b>Admin</b></span>
-    <span>14:08</span>
+<div class="aps-sub-h">
+  <div class="aps-sub-h-l">
+    <button class="aps-back" onclick="history.back()">← 메인</button>
+    <div class="aps-sub-title">기기 등록<em>S1.3 · AP 스캔</em></div>
+  </div>
+  <div class="aps-stepper">
+    <span class="aps-step active">1</span>
+    <span class="aps-step-bar"></span>
+    <span class="aps-step">2</span>
+    <span class="aps-step-bar"></span>
+    <span class="aps-step">3</span>
+    <span class="aps-step-bar"></span>
+    <span class="aps-step">4</span>
   </div>
 </div>
 
-<div class="info-body">
+<div class="aps-body">
 
-  <!-- Panel 1: 장비 정보 -->
-  <div class="panel">
-    <div class="panel-h">
-      <span class="panel-title"><span class="ico">⚙</span>장비 정보</span>
-      <span class="panel-id">8.1.1</span>
+  <div class="aps-col">
+    <div class="aps-col-h">
+      <span class="aps-col-title">발견된 머신<em>3대 · 5초 간격 자동 재스캔</em></span>
+      <button class="aps-refresh" id="aps-refresh">↻ 새로고침</button>
     </div>
-    <div class="pr"><span class="pr-k">일련 번호</span><span class="pr-v mono" id="info-serial">R5KRW2600001<span class="ro">read-only</span></span></div>
-    <div class="pr"><span class="pr-k">모델 번호</span><span class="pr-v" id="info-model">iRHEA-Light-M5</span></div>
-    <div class="pr"><span class="pr-k">펌웨어 버전</span><span class="pr-v" id="info-fw">1.0 <em>(2026.03.01)</em></span></div>
-    <div class="pr"><span class="pr-k">타임존</span><span class="pr-v">Asia / Seoul <em>(UTC+9)</em></span></div>
-    <div class="pr"><span class="pr-k">최초 설치일</span><span class="pr-v" id="info-install">2026.03.17</span></div>
-    <div class="panel-foot"><span>관리자 메뉴에서 변경 가능</span><a href="/irhea-design-2/setup">변경 →</a></div>
-  </div>
-
-  <!-- Panel 2: 보일러 정보 -->
-  <div class="panel">
-    <div class="panel-h">
-      <span class="panel-title"><span class="ico">🔥</span>보일러 정보</span>
-      <span class="panel-id">8.1.2</span>
-    </div>
-    <div class="pr"><span class="pr-k">일련 번호</span><span class="pr-v mono" id="info-b-serial">R5KRM2600001<span class="ro">read-only</span></span></div>
-    <div class="pr"><span class="pr-k">모델 번호</span><span class="pr-v" id="info-b-model">iRHEA-Light-M5</span></div>
-    <div class="pr"><span class="pr-k">펌웨어</span><span class="pr-v" id="info-b-fw">1.0 <em>(2026.03.01)</em></span></div>
-    <div class="pr"><span class="pr-k">워터펌프</span><span class="pr-v" id="info-b-pump">SC3711PW <em>(12V)</em></span></div>
-    <div class="pr"><span class="pr-k">솔 밸브</span><span class="pr-v" id="info-b-valve">출수측 2 Way / 입수측 2 Way</span></div>
-    <div class="pr"><span class="pr-k">온도 최대</span><span class="pr-v" id="info-b-temp">95 °C</span></div>
-  </div>
-
-  <!-- Panel 3: 물붓기 범위 -->
-  <div class="panel">
-    <div class="panel-h">
-      <span class="panel-title"><span class="ico">💧</span>물붓기 범위</span>
-      <span class="panel-id">8.1.3</span>
-    </div>
-    <table class="rt">
-      <thead><tr><th>범위</th><th style="text-align:right;">반지름</th></tr></thead>
-      <tbody id="info-pour-rows"></tbody>
-    </table>
-    <div class="panel-foot"><span>image13 verbatim — "cup" 소문자 표기</span><a href="/irhea-design-2/settings/general">설정 →</a></div>
-  </div>
-
-  <!-- Panel 4: 사용 실적 (metric quick link) -->
-  <div class="panel metric">
-    <div class="metric-h">
-      <span class="panel-title"><span class="ico">📊</span>사용 실적 (요약)</span>
-      <span class="panel-id">8.1.4 → S8.3</span>
-    </div>
-    <div class="metric-grid">
-      <div class="metric-cell">
-        <span class="metric-num">1,247</span>
-        <span class="metric-lbl">총 추출</span>
+    <div class="ap-list" id="aps-list">
+      <div class="ap" data-ssid="iRHEA-A3F7B219">
+        <div class="ap-icon">📡</div>
+        <div class="ap-info">
+          <div class="ap-ssid">iRHEA-A3F7B219</div>
+          <div class="ap-meta"><span class="ap-badge">등록됨</span><span>NT-iRhea 1호기</span><span>· 2026.03.17 ~</span></div>
+        </div>
+        <div class="ap-signal"><span class="b"></span><span class="b"></span><span class="b"></span><span class="b"></span></div>
+        <span class="ap-dbm">−42 dBm</span>
       </div>
-      <div class="metric-cell">
-        <span class="metric-num brand">38</span>
-        <span class="metric-lbl">오늘 (KST)</span>
+      <div class="ap selected" data-ssid="iRHEA-C0F824D1">
+        <div class="ap-icon">📡</div>
+        <div class="ap-info">
+          <div class="ap-ssid">iRHEA-C0F824D1</div>
+          <div class="ap-meta"><span class="ap-badge new">NEW</span><span>WiFi PW 입력 필요</span></div>
+        </div>
+        <div class="ap-signal"><span class="b"></span><span class="b"></span><span class="b"></span><span class="b off"></span></div>
+        <span class="ap-dbm">−58 dBm</span>
       </div>
-      <div class="metric-cell">
-        <span class="metric-num" style="font-size:18px; letter-spacing:-0.5px;">레시피 3</span>
-        <span class="metric-lbl">이번 주 1위 · 8회</span>
+      <div class="ap weak" data-ssid="iRHEA-F1A26C03">
+        <div class="ap-icon">📡</div>
+        <div class="ap-info">
+          <div class="ap-ssid">iRHEA-F1A26C03</div>
+          <div class="ap-meta"><span>신호 약함 · 연결 시 경고</span></div>
+        </div>
+        <div class="ap-signal"><span class="b"></span><span class="b off"></span><span class="b off"></span><span class="b off"></span></div>
+        <span class="ap-dbm">−82 dBm</span>
       </div>
     </div>
-    <div class="metric-foot">
-      <span class="timestamp">마지막 갱신 · 14:31 · 자정 자동 reset</span>
-      <a class="btn-detail" href="/irhea-design-2/info/security">상세 보기 →</a>
-    </div>
+    <div class="aps-hint">머신 본체 라벨의 <b style="color:var(--ink);">8자리 ID</b>를 확인하세요. SSID 마지막 8자리와 일치하는 항목을 선택합니다.</div>
   </div>
 
+  <aside class="aps-info-panel">
+    <div class="aps-info-h">안내</div>
+    <div class="aps-info-row"><span class="num">1</span><div>머신 <b>전원</b>이 켜져 있어야 합니다.</div></div>
+    <div class="aps-info-row"><span class="num">2</span><div>AP SSID는 <b>iRHEA-{XXXXXXXX}</b> 형식입니다.</div></div>
+    <div class="aps-info-row"><span class="num">3</span><div>라벨의 <b>마지막 8자리</b>와 일치하는 SSID를 선택하세요.</div></div>
+    <div class="aps-info-row priv"><span class="num">4</span><div><b>WiFi 비밀번호 = 운용 권한.</b> 설치자/구매자만 알고 있는 정보입니다.</div></div>
+  </aside>
+
+</div>
+
+<div class="aps-action-bar">
+  <div class="aps-ab-l">
+    <button class="aps-ab-btn" onclick="history.back()">취소</button>
+    <span class="aps-ab-status">선택됨: <b id="aps-selected">iRHEA-C0F824D1</b> · <span id="aps-state">신규 등록</span></span>
+  </div>
+  <button class="aps-ab-btn primary" id="aps-next">다음 → WiFi 비밀번호</button>
 </div>
 
 <style>
-  /* info — designs/02-info.html 정합 */
-  .sub-h { height: 44px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
-  .sub-h-l { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
-  .sub-h-l em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
-  .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
-  .sub-h-r b { color: var(--ink-2); font-weight: 600; }
-  .sub-h-r .ok { color: var(--brand); font-weight: 600; }
+  /* AP 스캔 (S1.3) — designs/02-ap-scan.html 정합 */
+  .aps-sub-h { height: 52px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
+  .aps-sub-h-l { display: inline-flex; align-items: baseline; gap: 14px; }
+  .aps-back { font-size: 12px; padding: 6px 12px; border: 1px solid var(--hair-2); color: var(--ink-2); cursor: pointer; background: var(--bg); font-family: inherit; }
+  .aps-sub-title { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .aps-sub-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
+  .aps-stepper { display: inline-flex; align-items: center; gap: 6px; }
+  .aps-step { width: 22px; height: 22px; border: 1px solid var(--hair-2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: var(--ink-3); font-weight: 700; }
+  .aps-step.active { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  .aps-step-bar { width: 22px; height: 1px; background: var(--hair-2); }
 
-  .info-body { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
-  .panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; background: var(--bg); }
+  .aps-body { flex: 1; display: grid; grid-template-columns: 1fr 280px; gap: 14px; padding: 18px 24px; min-height: 0; }
+  .aps-col { display: flex; flex-direction: column; min-height: 0; gap: 10px; }
 
-  .panel-h { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--hair); margin: 0; }
-  .panel-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
-  .panel-title .ico { margin-right: 6px; font-weight: 400; }
-  .panel-id { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
+  .aps-col-h { display: flex; align-items: baseline; justify-content: space-between; }
+  .aps-col-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .aps-col-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 6px; font-size: 11px; }
+  .aps-refresh { font-size: 11px; padding: 5px 10px; border: 1px dashed var(--hair-2); color: var(--ink-2); cursor: pointer; background: var(--bg); font-family: inherit; }
+  .aps-refresh:hover { border-color: var(--brand); color: var(--brand); }
 
-  .pr { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: baseline; padding: 5px 0; border-top: 1px solid var(--hair); font-size: 12.5px; }
-  .pr:first-of-type { border-top: none; padding-top: 2px; }
-  .pr-k { color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
-  .pr-v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
-  .pr-v.mono { font-family: var(--font-mono); font-size: 12px; }
-  .pr-v em { color: var(--ink-3); font-weight: 500; font-style: normal; margin-left: 6px; }
-  .pr-v .ro { font-size: 9px; color: var(--ink-3); border: 1px solid var(--hair-2); padding: 1px 4px; margin-left: 6px; font-weight: 600; letter-spacing: 0.3px; }
+  .ap-list { border: 1px solid var(--hair); }
+  .ap { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--hair); cursor: pointer; transition: background 0.15s; position: relative; }
+  .ap:last-child { border-bottom: none; }
+  .ap:hover { background: #FAFAFA; }
+  .ap.selected { background: var(--brand-dim); }
+  .ap.selected::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--brand); }
+  .ap.weak { opacity: 0.55; }
+  .ap-icon { width: 36px; height: 36px; border: 1px solid var(--hair-2); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .ap.selected .ap-icon { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  .ap-info { flex: 1; }
+  .ap-ssid { font-size: 14px; font-weight: 600; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
+  .ap-meta { font-size: 10.5px; color: var(--ink-3); margin-top: 3px; display: inline-flex; gap: 10px; align-items: center; }
+  .ap-badge { font-size: 9px; padding: 2px 6px; background: var(--ink); color: #FFF; font-weight: 700; letter-spacing: 0.4px; }
+  .ap-badge.new { background: var(--brand); }
+  .ap-signal { display: inline-flex; align-items: flex-end; gap: 2px; height: 18px; }
+  .ap-signal .b { width: 4px; background: var(--ink); }
+  .ap-signal .b:nth-child(1) { height: 5px; }
+  .ap-signal .b:nth-child(2) { height: 9px; }
+  .ap-signal .b:nth-child(3) { height: 13px; }
+  .ap-signal .b:nth-child(4) { height: 18px; }
+  .ap-signal .b.off { background: var(--hair-2); }
+  .ap-dbm { font-size: 10px; color: var(--ink-3); font-variant-numeric: tabular-nums; font-weight: 600; margin-left: 6px; }
+  .aps-hint { font-size: 11px; color: var(--ink-3); font-weight: 500; padding-top: 4px; }
 
-  .panel-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 10px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
-  .panel-foot a { color: var(--brand); font-weight: 600; text-decoration: none; }
+  .aps-info-panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 0; }
+  .aps-info-h { font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--hair); }
+  .aps-info-row { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: var(--ink-2); line-height: 1.55; }
+  .aps-info-row .num { width: 18px; height: 18px; border-radius: 50%; background: var(--ink); color: #FFF; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .aps-info-row.priv .num { background: var(--brand); }
+  .aps-info-row.priv { padding: 8px; background: var(--brand-dim); border-left: 3px solid var(--brand); }
+  .aps-info-row b { color: var(--ink); font-weight: 700; }
 
-  /* metric card (warn-colored) */
-  .panel.metric { padding: 0; background: linear-gradient(180deg, #FFFAF2 0%, var(--bg) 60%); border-color: #C28200; }
-  .metric-h { padding: 12px 16px; border-bottom: 1px solid var(--hair); display: flex; align-items: baseline; justify-content: space-between; }
-  .metric-h .panel-title { color: #C28200; }
-  .metric-grid { padding: 14px 16px 8px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  .metric-cell { display: flex; flex-direction: column; gap: 4px; padding: 6px 0; }
-  .metric-cell + .metric-cell { border-left: 1px solid var(--hair); padding-left: 12px; }
-  .metric-num { font-size: 28px; font-weight: 600; color: var(--ink); letter-spacing: -1.5px; line-height: 1; font-variant-numeric: tabular-nums; }
-  .metric-num.brand { color: var(--brand); }
-  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
-  .metric-foot { padding: 8px 16px 12px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--hair); }
-  .metric-foot .timestamp { font-size: 10.5px; color: var(--ink-3); font-weight: 500; }
-  .btn-detail { font-size: 12px; padding: 6px 14px; border: 1px solid var(--ink); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.15s; text-decoration: none; }
-  .btn-detail:hover { background: var(--ink); color: #fff; }
-
-  .rt { width: 100%; font-size: 12px; font-variant-numeric: tabular-nums; }
-  .rt th { text-align: left; padding: 5px 0; font-size: 10px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; border-bottom: 1px solid var(--hair); }
-  .rt td { padding: 5px 0; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--hair); }
-  .rt td:last-child { text-align: right; font-weight: 600; }
-  .rt tr:last-child td { border-bottom: none; }
+  .aps-action-bar { height: 60px; padding: 0 24px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #FCFCFC; }
+  .aps-ab-l { display: inline-flex; gap: 10px; align-items: center; }
+  .aps-ab-btn { padding: 10px 20px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .aps-ab-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .aps-ab-btn.primary { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  .aps-ab-btn.primary:hover { background: #C8000F; }
+  .aps-ab-status { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .aps-ab-status b { color: var(--ink); font-weight: 700; }
 </style>
 
 <script>
 (function () {
-  fetch('/api/system-config').then(r => r.json()).then(function (sc) {
-    if (sc.serialNumber) document.getElementById('info-serial').innerHTML =
-      sc.serialNumber + '<span class="ro">read-only</span>';
-    if (sc.modelName || sc.modelNumber) document.getElementById('info-model').textContent = sc.modelName || sc.modelNumber;
-    if (sc.firmwareVersion && sc.firmwareDate) document.getElementById('info-fw').innerHTML =
-      sc.firmwareVersion + ' <em>(' + sc.firmwareDate + ')</em>';
-    if (sc.installedAt) document.getElementById('info-install').textContent = sc.installedAt;
+  function selectAp(ap) {
+    document.querySelectorAll('.ap').forEach(function (a) { a.classList.remove('selected'); });
+    ap.classList.add('selected');
+    document.getElementById('aps-selected').textContent = ap.dataset.ssid;
+    var state = ap.classList.contains('weak') ? '신호 약함 (경고)' :
+                ap.querySelector('.ap-badge.new') ? '신규 등록' : '기존 머신';
+    document.getElementById('aps-state').textContent = state;
+  }
+  document.querySelectorAll('.ap').forEach(function (ap) {
+    ap.addEventListener('click', function () { selectAp(ap); });
   });
-  fetch('/api/boiler-info').then(r => r.json()).then(function (b) {
-    if (b.serialNumber) document.getElementById('info-b-serial').innerHTML = b.serialNumber + '<span class="ro">read-only</span>';
-    if (b.modelNumber) document.getElementById('info-b-model').textContent = b.modelNumber;
-    if (b.firmwareVersion && b.firmwareDate) document.getElementById('info-b-fw').innerHTML =
-      b.firmwareVersion + ' <em>(' + b.firmwareDate + ')</em>';
-    if (b.waterPump) document.getElementById('info-b-pump').textContent = b.waterPump;
-    if (b.valve) document.getElementById('info-b-valve').textContent = b.valve;
-    if (b.tempMax) document.getElementById('info-b-temp').textContent = b.tempMax + ' °C';
+  document.getElementById('aps-refresh').addEventListener('click', function () {
+    window.IRToast?.show('AP 재스캔 중…');
   });
-  fetch('/api/pour-range').then(r => r.json()).then(function (rows) {
-    var html = rows.map(function (r) {
-      return '<tr><td>' + r.cup + ' cup</td><td>' + r.radius + ' mm</td></tr>';
-    }).join('');
-    document.getElementById('info-pour-rows').innerHTML = html;
+  document.getElementById('aps-next').addEventListener('click', function () {
+    var ssid = document.getElementById('aps-selected').textContent;
+    window.IRModal?.confirm({
+      title: '알림',
+      body: ssid + '<br>WiFi 비밀번호 입력 단계로 진행',
+      onOk: function () { window.IRToast?.show('S1.4 WiFi PW 단계 (mock)'); }
+    });
   });
 })();
 </script>
@@ -263,7 +268,7 @@
   <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
   <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
   <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
-  <a class="nav-item active" href="/irhea-design-2/info">정보</a>
+  <a class="nav-item " href="/irhea-design-2/info">정보</a>
 </nav>
 
   </div>

@@ -63,13 +63,27 @@
     updateClock();
 
     document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
-      if (window.IRModal) {
-        window.IRModal.confirm({
-          title: '알림',
-          body: '장비를 종료하시겠습니까?',
-          onOk: function() { window.location.href = '/shutdown'; }
-        });
-      }
+      // Shutdown flow per designs/02-shutdown-progress.html → 02-shutdown-complete.html.
+      // STEP1: progress modal (blocking, no buttons) → STEP2: complete modal.
+      if (!window.IRModal) return;
+      window.IRModal.confirm({
+        title: '알림',
+        body: '장비를 종료하시겠습니까?',
+        onOk: function () {
+          // STEP1: progress (blocking 2.5s)
+          window.IRModal.info({
+            body: '⏳<br>장비를 종료합니다.<br>기다려 주세요',
+            buttons: []
+          });
+          setTimeout(function () {
+            // STEP2: complete (no buttons, waiting for physical power off)
+            window.IRModal.info({
+              body: '장비 종료 완료<br>전원 스위치를 꺼<br>주세요.',
+              buttons: []
+            });
+          }, 2500);
+        }
+      });
     });
 
     // Simple language toggle simulation
@@ -467,7 +481,5 @@
     })();
   </script>
 
-  
-  
 </body>
 </html>

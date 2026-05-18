@@ -33,21 +33,21 @@ app.get('/', (req, res) => {
   res.redirect('/setup');
 });
 
-app.get('/setup',   (req, res) => renderIR(res, 'setup',   { title: '최초 설정' }));
-app.get('/connect', (req, res) => renderIR(res, 'connect', { title: '장치 연결' }));
-app.get('/main',    (req, res) => renderIR(res, 'main',    { title: '메인' }));
-// Production routes
-app.get('/dashboard',         (req, res) => res.redirect('/main'));
-app.get('/recipes',           (req, res) => renderIR(res, 'recipes', { title: '레시피', activeNav: 'recipes' }));
-app.get('/recipe/:id',        (req, res) => renderIR(res, 'recipes', { title: '레시피', activeNav: 'recipes' }));
-app.get('/recipe/:id/edit',   (req, res) => renderIR(res, 'recipes', { title: '레시피', activeNav: 'recipes' }));
-app.get('/favorites',         (req, res) => renderIR(res, 'favorites', { title: '즐겨찾기', activeNav: 'favorites' }));
-app.get('/alarms',            (req, res) => res.redirect('/info/security'));
-app.get('/usage',             (req, res) => renderIR(res, 'info-security', { title: '사용 실적', activeNav: 'usage' }));
-app.get('/calibration',       (req, res) => renderIR(res, 'settings-general', { title: '설정', activeNav: 'general' }));
-app.get('/firmware',          (req, res) => renderIR(res, 'firmware-upgrade', { title: '펌웨어', activeNav: 'firmware' }));
-app.get('/system-info',       (req, res) => renderIR(res, 'info',          { title: '장비 정보', activeNav: 'system-info' }));
-app.get('/settings',          (req, res) => renderIR(res, 'settings-general', { title: '설정', activeNav: 'settings' }));
+app.get('/setup',     (req, res) => renderIR(res, 'setup',   { title: '최초 설정' }));
+app.get('/connect',         (req, res) => renderIR(res, 'connect',         { title: '장치 연결' }));
+app.get('/connect/ap-scan', (req, res) => renderIR(res, 'connect-ap-scan', { title: 'AP 스캔' }));
+app.get('/main',      (req, res) => renderIR(res, 'main',    { title: '메인' }));
+app.get('/recipes',   (req, res) => renderIR(res, 'recipes',   { title: '레시피',     activeNav: 'recipes' }));
+app.get('/favorites', (req, res) => renderIR(res, 'favorites', { title: '즐겨찾기',   activeNav: 'favorites' }));
+
+// Legacy aliases — keep so old links / hardcoded refs still resolve.
+app.get('/dashboard',   (req, res) => res.redirect('/main'));
+app.get('/alarms',      (req, res) => res.redirect('/info/security'));
+app.get('/usage',       (req, res) => res.redirect('/info/security'));
+app.get('/calibration', (req, res) => res.redirect('/settings/general'));
+app.get('/firmware',    (req, res) => res.redirect('/settings/firmware'));
+app.get('/system-info', (req, res) => res.redirect('/info'));
+app.get('/settings',    (req, res) => res.redirect('/settings/general'));
 
 app.get('/brewing',          (req, res) => renderIR(res, 'brewing',          { title: '추출 중' }));
 app.get('/brewing/complete', (req, res) => renderIR(res, 'brewing-complete', { title: '추출 완료' }));
