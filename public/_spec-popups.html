@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>iRhea · 시안 ② Light · 팝업 8종 카탈로그 (S9.1)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  :root {
+    --bg: #FFFFFF; --ink: #111; --ink-2: #555; --ink-3: #999;
+    --hair: #ECECEC; --hair-2: #DDD; --brand: #E60012;
+    --warn-bg: #F5E040; --warn: #E89E2D;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; }
+  body { background: #1A1A1A; color: var(--ink); font-family: 'Pretendard Variable', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: "ss01", "ss02"; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .scene { width: 1280px; display: flex; flex-direction: column; gap: 6px; transform-origin: center center; transition: transform 0.15s; }
+  .caption { display: flex; justify-content: space-between; align-items: baseline; color: #888; font-size: 11px; letter-spacing: 0.5px; padding: 0 8px; }
+  .caption a { color: #FFF; text-decoration: none; opacity: 0.7; }
+  .caption b { color: #FFF; }
+  .viewport { width: 1280px; height: 800px; background: #F4F4F2; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,0.4); display: flex; flex-direction: column; }
+
+  .topbar { height: 60px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
+  .brand { display: inline-flex; align-items: center; gap: 14px; }
+  .brand-logo { height: 24px; }
+  .brand-divider { width: 1px; height: 18px; background: var(--hair); }
+  .brand-sub { font-size: 12px; color: var(--ink-3); font-weight: 500; }
+  .brand-sub b { color: var(--ink-2); font-weight: 600; }
+  .topbar-right { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+  /* sub-header */
+  .sub-h { padding: 18px 24px 14px; flex-shrink: 0; background: var(--bg); border-bottom: 1px solid var(--hair); }
+  .sub-h-kicker { font-size: 11px; color: var(--brand); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .sub-h-title { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; margin-top: 4px; }
+  .sub-h-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
+  .sub-h-meta { font-size: 11.5px; color: var(--ink-3); font-weight: 500; margin-top: 4px; line-height: 1.55; }
+  .sub-h-meta b { color: var(--ink-2); font-weight: 700; }
+
+  /* popup grid */
+  .grid { flex: 1; padding: 16px 24px 20px; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 12px; min-height: 0; }
+
+  /* popup card */
+  .pp { background: var(--bg); display: flex; flex-direction: column; box-shadow: 0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--hair-2); }
+  .pp-id { padding: 6px 10px; background: var(--ink); color: #FFF; display: flex; align-items: center; justify-content: space-between; font-size: 9.5px; font-weight: 700; letter-spacing: 0.5px; }
+  .pp-id .ref { opacity: 0.5; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+  /* yellow header for 7 of 8 */
+  .pp-h { background: var(--warn-bg); color: var(--ink); padding: 8px 12px; display: flex; align-items: center; gap: 8px; }
+  .pp-h .ico { width: 18px; height: 18px; background: var(--ink); color: var(--warn-bg); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .pp-h .lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+
+  /* admin (S4.1) — gray/ink header */
+  .pp.admin .pp-h { background: var(--ink); color: #FFF; }
+  .pp.admin .pp-h .ico { background: var(--brand); color: #FFF; }
+
+  .pp-b { flex: 1; padding: 18px 14px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; min-height: 100px; }
+  .pp-msg { font-size: 14px; font-weight: 700; color: var(--warn); letter-spacing: -0.2px; line-height: 1.4; }
+  .pp-msg.danger { color: var(--brand); }
+  .pp-icon { font-size: 26px; margin-bottom: 4px; }
+
+  /* O/X capsule buttons */
+  .pp-f { padding: 8px 12px 12px; display: flex; gap: 8px; justify-content: center; }
+  .pp-btn { min-width: 56px; height: 32px; border-radius: 16px; border: 1.5px solid var(--ink); background: var(--bg); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; }
+  .pp-btn.primary { background: var(--ink); color: #FFF; }
+  .pp-btn.text { border-radius: 0; padding: 0 12px; font-size: 11px; font-weight: 600; min-width: 70px; }
+  .pp-f.none { font-size: 10px; color: var(--ink-3); justify-content: center; padding-top: 10px; font-weight: 600; letter-spacing: 0.5px; }
+  .pp-f.none::before { content: '⊘ '; color: var(--brand); }
+
+  /* admin form */
+  .admin-form { width: 100%; display: flex; flex-direction: column; gap: 8px; padding: 6px 0; }
+  .admin-row { display: grid; grid-template-columns: 60px 1fr; gap: 8px; align-items: center; }
+  .admin-row .lbl { font-size: 10px; color: var(--ink-3); font-weight: 600; }
+  .admin-row .val { font-size: 12px; font-weight: 700; color: var(--ink); padding: 4px 6px; background: #FAFAFA; border-bottom: 1.5px solid var(--ink); font-family: 'JetBrains Mono', monospace; letter-spacing: 1.5px; }
+
+  /* trigger meta */
+  .pp-meta { padding: 6px 12px; background: #FCFCFC; border-top: 1px solid var(--hair); font-size: 9.5px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
+  .pp-meta b { color: var(--ink-2); font-weight: 700; }
+  .pp-screen { font-family: 'JetBrains Mono', monospace; color: var(--brand); font-weight: 700; }
+
+  /* footer note */
+  .footer-note { padding: 10px 24px; background: #FCFCFC; border-top: 1px solid var(--hair); display: flex; gap: 20px; align-items: center; flex-shrink: 0; font-size: 11px; color: var(--ink-3); font-weight: 500; }
+  .footer-note .swatch { display: inline-flex; align-items: center; gap: 6px; }
+  .footer-note .sw { width: 12px; height: 12px; }
+  .footer-note .sw.y { background: var(--warn-bg); }
+  .footer-note .sw.o { background: var(--warn); }
+  .footer-note .sw.i { background: var(--ink); }
+  .footer-note .sw.r { background: var(--brand); }
+  .footer-note b { color: var(--ink-2); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="scene">
+
+<div class="caption">
+  <span>iRhea · 시안 <b>②</b> · <b>S9.1 팝업 8종 카탈로그</b> — image26/27/11/5/23/7/9/24 verbatim · 황색 헤더 + 주황 본문 + O/X 캡슐 (image2 별도)</span>
+  <span><a href="02-cinema-gold.html">← 메인</a> · <a href="index.html">인덱스</a></span>
+</div>
+
+<div class="viewport">
+
+  <div class="topbar">
+    <div class="brand">
+      <img class="brand-logo" src="img/irhea-logo.png" alt="iRhea">
+      <span class="brand-divider"></span>
+      <span class="brand-sub"><b>Noble Tree</b> · M5 PRO · 1호기</span>
+    </div>
+    <div class="topbar-right">팝업 디자인 시스템 · 8종</div>
+  </div>
+
+  <div class="sub-h">
+    <div class="sub-h-kicker">DESIGN SYSTEM · POPUP CATALOG</div>
+    <div class="sub-h-title">팝업 8종 카탈로그<em>S9.1 · image26/27/11/5/23/7/9/24 verbatim</em></div>
+    <div class="sub-h-meta">공통 템플릿 7종: <b>황색 헤더 · 주황 본문 · 청 캡슐 O/X 버튼</b> · <b>image2 (S4.1 관리자 인증)</b> 별도 템플릿. 회의 결정으로 액션은 인라인 배치, 본 카탈로그는 참조용.</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1: image26 — 연결 설정 변경 -->
+    <div class="pp">
+      <div class="pp-id"><span>#1 연결 설정 변경</span><span class="ref">IMAGE26</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg">장치 연결 설정을<br>변경 합니다.</div>
+      </div>
+      <div class="pp-f">
+        <span class="pp-btn primary">O</span>
+        <span class="pp-btn">X</span>
+      </div>
+      <div class="pp-meta"><span class="pp-screen">S4.3</span><span><b>설정 변경 진입</b></span></div>
+    </div>
+
+    <!-- 2: image27 — 연결 실패 -->
+    <div class="pp">
+      <div class="pp-id"><span>#2 연결 실패</span><span class="ref">IMAGE27</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg">연결 실패<br>재시도?</div>
+      </div>
+      <div class="pp-f">
+        <span class="pp-btn primary">O</span>
+        <span class="pp-btn">X</span>
+      </div>
+      <div class="pp-meta"><span class="pp-screen">S1.2</span><span>WiFi 타임아웃 15s</span></div>
+    </div>
+
+    <!-- 3: image11 — 암호 오류 -->
+    <div class="pp">
+      <div class="pp-id"><span>#3 암호 오류</span><span class="ref">IMAGE11</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg">암호 오류</div>
+      </div>
+      <div class="pp-f">
+        <span class="pp-btn">X</span>
+      </div>
+      <div class="pp-meta"><span class="pp-screen">S4.1 · S4.4</span><span>잘못된 PW</span></div>
+    </div>
+
+    <!-- 4: image5 — 복구불가 -->
+    <div class="pp">
+      <div class="pp-id"><span>#4 복구불가 ★ 위험</span><span class="ref">IMAGE5</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg danger">복구불가<br>진행 하시겠습니까?</div>
+      </div>
+      <div class="pp-f">
+        <span class="pp-btn primary">O</span>
+        <span class="pp-btn">X</span>
+      </div>
+      <div class="pp-meta"><span class="pp-screen">S4.2 · S3.2 · S4.5</span><span><b>초기화·교체</b></span></div>
+    </div>
+
+    <!-- 5: image23 — 종료 진행 (모래시계) -->
+    <div class="pp">
+      <div class="pp-id"><span>#5 종료 진행</span><span class="ref">IMAGE23</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-icon">⏳</div>
+        <div class="pp-msg" style="font-size:13px;">장비를 종료합니다.<br>기다려 주세요</div>
+      </div>
+      <div class="pp-f none">버튼 없음 · 블로킹</div>
+      <div class="pp-meta"><span class="pp-screen">S2.3 STEP1</span><span>~10초 자동</span></div>
+    </div>
+
+    <!-- 6: image7 — 종료 완료 -->
+    <div class="pp">
+      <div class="pp-id"><span>#6 종료 완료</span><span class="ref">IMAGE7</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg" style="font-size:13px;">장비 종료 완료<br>전원 스위치를 꺼<br>주세요.</div>
+      </div>
+      <div class="pp-f none">버튼 없음 · 전원 OFF 대기</div>
+      <div class="pp-meta"><span class="pp-screen">S2.3 STEP2</span><span>물리 전원 OFF</span></div>
+    </div>
+
+    <!-- 7: image9 — 추출 진행 -->
+    <div class="pp">
+      <div class="pp-id"><span>#7 추출 진행</span><span class="ref">IMAGE9</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg" style="font-size:13px;">추출진행<br>추출구의 버튼을<br>눌러주세요</div>
+      </div>
+      <div class="pp-f">
+        <span class="pp-btn">X</span>
+      </div>
+      <div class="pp-meta"><span class="pp-screen">S6.2 · S6.3</span><span>[추출]·[테스트]</span></div>
+    </div>
+
+    <!-- 8: image24 — 펌웨어 업그레이드 -->
+    <div class="pp">
+      <div class="pp-id"><span>#8 펌웨어</span><span class="ref">IMAGE24</span></div>
+      <div class="pp-h"><span class="ico">!</span><span class="lbl">알림</span></div>
+      <div class="pp-b">
+        <div class="pp-msg">펌웨어를 업그레이<br>드 합니다.</div>
+      </div>
+      <div class="pp-f">
+        <span class="pp-btn primary">O</span>
+        <span class="pp-btn">X</span>
+      </div>
+      <div class="pp-meta"><span class="pp-screen">S5.1</span><span>[업그레이드]</span></div>
+    </div>
+
+  </div>
+
+  <!-- Footer with palette + S4.1 separate template note -->
+  <div class="footer-note">
+    <div class="swatch"><span class="sw y"></span>황색 헤더 #F5E040</div>
+    <div class="swatch"><span class="sw o"></span>주황 본문 #E89E2D</div>
+    <div class="swatch"><span class="sw i"></span>청 캡슐 (O 채움 / X 외곽)</div>
+    <div class="swatch"><span class="sw r"></span>적색 위험 (image5 복구불가)</div>
+    <span style="margin-left:auto;"><b>★ image2 별도 템플릿:</b> 청 헤더 + Admin 폼 + 사각 [연결]/[취소] 버튼 → <a href="02-admin-auth.html" style="color:var(--brand); text-decoration:none; font-weight:700;">S4.1 →</a></span>
+  </div>
+
+</div>
+
+<div class="caption" style="color:#888;">
+  <span>1280 × 800 · S9.1 image26/27/11/5/23/7/9/24 verbatim · 4×2 그리드 · 각 카드: 화면 ID·image ref·헤더·본문·버튼·트리거 매핑</span>
+</div>
+
+</div><!-- /scene -->
+<script>
+(function(){
+  var scene = document.querySelector('.scene');
+  if (!scene) return;
+  var W = 1300, H = 850;
+  function fit() { var s = Math.min(window.innerWidth/W, window.innerHeight/H); scene.style.transform = 'scale('+s+')'; }
+  window.addEventListener('resize', fit); fit();
+})();
+</script>
+</body>
+</html>
