@@ -1,154 +1,196 @@
-<!-- 메인 — 5 추출구 -->
-<div class="ir-shell">
-
-  <!-- Top header -->
-  <header style="display:flex;align-items:center;padding:16px 28px 12px;gap:16px;">
-    <div>
-      <span class="ir-page-sub">Counter · 5 spouts</span>
-      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">NT-iRhea <em>1호기.</em></h1>
-    </div>
-    <div style="flex:1;display:flex;justify-content:center;">
-      <span class="ir-chip is-ready" style="font-size:13px;padding:7px 22px;">추출 가능</span>
-    </div>
-    <div style="font-family:JetBrains Mono, monospace;font-size:13px;color:var(--ir-fg-muted);letter-spacing:0.08em;">BOILER · <span style="font-weight:700;color:var(--ir-fg);">95°</span></div>
-    <a class="ir-btn-fab" href="javascript:void(0);" id="btn-shutdown" style="width:64px;height:64px;font-size:12px;margin-left:8px;letter-spacing:0.04em;">종료</a>
-  </header>
-
-  <div style="display:flex;flex:1;padding:0 16px 12px;gap:8px;align-items:stretch;min-height:0;">
-
-    <!-- Spout grid (5 columns) -->
-    <div style="flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
-      <% for (var i = 1; i <= 5; i++) { %>
-        <div class="ir-card spout-card" data-spout="<%= i %>" style="padding:10px;display:flex;flex-direction:column;gap:8px;">
-
-          <!-- Progress ring -->
-          <div style="display:flex;justify-content:center;">
-            <svg viewBox="0 0 120 120" width="100" height="100">
-              <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(60,40,20,0.10)" stroke-width="6"/>
-              <circle class="spout-ring" cx="60" cy="60" r="50" fill="none" stroke="var(--ir-state-extracting)" stroke-width="6"
-                stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
-              <text class="spout-time"  x="60" y="58" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700" fill="var(--ir-fg)">--:--</text>
-              <text class="spout-total" x="60" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ir-fg-muted)">/ --:--</text>
-              <text class="spout-pct"   x="60" y="96" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="var(--ir-orange)">--%</text>
-            </svg>
-          </div>
-
-          <div class="spout-count" style="text-align:center;font-size:11px;color:var(--ir-fg-muted);">추출횟수 : <span class="spout-count-val" style="color:var(--ir-fg);font-weight:700;">--</span>회</div>
-
-          <!-- Status chip -->
-          <div style="display:flex;justify-content:center;">
-            <span class="ir-chip spout-status">— —</span>
-          </div>
-
-          <!-- Currently selected recipe -->
-          <div style="display:flex;justify-content:center;">
-            <span class="ir-chip is-recipe spout-recipe" style="font-size:12px;">레시피 —</span>
-          </div>
-
-          <!-- Recipe shortlist (favorites for this spout) -->
-          <div class="spout-faves" style="display:flex;flex-direction:column;gap:4px;margin-top:4px;flex:1;font-size:11px;"></div>
-
+<!-- Main Dashboard — 5-spout stations. Topbar is rendered by layout.ejs.
+     Aligned with designs/02-cinema-gold.html (시안 ② Light · S2.1 메인 모니터링). -->
+<div class="stations">
+  <% for (let i = 1; i <= 5; i++) { %>
+    <div class="st st-<%= i %> spout-card" data-spout="<%= i %>">
+      <div class="st-head">
+        <span class="st-num"><%= i %></span>
+        <div class="st-head-r">
+          <span class="st-state"><span class="dot"></span><span class="spout-status-text">Idle</span></span>
+          <span class="st-count">누적 <b class="spout-count-val">--</b>회</span>
         </div>
-      <% } %>
+      </div>
+      <div class="st-vis">
+        <div class="st-circle">
+          <video class="st-video" src="/video/idle.mp4" loop muted autoplay playsinline></video>
+          <svg class="prog" viewBox="0 0 100 100">
+            <circle class="prog-track" cx="50" cy="50" r="43"/>
+            <circle class="spout-ring prog-fill idle" cx="50" cy="50" r="43" pathLength="100" stroke-dasharray="0 100"/>
+            <circle class="prog-shimmer" cx="50" cy="50" r="43" pathLength="100"/>
+          </svg>
+          <div class="prog-center">
+            <span class="prog-pct"><span class="spout-pct-val">0</span><span class="u spout-pct-u">%</span></span>
+            <span class="prog-sub spout-sublabel">대기</span>
+          </div>
+        </div>
+      </div>
+      <div class="st-info">
+        <div class="st-info-row">
+          <span class="st-stage spout-stage">현 단계</span>
+          <span class="st-time"><span class="spout-time-val">00:00</span><em> / <span class="spout-total-val">00:00</span></em></span>
+        </div>
+        <div class="st-bar"><div class="st-bar-fill spout-bar-fill" style="width:0%;"></div></div>
+      </div>
+      <div class="st-recipe">
+        <div class="st-recipe-name spout-recipe-name">Ethiopia <i>Aricha G1</i></div>
+        <div class="st-recipe-meta">Bean <b>20g</b> · Ratio <b>1:12</b></div>
+      </div>
+      <div class="st-slots spout-faves">
+        <div class="st-slot a">
+          <div class="st-slot-top"><span class="st-slot-mark">★</span><span class="st-slot-recipe">Recipe 03</span><span class="st-slot-hint">1s</span></div>
+          <div class="st-slot-desc">20g · 1:12 · 95°C</div>
+        </div>
+        <div class="st-slot b">
+          <div class="st-slot-top"><span class="st-slot-mark">☆</span><span class="st-slot-recipe">Recipe 05</span></div>
+          <div class="st-slot-desc">22g · 1:15 · 92°C</div>
+        </div>
+      </div>
     </div>
-
-    <!-- Right: 정보 vertical button -->
-    <button class="ir-btn-fab" id="btn-info" style="align-self:flex-start;margin-top:8px;width:60px;height:60px;font-size:13px;">정보</button>
-  </div>
-
-  <!-- Bottom action bar -->
-  <footer style="display:flex;justify-content:space-between;padding:8px 24px 14px;gap:8px;">
-    <a class="ir-btn ir-btn-pill" href="/settings/general" style="flex:1;max-width:240px;">설정</a>
-    <a class="ir-btn ir-btn-pill" href="/recipes" style="flex:1;max-width:240px;">레시피</a>
-    <a class="ir-btn ir-btn-pill" href="/recipes?fav=1" style="flex:1;max-width:240px;">즐겨찾기</a>
-  </footer>
-
+  <% } %>
 </div>
 
-<script>
-(function () {
-  var STATUS = {
-    idle:       { label: '추출 가능', cls: 'is-ready',    color: 'var(--ir-state-ready)' },
-    extracting: { label: '추출 중',   cls: 'is-extract',  color: 'var(--ir-state-extracting)' },
-    complete:   { label: '추출 완료', cls: 'is-complete', color: 'var(--ir-state-complete)' },
-    rinsing:    { label: '린스 중',   cls: 'is-rinse',    color: 'var(--ir-state-rinsing)' },
-    watering:   { label: '워터 중',   cls: 'is-water',    color: 'var(--ir-state-watering)' }
-  };
+<style>
+  .stations { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 0; }
+  .st { padding: 18px 18px 16px; display: flex; flex-direction: column; align-items: stretch; gap: 12px; border-right: 1px solid var(--hair); position: relative; min-height: 0; }
+  .st:last-child { border-right: none; }
+  .st.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
+  .st-head { display: flex; align-items: flex-start; justify-content: space-between; }
+  .st-num { font-weight: 700; font-size: 34px; line-height: 0.9; letter-spacing: -1px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .st-1 .st-num { color: var(--st-brewing); }
+  .st-2 .st-num { color: var(--st-done); }
+  .st-3 .st-num { color: var(--st-rinse); }
+  .st-4 .st-num { color: var(--st-water); }
+  .st-5 .st-num { color: var(--st-idle); }
+  .st-head-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 2px; }
+  .st-state { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--ink-3); display: inline-flex; align-items: center; gap: 5px; }
+  .st-1 .st-state { color: var(--st-brewing); }
+  .st-2 .st-state { color: var(--st-done); }
+  .st-3 .st-state { color: var(--st-rinse); }
+  .st-4 .st-state { color: var(--st-water); }
+  .st-5 .st-state { color: var(--st-idle); }
+  .st-state .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; animation: pulse-st 1.6s ease-in-out infinite; }
+  @keyframes pulse-st { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .st-count { font-size: 10.5px; color: var(--ink-3); font-weight: 500; }
+  .st-count b { color: var(--ink-2); font-weight: 700; }
+  .st-vis { display: flex; justify-content: center; align-items: center; padding: 4px 0; }
+  .st-circle { width: 150px; height: 150px; position: relative; border-radius: 50%; overflow: hidden; background: #111; }
+  .st-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .st-circle::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.32) 55%, rgba(0,0,0,0.1) 100%); }
+  .prog { position: absolute; inset: 0; transform: rotate(-90deg); z-index: 2; }
+  .prog-track { fill: none; stroke: rgba(255,255,255,0.22); stroke-width: 5; }
+  .prog-fill { fill: none; stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray 0.7s cubic-bezier(.4,0,.2,1); animation: prog-breathe 2.8s ease-in-out infinite; }
+  .prog-fill.brewing { stroke: var(--st-brewing); filter: drop-shadow(0 0 6px rgba(230,0,18,0.9)); }
+  .prog-fill.done    { stroke: var(--st-done);    filter: drop-shadow(0 0 6px rgba(61,214,140,0.7)); }
+  .prog-fill.rinse   { stroke: var(--st-rinse);   filter: drop-shadow(0 0 5px rgba(110,90,150,0.7)); }
+  .prog-fill.water   { stroke: var(--st-water);   filter: drop-shadow(0 0 5px rgba(62,126,150,0.7)); }
+  .prog-fill.idle    { stroke: rgba(255,255,255,0.35); animation: none; filter: none; }
+  @keyframes prog-breathe { 0%,100% { opacity: 1; } 50% { opacity: 0.78; } }
+  .prog-shimmer { fill: none; stroke: #FFF; stroke-width: 5; stroke-linecap: round; stroke-dasharray: 4 96; opacity: 0; }
+  .st.active .prog-shimmer { opacity: 0.65; animation: shimmer-rot 2.4s linear infinite; }
+  @keyframes shimmer-rot { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -100; } }
+  .prog-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #FFF; line-height: 1; z-index: 3; }
+  .prog-pct { font-size: 38px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -1.6px; text-shadow: 0 1px 10px rgba(0,0,0,0.7); }
+  .prog-pct .u { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.7); margin-left: 1px; }
+  .prog-sub { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.92); margin-top: 5px; letter-spacing: 0.6px; text-shadow: 0 1px 8px rgba(0,0,0,0.8); }
+  .st-info { display: flex; flex-direction: column; gap: 4px; }
+  .st-info-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .st-stage { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+  .st-time { font-size: 15px; font-weight: 600; color: var(--ink); font-family: var(--font-mono); }
+  .st-time em { font-style: normal; color: var(--ink-3); font-weight: 500; font-size: 12px; }
+  .st-bar { height: 3px; background: rgba(0,0,0,0.06); position: relative; overflow: hidden; }
+  .st-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--state-color, var(--brand)); }
+  .st-recipe-name { font-weight: 600; font-size: 14px; color: var(--ink); }
+  .st-recipe-meta { font-size: 11px; color: var(--ink-3); font-weight: 500; }
+  .st-slots { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+  .st-slot { display: flex; flex-direction: column; gap: 2px; }
+  .st-slot-top { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 600; }
+  .st-slot.active .st-slot-recipe { color: var(--brand); }
+  .st-slot-desc { font-size: 9px; color: var(--ink-3); padding-left: 20px; }
+</style>
 
+<script>
+(function() {
+  // Spec: designs/02-cinema-gold.html. State labels match the spec exactly.
+  const STATUS = {
+    idle:       { label: 'Idle',    sub: '대기',     stage: '마지막 추출', active: false, vid: '/video/idle.mp4',     ring: 'idle',    progPct: 0 },
+    extracting: { label: 'Brewing', sub: '진행 중',  stage: '현 단계',     active: true,  vid: '/video/brewing.mp4',  ring: 'brewing' },
+    complete:   { label: 'Done',    sub: '완료',     stage: '추출 완료',   active: true,  vid: '/video/complete.mp4', ring: 'done' },
+    rinsing:    { label: 'Rinse',   sub: '린스 중',  stage: '자동 린스',   active: true,  vid: '/video/rinse.mp4',    ring: 'rinse' },
+    watering:   { label: 'Water',   sub: '워터 중',  stage: '온수 공급',   active: true,  vid: '/video/water.mp4',    ring: 'water' }
+  };
   function fmt(s) {
     var m = Math.floor(s / 60), sec = s % 60;
     return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
   }
-
-  Promise.all([
-    fetch('/api/spouts').then(function (r) { return r.json(); }),
-    fetch('/api/recipes').then(function (r) { return r.json(); })
-  ]).then(function (rs) {
-    var spouts = rs[0], recipes = rs[1];
-    var rmap = {};
-    recipes.forEach(function (r) { rmap[r.id] = r.name || ('레시피 ' + r.id); });
-
-    spouts.forEach(function (s) {
-      var card = document.querySelector('.spout-card[data-spout="' + s.id + '"]');
-      if (!card) return;
-      var st = STATUS[s.status] || STATUS.idle;
-
-      var time = card.querySelector('.spout-time');
-      var total = card.querySelector('.spout-total');
-      var pct  = card.querySelector('.spout-pct');
-      var ring = card.querySelector('.spout-ring');
-      var chip = card.querySelector('.spout-status');
-      var rec  = card.querySelector('.spout-recipe');
-
-      time.textContent = fmt(s.elapsedSec);
-      total.textContent = '/ ' + fmt(s.totalSec);
-      pct.textContent = (s.progressPct || 0) + '%';
-      ring.setAttribute('stroke', st.color);
-      ring.setAttribute('stroke-dashoffset', String(314 * (1 - (s.progressPct || 0) / 100)));
-
-      chip.textContent = st.label;
-      chip.className = 'ir-chip spout-status ' + st.cls;
-
-      rec.textContent = '레시피 ' + (s.currentRecipeId || '—');
-
-      card.querySelector('.spout-count-val').textContent = s.extractCount;
-
-      var fav = card.querySelector('.spout-faves');
-      fav.innerHTML = '';
-      (s.favoriteRecipeIds || []).slice(0, 6).forEach(function (rid, idx) {
-        var row = document.createElement('div');
-        var active = (idx === 0 || rid === s.currentRecipeId);
-        row.className = 'ir-chip' + (active ? ' is-recipe' : '');
-        row.style.justifyContent = 'flex-start';
-        row.style.padding = '5px 10px';
-        row.style.fontSize = '11px';
-        row.style.letterSpacing = '0.06em';
-        if (!active) {
-          row.style.background = 'transparent';
-          row.style.color = 'var(--ir-fg-muted)';
-          row.style.borderColor = 'var(--ir-line)';
-        }
-        row.textContent = '레시피 ' + rid;
-        fav.appendChild(row);
-      });
+  let recipesCache = null;
+  function loadRecipes() {
+    return recipesCache ? Promise.resolve(recipesCache)
+      : fetch('/api/recipes').then(r => r.json()).then(r => (recipesCache = r));
+  }
+  function applyRecipe(card, recipe) {
+    if (!recipe) return;
+    const nameEl = card.querySelector('.spout-recipe-name');
+    if (nameEl) {
+      const parts = String(recipe.name || '').split(' ');
+      const origin = parts.shift() || recipe.name;
+      const variety = parts.join(' ');
+      nameEl.innerHTML = variety
+        ? `${origin} <i>${variety}</i>`
+        : `<i>${origin}</i>`;
+    }
+    const meta = card.querySelector('.st-recipe-meta');
+    if (meta) {
+      meta.innerHTML = `Bean <b>${recipe.coffeeWeight || '--'}g</b> · Ratio <b>${recipe.ratio || '--'}</b>`;
+    }
+  }
+  function applyFavoriteSlots(card, spout, recipes) {
+    const slots = card.querySelectorAll('.st-slot');
+    const ids = (spout.favoriteRecipeIds || []).slice(0, slots.length);
+    ids.forEach((rid, idx) => {
+      const r = recipes.find(x => x.id === rid);
+      const slot = slots[idx];
+      if (!slot || !r) return;
+      slot.querySelector('.st-slot-recipe').textContent = r.name;
+      const tempC = r.waterTemp ? r.waterTemp + '°C' : '';
+      slot.querySelector('.st-slot-desc').textContent =
+        `${r.coffeeWeight || '--'}g · ${r.ratio || '--'} · ${tempC}`;
     });
-  });
-
-  document.getElementById('btn-shutdown').addEventListener('click', function () {
-    window.IRModal.info({
-      body: '장비를 종료합니다.<br>기다려 주세요',
-      buttons: []
-    });
-    setTimeout(function () {
-      window.IRModal.info({
-        body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',
-        buttons: [{ label: '확인', primary: true }]
+  }
+  function update() {
+    Promise.all([fetch('/api/spouts').then(r => r.json()), loadRecipes()])
+      .then(([spouts, recipes]) => {
+        spouts.forEach(s => {
+          const card = document.querySelector('.spout-card[data-spout="' + s.id + '"]');
+          if (!card) return;
+          const st = STATUS[s.status] || STATUS.idle;
+          if (st.active) card.classList.add('active'); else card.classList.remove('active');
+          card.querySelector('.spout-status-text').textContent = st.label;
+          const sublabel = card.querySelector('.spout-sublabel');
+          if (sublabel) sublabel.textContent = st.sub;
+          card.querySelector('.spout-count-val').textContent = s.extractCount.toLocaleString();
+          const video = card.querySelector('.st-video');
+          if (!video.src.includes(st.vid)) video.src = st.vid;
+          const stage = card.querySelector('.spout-stage');
+          if (stage) stage.textContent = st.stage + (st.active && s.status === 'extracting' ? ' · 1' : '');
+          const pct = s.progressPct != null ? s.progressPct : 0;
+          card.querySelector('.spout-pct-val').textContent = s.status === 'idle' ? '—' : pct;
+          const pctU = card.querySelector('.spout-pct-u');
+          if (pctU) pctU.style.display = s.status === 'idle' ? 'none' : '';
+          const ring = card.querySelector('.spout-ring');
+          ring.className = 'spout-ring prog-fill ' + st.ring;
+          ring.setAttribute('stroke-dasharray', pct + ' 100');
+          card.querySelector('.spout-time-val').textContent = fmt(s.elapsedSec);
+          card.querySelector('.spout-total-val').textContent = fmt(s.totalSec);
+          const barFill = card.querySelector('.spout-bar-fill');
+          barFill.className = 'st-bar-fill spout-bar-fill ' + st.ring;
+          barFill.style.width = pct + '%';
+          const currentRecipe = recipes.find(r => r.id === s.currentRecipeId);
+          applyRecipe(card, currentRecipe);
+          applyFavoriteSlots(card, s, recipes);
+        });
       });
-    }, 1800);
-  });
-
-  document.getElementById('btn-info').addEventListener('click', function () {
-    window.location.href = '/info';
-  });
+  }
+  setInterval(update, 1000);
+  update();
 })();
 </script>

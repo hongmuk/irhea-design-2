@@ -1,98 +1,185 @@
-<%- include('../partials/settings-shell', { activeTab: 'engineering' }) %>
+<!-- 공장 초기화 (S4.2) — designs/02-factory-reset.html 정합. Topbar는 layout.ejs. -->
 
-  <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
-
-    <aside class="ir-side-menu">
-      <a class="ir-tab is-active" href="/settings/engineering/factory-reset">공장초기화</a>
-      <a class="ir-tab" href="/settings/engineering/connection">장비 연결 설정</a>
-    </aside>
-
-    <section class="ir-grow ir-center" style="min-height:420px;">
-      <div class="ir-card" style="max-width:520px;width:100%;padding:28px 32px;">
-        <div style="text-align:center;font-family:var(--ir-font-display);font-style:italic;font-size:22px;margin-bottom:24px;color:var(--ir-fg);">공장 <em style="color:var(--ir-orange-deep);">초기화.</em></div>
-
-        <div id="fr-list" style="display:flex;flex-direction:column;gap:14px;font-size:16px;font-weight:600;">
-          <% var __cats = [
-            { id: 'log',     label: '1. 로그 & 오류 데이터', sel: true },
-            { id: 'recipe',  label: '2. 레시피 데이터',     sel: false },
-            { id: 'user',    label: '3. 사용자 데이터',     sel: true },
-            { id: 'device',  label: '4. 장비 설정 데이터',  sel: false },
-            { id: 'security',label: '5. 보안 데이터',       sel: true }
-          ]; %>
-          <% __cats.forEach(function (c) { %>
-            <label class="fr-row" data-cat="<%= c.id %>" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-              <span style="flex:1;"><%= c.label %></span>
-              <span class="fr-dot" data-on="<%= c.sel %>" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:<%= c.sel ? 'var(--ir-status-ok)' : 'transparent' %>;"></span>
-            </label>
-          <% }) %>
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;gap:12px;">
-          <button class="ir-btn ir-btn-primary" id="fr-run">실행</button>
-          <div class="ir-progress-ring" id="fr-progress" style="display:none;">20%</div>
-          <button class="ir-btn" id="fr-cancel">취소</button>
-        </div>
-      </div>
-    </section>
-
+<div class="settings-tabs">
+  <a href="/settings/general" class="stab">설정</a>
+  <a href="/settings/backup" class="stab">백업 / 복구</a>
+  <a href="/settings/engineering" class="stab active">관리자 메뉴</a>
+  <a href="/settings/firmware" class="stab">펌웨어 업그레이드</a>
+  <span class="stab-spacer"></span>
+  <div class="stab-actions">
+    <button class="stab-btn ghost" onclick="history.back()">복귀</button>
   </div>
+</div>
 
-<%- include('../partials/settings-shell-close') %>
+<div class="eng-body">
+  <nav class="side">
+    <div class="side-h">관리자</div>
+    <a class="side-i active" href="/settings/engineering/factory-reset"><span class="ico">⚠</span>공장 초기화</a>
+    <a class="side-i" href="/settings/engineering/connection"><span class="ico">📡</span>연결 설정</a>
+    <a class="side-i" href="/info/security"><span class="ico">🛡</span>보안 정보</a>
+  </nav>
+
+  <div class="content">
+    <div class="ch-h">
+      <span class="ch-title">공장 초기화</span>
+      <span class="ch-id">S4.2 · IMAGE19 · 다중 선택 5개</span>
+    </div>
+
+    <div class="danger-banner">
+      <span class="ico">!</span>
+      <div class="text">
+        <b>이 작업은 복구할 수 없습니다.</b> 선택한 데이터가 영구 삭제되며 실행 중 취소가 불가능합니다.
+        보안 데이터 초기화 시 관리자 비밀번호가 디폴트로 복원되어 재인증이 필요합니다.
+      </div>
+    </div>
+
+    <div class="radio-list">
+      <div class="ritem selected" data-id="logs">
+        <span class="num">01</span>
+        <div class="ritem-info">
+          <span class="ritem-name">로그 &amp; 오류 데이터</span>
+          <span class="ritem-desc">콘솔 부팅 로그 · 오류 발생 이력 · 디버그 트레이스. 일상 운영에 영향 없음.</span>
+        </div>
+        <span class="risk low">권장</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem" data-id="recipes">
+        <span class="num">02</span>
+        <div class="ritem-info">
+          <span class="ritem-name">레시피 데이터</span>
+          <span class="ritem-desc">12 레시피 · 즐겨찾기 매핑 (5×2 슬롯) · 사용자 정의 Stage 값 — 영구 삭제.</span>
+        </div>
+        <span class="risk high">위험</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem selected" data-id="users">
+        <span class="num">03</span>
+        <div class="ritem-info">
+          <span class="ritem-name">사용자 데이터</span>
+          <span class="ritem-desc">계정 3명 · 권한 분포 (운용2·디스트리뷰터2·개발자1) · 로그인 기록.</span>
+        </div>
+        <span class="risk mid">중간</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem" data-id="machine">
+        <span class="num">04</span>
+        <div class="ritem-info">
+          <span class="ritem-name">장비 설정 데이터</span>
+          <span class="ritem-desc">5+1 설정 카드 · 펌프 교정 5행 · 보일러 95° · 워터/린스 파라미터 — 재교정 필요.</span>
+        </div>
+        <span class="risk high">재교정</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem selected" data-id="security">
+        <span class="num">05</span>
+        <div class="ritem-info">
+          <span class="ritem-name">보안 데이터</span>
+          <span class="ritem-desc">Admin 비밀번호 디폴트 복원 · 잠금 카운터 reset · WiFi 등록 머신 유지.</span>
+        </div>
+        <span class="risk mid">PW 리셋</span>
+        <span class="radio-mark"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fr-action-bar">
+  <div class="ab-l">선택됨: <b id="fr-selected-count">3 / 5</b> · <span id="fr-selected-list">1, 3, 5</span></div>
+  <div class="ab-r">
+    <button class="fr-ab-btn" onclick="history.back()">취소</button>
+    <button class="fr-ab-btn primary" id="fr-run">실행 →</button>
+  </div>
+</div>
+
+<style>
+  /* factory-reset — designs/02-factory-reset.html 정합 */
+  .stab-spacer { flex: 1; }
+  .stab-actions { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; }
+  .stab-btn { font-size: 12px; padding: 8px 18px; font-weight: 600; cursor: pointer; line-height: 1; font-family: inherit; border: none; }
+  .stab-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
+  .stab-btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+  .eng-body { flex: 1; display: grid; grid-template-columns: 200px 1fr; min-height: 0; }
+  .side { display: flex; flex-direction: column; padding: 16px 12px; gap: 4px; border-right: 1px solid var(--hair); background: #FCFCFC; }
+  .side-h { font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.8px; padding: 6px 12px; text-transform: uppercase; }
+  .side-i { padding: 11px 14px; font-size: 13px; color: var(--ink-2); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 10px; text-decoration: none; letter-spacing: -0.1px; }
+  .side-i:hover { background: var(--bg); color: var(--ink); }
+  .side-i.active { background: var(--ink); color: #FFF; font-weight: 600; }
+  .side-i .ico { font-size: 14px; opacity: 0.7; }
+  .side-i.active .ico { opacity: 1; }
+
+  .content { padding: 22px 28px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+  .ch-h { display: flex; align-items: baseline; justify-content: space-between; }
+  .ch-title { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -0.4px; }
+  .ch-id { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
+
+  .danger-banner { padding: 14px 18px; border: 1px solid var(--brand); background: var(--brand-dim); display: flex; gap: 14px; align-items: flex-start; }
+  .danger-banner .ico { width: 36px; height: 36px; background: var(--brand); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+  .danger-banner .text { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+  .danger-banner b { color: var(--brand); font-weight: 700; }
+
+  .radio-list { display: flex; flex-direction: column; gap: 10px; }
+  .ritem { display: grid; grid-template-columns: 32px 1fr auto auto; gap: 14px; align-items: center; padding: 14px 18px; border: 1px solid var(--hair); cursor: pointer; transition: all 0.15s; }
+  .ritem:hover { border-color: var(--ink-3); }
+  .ritem.selected { border-color: var(--ink); background: #FAFAFA; }
+  .ritem .num { font-size: 13px; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; letter-spacing: 0.4px; text-align: center; }
+  .ritem.selected .num { color: var(--ink); }
+  .ritem-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .ritem-name { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .ritem-desc { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .risk { font-size: 10px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .risk.low { background: #1A8054; color: #fff; }
+  .risk.mid { background: #C28200; color: #fff; }
+  .risk.high { background: var(--brand); color: #fff; }
+  .radio-mark { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--hair-2); position: relative; flex-shrink: 0; }
+  .ritem.selected .radio-mark { border-color: var(--ink); }
+  .ritem.selected .radio-mark::after { content: ''; position: absolute; inset: 4px; background: var(--ink); border-radius: 50%; }
+
+  .fr-action-bar { height: 64px; padding: 0 28px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #FCFCFC; }
+  .ab-l { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .ab-l b { color: var(--ink); font-weight: 700; }
+  .ab-r { display: inline-flex; gap: 10px; align-items: center; }
+  .fr-ab-btn { padding: 10px 22px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .fr-ab-btn.primary { background: var(--brand); color: #FFF; border-color: var(--brand); }
+</style>
 
 <script>
 (function () {
-  if (location.search.indexOf('dev=1') >= 0) sessionStorage.setItem('ir-admin-ok', '1');
-  if (sessionStorage.getItem('ir-admin-ok') !== '1') {
-    window.location.href = '/settings/engineering';
-    return;
-  }
-
-  // Toggle dot rows
-  document.querySelectorAll('.fr-row').forEach(function (row) {
-    row.addEventListener('click', function () {
-      var dot = row.querySelector('.fr-dot');
-      var on = dot.dataset.on === 'true';
-      dot.dataset.on = (!on).toString();
-      dot.style.background = !on ? 'var(--ir-status-ok)' : 'transparent';
+  function updateCount() {
+    var items = document.querySelectorAll('.ritem');
+    var selected = [];
+    items.forEach(function (el, idx) {
+      if (el.classList.contains('selected')) selected.push(idx + 1);
     });
-  });
-
-  document.getElementById('fr-cancel').addEventListener('click', function () {
-    window.location.href = '/settings/engineering';
+    document.getElementById('fr-selected-count').textContent = selected.length + ' / 5';
+    document.getElementById('fr-selected-list').textContent = selected.length ? selected.join(', ') : '없음';
+  }
+  document.querySelectorAll('.ritem').forEach(function (item) {
+    item.addEventListener('click', function () { item.classList.toggle('selected'); updateCount(); });
   });
 
   document.getElementById('fr-run').addEventListener('click', function () {
-    var cats = [];
-    document.querySelectorAll('.fr-row').forEach(function (row) {
-      if (row.querySelector('.fr-dot').dataset.on === 'true') cats.push(row.dataset.cat);
-    });
-    if (cats.length === 0) {
-      window.IRModal.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
+    var selected = Array.from(document.querySelectorAll('.ritem.selected')).map(function (el) { return el.dataset.id; });
+    if (selected.length === 0) {
+      window.IRModal?.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
       return;
     }
-    window.IRModal.confirm({
-      body: '복구불가<br>진행하시겠습니까?',
+    window.IRModal?.confirm({
+      title: '공장 초기화 실행',
       bodyClass: 'is-error',
+      body: '복구불가<br>진행하시겠습니까?',
       onOk: function () {
-        var ring = document.getElementById('fr-progress');
-        ring.style.display = 'inline-flex';
-        ring.textContent = '0%';
-        var p = 0;
-        var iv = setInterval(function () {
-          p += 8;
-          ring.textContent = Math.min(p, 100) + '%';
-          if (p >= 100) {
-            clearInterval(iv);
-            fetch('/api/factory-reset', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ categories: cats })
-            }).then(function () {
-              window.IRModal.info({ body: '초기화 완료' });
-              ring.style.display = 'none';
-            });
-          }
-        }, 120);
+        fetch('/api/factory-reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ categories: selected })
+        }).then(function () {
+          window.IRToast?.show('공장 초기화가 완료되었습니다.', { type: 'error' });
+        });
       }
     });
   });

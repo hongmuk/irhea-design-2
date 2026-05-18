@@ -3,75 +3,38 @@
 <head>
   <%- include('partials/head') %>
 </head>
-<body>
-  <div class="app-shell">
+<body class="ir-theme">
+  <div class="viewport">
     <%- include('partials/topbar') %>
-    <main class="content-area">
-      <div class="page-content">
-        <%- include('pages/' + page) %>
-      </div>
+    
+    <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <%- include('pages/' + page) %>
     </main>
+
     <%- include('partials/bottomnav') %>
   </div>
 
-  <!-- More Menu Overlay -->
-  <div class="more-overlay" id="more-overlay" onclick="closeMoreMenu()"></div>
-  <div class="more-menu" id="more-menu">
-    <div class="more-menu-header">
-      <span>System</span>
-      <button class="more-menu-close" onclick="closeMoreMenu()">&times;</button>
-    </div>
-    <a href="/alarms" class="more-menu-item <%= activeNav === 'alarms' ? 'active' : '' %>">
-      <span class="more-icon">&#9888;</span>
-      <span>Alarms</span>
-      <span class="nav-badge" id="alarm-badge-more">3</span>
-    </a>
-    <a href="/usage" class="more-menu-item <%= activeNav === 'usage' ? 'active' : '' %>">
-      <span class="more-icon">&#9636;</span>
-      <span>Usage History</span>
-    </a>
-    <a href="/settings" class="more-menu-item <%= activeNav === 'settings' ? 'active' : '' %>">
-      <span class="more-icon">&#9881;</span>
-      <span>Settings</span>
-    </a>
-    <a href="/calibration" class="more-menu-item <%= activeNav === 'calibration' ? 'active' : '' %>">
-      <span class="more-icon">&#8982;</span>
-      <span>Calibration</span>
-    </a>
-    <a href="/firmware" class="more-menu-item <%= activeNav === 'firmware' ? 'active' : '' %>">
-      <span class="more-icon">&#8635;</span>
-      <span>Firmware</span>
-    </a>
-    <a href="/system-info" class="more-menu-item <%= activeNav === 'system-info' ? 'active' : '' %>">
-      <span class="more-icon">&#9432;</span>
-      <span>System Info</span>
-    </a>
-  </div>
-
-  <%- include('partials/toast') %>
   <%- include('partials/modal') %>
+  <%- include('partials/toast') %>
 
-  <!-- Global JS -->
-  <script src="/js/app.js"></script>
+  <!-- Shared fitscreen script for 1280x800 target -->
+  <script>
+    (function() {
+      const W = 1280, H = 800;
+      function fit() {
+        const sw = window.innerWidth / W;
+        const sh = window.innerHeight / H;
+        const s = Math.min(sw, sh);
+        // Only scale down if viewport is smaller, or scale to fit
+        document.body.style.transform = 'scale(' + s + ')';
+        document.body.style.transformOrigin = 'center center';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+    })();
+  </script>
 
-  <!-- Component JS -->
-  <script src="/js/components/gauge.js"></script>
-  <script src="/js/components/progress-ring.js"></script>
-  <script src="/js/components/timeline.js"></script>
-
-  <!-- Page JS -->
-  <% if (page === 'dashboard') { %><script src="/js/pages/dashboard.js"></script><% } %>
-  <% if (page === 'recipe-list') { %><script src="/js/pages/recipe-list.js"></script><% } %>
-  <% if (page === 'recipe-detail') { %><script src="/js/pages/recipe-detail.js"></script><% } %>
-  <% if (page === 'recipe-edit') { %><script src="/js/pages/recipe-edit.js"></script><% } %>
-  <% if (page === 'brewing') { %><script src="/js/pages/brewing.js"></script><% } %>
-  <% if (page === 'brewing-complete') { %><script src="/js/pages/brewing.js"></script><% } %>
-  <% if (page === 'favorites') { %><script src="/js/pages/favorites.js"></script><% } %>
-  <% if (page === 'alarms') { %><script src="/js/pages/alarms.js"></script><% } %>
-  <% if (page === 'settings') { %><script src="/js/pages/settings.js"></script><% } %>
-  <% if (page === 'calibration') { %><script src="/js/pages/calibration.js"></script><% } %>
-  <% if (page === 'firmware') { %><script src="/js/pages/firmware.js"></script><% } %>
-  <% if (page === 'system-info') { %><script src="/js/pages/system-info.js"></script><% } %>
-  <% if (page === 'usage') { %><script src="/js/pages/usage.js"></script><% } %>
+  <% if (page === 'dashboard' || page === 'main') { %><script src="/js/pages/dashboard.js"></script><% } %>
+  <% if (page === 'settings-general') { %><script src="/js/pages/settings.js"></script><% } %>
 </body>
 </html>

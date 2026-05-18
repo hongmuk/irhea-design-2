@@ -1,177 +1,280 @@
-<%- include('../partials/settings-shell', { activeTab: 'general', showSave: true }) %>
+<!-- 설정 (S3.1) — designs/02-settings.html 정합. Topbar는 layout.ejs에서 렌더. -->
 
-  <div class="ir-row" style="gap:14px;flex:1;align-items:flex-start;flex-wrap:nowrap;">
+<div class="settings-tabs">
+  <a href="/settings/general" class="stab active">설정</a>
+  <a href="/settings/backup" class="stab">백업 / 복구</a>
+  <a href="/settings/engineering" class="stab">관리자 메뉴</a>
+  <a href="/settings/firmware" class="stab">펌웨어 업그레이드</a>
+  <span class="stab-spacer"></span>
+  <div class="stab-actions">
+    <button class="stab-btn primary" id="btn-save-settings">저장</button>
+    <button class="stab-btn ghost" onclick="history.back()">복귀</button>
+  </div>
+</div>
 
-    <!-- 환경설정 -->
-    <div class="ir-card" style="flex:0 0 232px;">
-      <div class="ir-card-header">환경설정</div>
-      <table class="ir-table">
-        <thead><tr><th>항목</th><th>선택</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>추출단위 (%, g)</td>
-            <td>
-              <select class="ir-select" id="g-unit">
-                <option value="Percent (%)">Percent (%)</option>
-                <option value="Gram (g)">Gram (g)</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>알람</td>
-            <td>
-              <select class="ir-select" id="g-alarm">
-                <option value="예">예</option>
-                <option value="아니오">아니오</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>기본 드립퍼</td>
-            <td>
-              <select class="ir-select" id="g-dripper">
-                <option>Kalita</option>
-                <option>Hario</option>
-                <option>Kalita Wave</option>
-                <option>Kono</option>
-                <option>Chemax</option>
-                <option>December</option>
-                <option>Melita</option>
-              </select>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<div class="cards">
+
+  <!-- Card 1: 환경설정 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">환경설정</span>
+      <span class="card-id">3.1.3</span>
     </div>
-
-    <!-- 보일러 -->
-    <div class="ir-card" style="flex:0 0 178px;">
-      <div class="ir-card-header">보일러</div>
-      <table class="ir-table">
-        <thead><tr><th>항목</th><th>선택</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>설정온도</td>
-            <td>
-              <input class="ir-input" id="b-temp" value="95" style="width:50px;"/> 도
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p style="color:var(--ir-fg-muted);font-size:11px;margin-top:8px;text-align:center;">최고 95도</p>
+    <div class="cr"><span class="cr-k">추출 단위</span>
+      <span class="seg" data-name="unit">
+        <span class="seg-i on" data-value="percent">Percent (%)</span>
+        <span class="seg-i" data-value="gram">Gram (g)</span>
+      </span>
     </div>
-
-    <!-- 물붓기 범위 -->
-    <div class="ir-card" style="flex:0 0 200px;">
-      <div class="ir-card-header">물붓기 범위</div>
-      <table class="ir-table" id="pour-table">
-        <thead><tr><th>범위</th><th>반지름</th></tr></thead>
-        <tbody></tbody>
-      </table>
+    <div class="cr"><span class="cr-k">알람</span>
+      <span class="seg" data-name="alarm">
+        <span class="seg-i on" data-value="on">예</span>
+        <span class="seg-i" data-value="off">아니오</span>
+      </span>
     </div>
-
-    <!-- 펌프 교정 -->
-    <div class="ir-card" style="flex:0 0 196px;">
-      <div class="ir-card-header">펌프 교정</div>
-      <style>#pump-table td, #pump-table th { padding:6px 6px; font-size:12px; }</style>
-      <table class="ir-table" id="pump-table">
-        <thead><tr><th>기존 유속</th><th>교정 유속</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-    <!-- 워터/린스 -->
-    <div class="ir-card" style="flex:1;min-width:0;">
-      <div class="ir-card-header">워터/린스</div>
-      <style>.ir-card .ir-table.wr-table td, .ir-card .ir-table.wr-table th { padding:5px 6px; font-size:11px; } .wr-table .ir-input.wr { width:30px !important; }</style>
-      <table class="ir-table wr-table">
-        <thead><tr><th>항목</th><th>워터</th><th>린스</th></tr></thead>
-        <tbody>
-          <tr><td>속도</td><td><input class="ir-input wr" data-k="water.speed"  value="6"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml/s</span></td><td><input class="ir-input wr" data-k="rinse.speed"  value="6"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml/s</span></td></tr>
-          <tr><td>온도</td><td><input class="ir-input wr" data-k="water.temp"   value="85"/> <span style="font-size:10px;color:var(--ir-fg-muted);">°C</span></td><td><input class="ir-input wr" data-k="rinse.temp"   value="85"/> <span style="font-size:10px;color:var(--ir-fg-muted);">°C</span></td></tr>
-          <tr><td>온수량</td><td><input class="ir-input wr" data-k="water.amount" value="50"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml</span></td><td><input class="ir-input wr" data-k="rinse.amount" value="60"/> <span style="font-size:10px;color:var(--ir-fg-muted);">ml</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
+    <div class="cr"><span class="cr-k">기본 드립퍼</span><button class="cr-v cr-pick" id="sg-dripper">Kalita</button></div>
+    <div class="card-foot"><span>image12 정합</span></div>
   </div>
 
-<%- include('../partials/settings-shell-close') %>
+  <!-- Card 2: 보일러 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">보일러</span>
+      <span class="card-id">3.1.4</span>
+    </div>
+    <div class="cr"><span class="cr-k">설정 온도</span><span class="cr-v" id="sg-boiler-set">95<span class="unit">°C</span></span></div>
+    <div class="cr"><span class="cr-k">현재 온도</span><span class="cr-v muted" id="sg-boiler-cur">95.2<span class="unit">°C</span></span></div>
+    <div class="cr"><span class="cr-k">웜업 상태</span><span class="cr-v muted">정상 · 7m 12s</span></div>
+    <div class="card-foot"><span>보일러 단일 항목</span></div>
+  </div>
+
+  <!-- Card 3: 물붓기 범위 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">물붓기 범위</span>
+      <span class="card-id">3.1.5</span>
+    </div>
+    <div id="sg-pour-rows"></div>
+    <div class="card-foot"><span>반지름 / mm</span></div>
+  </div>
+
+  <!-- Card 4: 펌프 교정 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">펌프 교정</span>
+      <span class="card-id">3.1.6</span>
+    </div>
+    <table class="ct">
+      <thead><tr><th>기존 유속</th><th>교정 유속</th></tr></thead>
+      <tbody id="sg-pump-rows"></tbody>
+    </table>
+    <div class="card-foot"><span>관리자 메뉴 이관 검토 中</span><a href="/settings/engineering">→</a></div>
+  </div>
+
+  <!-- Card 5: 워터 / 린스 -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">워터 / 린스</span>
+      <span class="card-id">3.1.7</span>
+    </div>
+    <table class="ct">
+      <thead><tr><th>항목</th><th>워터</th><th style="text-align:right;">린스</th></tr></thead>
+      <tbody id="sg-wr-rows">
+        <tr><td>속도</td><td class="wr-water" data-k="speed">— ml/s</td><td class="wr-rinse" data-k="speed">— ml/s</td></tr>
+        <tr><td>온도</td><td class="wr-water" data-k="temp">—°</td><td class="wr-rinse" data-k="temp">—°</td></tr>
+        <tr><td>온수량</td><td class="wr-water" data-k="amount">— ml</td><td class="wr-rinse" data-k="amount">— ml</td></tr>
+      </tbody>
+    </table>
+    <div class="card-foot"><span>2 컬럼 비교</span></div>
+  </div>
+
+  <!-- Card 6: 즐겨찾기 정책 (v1.1 accent) -->
+  <div class="card accent">
+    <div class="card-head">
+      <span class="card-title">★ 즐겨찾기 정책</span>
+      <span class="card-badge">v1.1</span>
+    </div>
+    <div class="cr"><span class="cr-k">추출구별 슬롯</span>
+      <span class="cr-v">2 <em>(v1.0: 5)</em></span></div>
+    <div class="cr"><span class="cr-k">슬롯 A</span>
+      <div class="fav-slots"><span class="fav-chip">★ 1초 = 추출</span></div></div>
+    <div class="cr"><span class="cr-k">슬롯 B</span>
+      <div class="fav-slots"><span class="fav-chip b">☆ 탭 전환</span></div></div>
+    <div class="cr"><span class="cr-k">매뉴얼 큐</span><span class="cr-v muted">별개 개념</span></div>
+    <div class="card-foot"><span>★ 활성 1 + ☆ 보조 1</span><a href="/favorites">즐겨찾기 매핑 →</a></div>
+  </div>
+
+</div>
+
+<style>
+  /* settings-general specific layout — matches designs/02-settings.html */
+  .stab-spacer { flex: 1; }
+  .stab-actions { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; }
+  .stab-btn { font-size: 12px; padding: 8px 18px; font-weight: 600; cursor: pointer; line-height: 1; transition: all 0.15s; font-family: inherit; border: none; }
+  .stab-btn.primary { background: var(--brand); color: #fff; border: 1px solid var(--brand); }
+  .stab-btn.primary:hover { background: #c8000f; border-color: #c8000f; }
+  .stab-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
+  .stab-btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+  .cards { flex: 1; padding: 20px 24px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
+  .card { background: var(--bg); border: 1px solid var(--hair); padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; position: relative; }
+  .card.accent { border: 1px solid var(--brand); background: linear-gradient(180deg, #FFFAFA 0%, var(--bg) 30%); }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .card.accent .card-title { color: var(--brand); }
+  .card-badge { font-size: 9px; font-weight: 600; color: var(--brand); letter-spacing: 1px; text-transform: uppercase; }
+  .card-id { font-size: 10px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
+
+  .cr { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--hair); }
+  .cr:first-of-type { border-top: none; padding-top: 2px; }
+  .cr-k { font-size: 12px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
+  .cr-v { font-size: 13px; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+  .cr-v.muted { color: var(--ink-2); font-weight: 500; }
+  .cr-v em { font-style: normal; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+  .cr-v .unit { font-size: 11px; color: var(--ink-3); font-weight: 500; margin-left: 2px; }
+
+  .seg { display: inline-flex; border: 1px solid var(--hair-2); height: 22px; align-items: stretch; user-select: none; }
+  .seg-i { padding: 0 8px; font-size: 11px; font-weight: 500; color: var(--ink-3); display: inline-flex; align-items: center; border-right: 1px solid var(--hair-2); cursor: pointer; }
+  .seg-i:last-child { border-right: none; }
+  .seg-i.on { background: var(--ink); color: #fff; font-weight: 600; }
+
+  .ct { font-size: 11px; font-variant-numeric: tabular-nums; width: 100%; border-collapse: collapse; }
+  .ct th { text-align: left; font-weight: 500; color: var(--ink-3); padding: 4px 0; border-bottom: 1px solid var(--hair); font-size: 10px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .ct td { padding: 3.5px 0; color: var(--ink); border-bottom: 1px solid var(--hair); font-weight: 500; }
+  .ct td:last-child { text-align: right; }
+  .ct tr:last-child td { border-bottom: none; }
+  .ct .delta-up { color: var(--brand); font-size: 9px; margin-left: 4px; font-weight: 600; }
+  .ct .delta-down { color: var(--ink-2); font-size: 9px; margin-left: 4px; font-weight: 600; }
+
+  .card-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 10px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
+  .card-foot a { color: var(--brand); font-weight: 600; text-decoration: none; }
+
+  .fav-slots { display: flex; gap: 6px; margin-top: 2px; }
+  .fav-chip { font-size: 10px; padding: 3px 8px; border: 1px solid var(--brand); color: var(--brand); font-weight: 600; }
+  .fav-chip.b { border-color: var(--hair-2); color: var(--ink-3); }
+
+  .cr-pick { background: transparent; border: 1px dashed var(--hair-2); padding: 4px 10px; cursor: pointer; font-family: inherit; color: var(--ink); font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }
+  .cr-pick:hover { border-color: var(--ink); border-style: solid; }
+  .cr-pick::after { content: ' ▾'; color: var(--ink-3); font-size: 9px; }
+
+  .dripper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 360px; }
+  .drp-i { padding: 12px 14px; border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink-2); text-align: left; }
+  .drp-i:hover { border-color: var(--ink); color: var(--ink); }
+  .drp-i.is-on { border: 2px solid var(--ink); color: var(--ink); background: #FAFAFA; padding: 11px 13px; }
+</style>
 
 <script>
 (function () {
-  // Hydrate from mocks
-  Promise.all([
-    fetch('/api/general-config').then(function (r) { return r.json(); }),
-    fetch('/api/boiler-info').then(function (r) { return r.json(); }),
-    fetch('/api/pour-range').then(function (r) { return r.json(); }),
-    fetch('/api/pump-calibration').then(function (r) { return r.json(); }),
-    fetch('/api/water-rinse').then(function (r) { return r.json(); })
-  ]).then(function (rs) {
-    var g = rs[0] || {}, b = rs[1] || {}, pr = rs[2] || [], pc = rs[3] || [], wr = rs[4] || {};
+  var DRIPPERS = ['Kalita Wave', 'Hario V60', 'Chemex', 'Kono', 'Origami', 'Melita', 'December'];
 
-    if (g.extractionUnit) document.getElementById('g-unit').value = g.extractionUnit;
-    if (g.alarm)          document.getElementById('g-alarm').value = g.alarm;
-    if (g.defaultDripper) document.getElementById('g-dripper').value = g.defaultDripper;
+  // Hydrate from localStorage
+  function hydrate() {
+    var s = window.IRState.getSettings();
+    // Unit seg
+    var unitSeg = document.querySelector('.seg[data-name=unit]');
+    unitSeg.querySelectorAll('.seg-i').forEach(function (i) { i.classList.toggle('on', i.dataset.value === s.unit); });
+    // Alarm seg
+    var aSeg = document.querySelector('.seg[data-name=alarm]');
+    aSeg.querySelectorAll('.seg-i').forEach(function (i) {
+      i.classList.toggle('on', (i.dataset.value === 'on') === !!s.alarm);
+    });
+    // Dripper
+    document.getElementById('sg-dripper').textContent = s.dripper || 'Kalita Wave';
+  }
+  hydrate();
 
-    if (b.tempSet) document.getElementById('b-temp').value = b.tempSet;
-
-    var pourBody = document.querySelector('#pour-table tbody');
-    pourBody.innerHTML = pr.map(function (row) {
-      return '<tr><td>' + row.cup + ' Cup</td><td><input class="ir-input pr" data-cup="' + row.cup + '" value="' + row.radius + '" style="width:38px;"/> mm</td></tr>';
-    }).join('');
-
-    var pumpBody = document.querySelector('#pump-table tbody');
-    pumpBody.innerHTML = pc.map(function (row, i) {
-      return '<tr><td>' + row.base.toFixed(1) + ' g/sec</td><td><input class="ir-input pc" data-i="' + i + '" value="' + row.calibrated.toFixed(1) + '" style="width:42px;"/> g/sec</td></tr>';
-    }).join('');
-
-    if (wr.water) {
-      document.querySelector('[data-k="water.speed"]').value  = wr.water.speed;
-      document.querySelector('[data-k="water.temp"]').value   = wr.water.temp;
-      document.querySelector('[data-k="water.amount"]').value = wr.water.amount;
-    }
-    if (wr.rinse) {
-      document.querySelector('[data-k="rinse.speed"]').value  = wr.rinse.speed;
-      document.querySelector('[data-k="rinse.temp"]').value   = wr.rinse.temp;
-      document.querySelector('[data-k="rinse.amount"]').value = wr.rinse.amount;
-    }
+  // Segmented controls — persist on click
+  document.querySelectorAll('.seg').forEach(function (seg) {
+    var name = seg.dataset.name;
+    seg.querySelectorAll('.seg-i').forEach(function (i) {
+      i.addEventListener('click', function () {
+        seg.querySelectorAll('.seg-i').forEach(function (x) { x.classList.remove('on'); });
+        i.classList.add('on');
+        var v = i.dataset.value;
+        if (name === 'unit') window.IRState.setSetting('unit', v);
+        if (name === 'alarm') window.IRState.setSetting('alarm', v === 'on');
+      });
+    });
   });
 
-  document.querySelector('[data-ir-save]').addEventListener('click', function () {
-    var general = {
-      extractionUnit: document.getElementById('g-unit').value,
-      alarm: document.getElementById('g-alarm').value,
-      defaultDripper: document.getElementById('g-dripper').value
-    };
-    var boiler = { tempSet: parseInt(document.getElementById('b-temp').value, 10) };
-    var pour = Array.prototype.map.call(document.querySelectorAll('.pr'), function (el) {
-      return { cup: parseInt(el.dataset.cup, 10), radius: parseInt(el.value, 10) };
+  // Dripper picker modal
+  document.getElementById('sg-dripper').addEventListener('click', function () {
+    var overlay = document.getElementById('ir-modal-overlay');
+    var title = document.getElementById('ir-modal-title');
+    var body = document.getElementById('ir-modal-body');
+    var actions = document.getElementById('ir-modal-actions');
+    var current = document.getElementById('sg-dripper').textContent.trim();
+    title.textContent = '기본 드립퍼 선택';
+    body.className = 'ir-modal-body is-info';
+    body.style.padding = '14px 18px';
+    body.style.textAlign = 'left';
+    body.innerHTML = '<div class="dripper-grid">' +
+      DRIPPERS.map(function (d) {
+        return '<button class="drp-i' + (d === current ? ' is-on' : '') + '" data-d="' + d + '">' + d + '</button>';
+      }).join('') + '</div>';
+    actions.innerHTML = '';
+    var cancel = document.createElement('button');
+    cancel.className = 'ir-modal-btn';
+    cancel.textContent = '취소';
+    cancel.onclick = function () { overlay.classList.remove('is-open'); body.style.cssText = ''; };
+    actions.appendChild(cancel);
+    body.querySelectorAll('.drp-i').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var d = btn.dataset.d;
+        document.getElementById('sg-dripper').textContent = d;
+        window.IRState.setSetting('dripper', d);
+        overlay.classList.remove('is-open');
+        body.style.cssText = '';
+        window.IRToast?.show('기본 드립퍼: ' + d);
+      });
     });
-    var pump = Array.prototype.map.call(document.querySelectorAll('.pc'), function (el, i) {
-      return { base: i + 1, calibrated: parseFloat(el.value) };
-    });
-    var wr = {
-      water: {
-        speed:  parseInt(document.querySelector('[data-k="water.speed"]').value, 10),
-        temp:   parseInt(document.querySelector('[data-k="water.temp"]').value, 10),
-        amount: parseInt(document.querySelector('[data-k="water.amount"]').value, 10)
-      },
-      rinse: {
-        speed:  parseInt(document.querySelector('[data-k="rinse.speed"]').value, 10),
-        temp:   parseInt(document.querySelector('[data-k="rinse.temp"]').value, 10),
-        amount: parseInt(document.querySelector('[data-k="rinse.amount"]').value, 10)
-      }
-    };
+    overlay.classList.add('is-open');
+  });
 
-    Promise.all([
-      fetch('/api/general-config',    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(general) }),
-      fetch('/api/boiler-info',       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(boiler) }),
-      fetch('/api/pour-range',        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: pour }) }),
-      fetch('/api/pump-calibration',  { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: pump }) }),
-      fetch('/api/water-rinse',       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(wr) })
-    ]).then(function () {
-      window.IRModal.info({ body: '저장 완료', bodyClass: 'is-info' });
+  // Pour range
+  fetch('/api/pour-range').then(r => r.json()).then(function (rows) {
+    var html = rows.map(function (r) {
+      return '<div class="cr"><span class="cr-k">' + r.cup + ' Cup</span>' +
+             '<span class="cr-v">' + r.radius + '<span class="unit">mm</span></span></div>';
+    }).join('');
+    document.getElementById('sg-pour-rows').innerHTML = html;
+  });
+
+  // Pump calibration
+  fetch('/api/pump-calibration').then(r => r.json()).then(function (rows) {
+    var html = rows.map(function (r) {
+      var delta = (r.calibrated - r.base).toFixed(1);
+      var sign = delta >= 0 ? '+' : '';
+      var cls = delta >= 0 ? 'delta-up' : 'delta-down';
+      var deltaTxt = delta >= 0 ? sign + delta : '−' + Math.abs(delta).toFixed(1);
+      return '<tr><td>' + r.base.toFixed(1) + ' g/s</td>' +
+             '<td>' + r.calibrated.toFixed(1) + ' g/s<span class="' + cls + '">' + deltaTxt + '</span></td></tr>';
+    }).join('');
+    document.getElementById('sg-pump-rows').innerHTML = html;
+  });
+
+  // Water / Rinse
+  fetch('/api/water-rinse').then(r => r.json()).then(function (wr) {
+    ['speed','temp','amount'].forEach(function (k) {
+      var w = document.querySelector('.wr-water[data-k=' + k + ']');
+      var r = document.querySelector('.wr-rinse[data-k=' + k + ']');
+      if (wr.water && wr.water[k] != null && w) w.textContent = wr.water[k] + (k === 'speed' ? ' ml/s' : k === 'temp' ? '°' : ' ml');
+      if (wr.rinse && wr.rinse[k] != null && r) r.textContent = wr.rinse[k] + (k === 'speed' ? ' ml/s' : k === 'temp' ? '°' : ' ml');
+    });
+  });
+
+  // Boiler
+  fetch('/api/boiler-info').then(r => r.json()).then(function (b) {
+    if (b.tempSet != null) document.getElementById('sg-boiler-set').innerHTML = b.tempSet + '<span class="unit">°C</span>';
+    if (b.tempMax != null) document.getElementById('sg-boiler-cur').innerHTML = b.tempMax + '<span class="unit">°C</span>';
+  });
+
+  // Save
+  document.getElementById('btn-save-settings')?.addEventListener('click', function () {
+    window.IRModal?.confirm({
+      title: '설정 저장',
+      body: '변경된 설정값을 저장하시겠습니까?',
+      onOk: function () { window.IRModal.info({ body: '설정이 저장되었습니다.' }); }
     });
   });
 })();

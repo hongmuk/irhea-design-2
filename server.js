@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -30,25 +30,24 @@ function renderIR(res, page, opts) {
 // ── Page Routes ──────────────────────────────────────────
 
 app.get('/', (req, res) => {
-  // Hand-Drip Cinema prototype lives at /preview/. Default to it.
-  res.redirect('/preview/');
+  res.redirect('/setup');
 });
 
 app.get('/setup',   (req, res) => renderIR(res, 'setup',   { title: '최초 설정' }));
 app.get('/connect', (req, res) => renderIR(res, 'connect', { title: '장치 연결' }));
 app.get('/main',    (req, res) => renderIR(res, 'main',    { title: '메인' }));
-// Legacy production EJS routes (pages restored from git HEAD)
-app.get('/dashboard',         (req, res) => res.render('layout', { page: 'dashboard',     title: 'Spout Control', activeNav: 'dashboard' }));
-app.get('/recipes',           (req, res) => res.render('layout', { page: 'recipe-list',   title: 'Recipe Library', activeNav: 'recipes' }));
-app.get('/recipe/:id',        (req, res) => res.render('layout', { page: 'recipe-detail', title: 'Recipe Detail',  activeNav: 'recipes' }));
-app.get('/recipe/:id/edit',   (req, res) => res.render('layout', { page: 'recipe-edit',   title: 'Edit Recipe',    activeNav: 'recipes' }));
-app.get('/favorites',         (req, res) => res.render('layout', { page: 'favorites',     title: 'Favorites',      activeNav: 'favorites' }));
-app.get('/alarms',            (req, res) => res.render('layout', { page: 'alarms',        title: 'Alarms',         activeNav: 'alarms' }));
-app.get('/usage',             (req, res) => res.render('layout', { page: 'usage',         title: 'Usage History',  activeNav: 'usage' }));
-app.get('/calibration',       (req, res) => res.render('layout', { page: 'calibration',   title: 'Calibration',    activeNav: 'calibration' }));
-app.get('/firmware',          (req, res) => res.render('layout', { page: 'firmware',      title: 'Firmware',       activeNav: 'firmware' }));
-app.get('/system-info',       (req, res) => res.render('layout', { page: 'system-info',   title: 'System Info',    activeNav: 'system-info' }));
-app.get('/settings',          (req, res) => res.render('layout', { page: 'settings',      title: 'Settings',       activeNav: 'settings' }));
+// Production routes
+app.get('/dashboard',         (req, res) => res.redirect('/main'));
+app.get('/recipes',           (req, res) => renderIR(res, 'recipes', { title: '레시피', activeNav: 'recipes' }));
+app.get('/recipe/:id',        (req, res) => renderIR(res, 'recipes', { title: '레시피', activeNav: 'recipes' }));
+app.get('/recipe/:id/edit',   (req, res) => renderIR(res, 'recipes', { title: '레시피', activeNav: 'recipes' }));
+app.get('/favorites',         (req, res) => renderIR(res, 'favorites', { title: '즐겨찾기', activeNav: 'favorites' }));
+app.get('/alarms',            (req, res) => res.redirect('/info/security'));
+app.get('/usage',             (req, res) => renderIR(res, 'info-security', { title: '사용 실적', activeNav: 'usage' }));
+app.get('/calibration',       (req, res) => renderIR(res, 'settings-general', { title: '설정', activeNav: 'general' }));
+app.get('/firmware',          (req, res) => renderIR(res, 'firmware-upgrade', { title: '펌웨어', activeNav: 'firmware' }));
+app.get('/system-info',       (req, res) => renderIR(res, 'info',          { title: '장비 정보', activeNav: 'system-info' }));
+app.get('/settings',          (req, res) => renderIR(res, 'settings-general', { title: '설정', activeNav: 'settings' }));
 
 app.get('/brewing',          (req, res) => renderIR(res, 'brewing',          { title: '추출 중' }));
 app.get('/brewing/complete', (req, res) => renderIR(res, 'brewing-complete', { title: '추출 완료' }));

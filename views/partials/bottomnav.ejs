@@ -1,22 +1,6 @@
-<nav class="bottom-nav" id="bottom-nav">
-  <a href="/" class="bnav-item <%= activeNav === 'dashboard' ? 'active' : '' %>">
-    <span class="bnav-icon">&#9632;</span>
-    <span class="bnav-label">Control</span>
-  </a>
-  <a href="/recipes" class="bnav-item <%= activeNav === 'recipes' ? 'active' : '' %>">
-    <span class="bnav-icon">&#9749;</span>
-    <span class="bnav-label">Recipes</span>
-  </a>
-  <a href="/brewing" class="bnav-item <%= activeNav === 'brewing' ? 'active' : '' %>">
-    <span class="bnav-icon">&#9200;</span>
-    <span class="bnav-label">Brewing</span>
-  </a>
-  <a href="/favorites" class="bnav-item <%= activeNav === 'favorites' ? 'active' : '' %>">
-    <span class="bnav-icon">&#9733;</span>
-    <span class="bnav-label">Favorites</span>
-  </a>
-  <button class="bnav-item <%= ['alarms','usage','settings','calibration','firmware','system-info'].includes(activeNav) ? 'active' : '' %>" onclick="toggleMoreMenu()">
-    <span class="bnav-icon">&#8943;</span>
-    <span class="bnav-label">More</span>
-  </button>
+<nav class="nav">
+  <a class="nav-item <%= activeNav === 'settings' ? 'active' : '' %>" href="/settings/general">설정</a>
+  <a class="nav-item <%= activeNav === 'recipes' ? 'active' : '' %>" href="/recipes">레시피</a>
+  <a class="nav-item <%= activeNav === 'favorites' ? 'active' : '' %>" href="/favorites">즐겨찾기</a>
+  <a class="nav-item <%= activeNav === 'info' ? 'active' : '' %>" href="/info">정보</a>
 </nav>

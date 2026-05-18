@@ -1,126 +1,159 @@
-<!-- 정보 — 일반 정보 6패널 -->
-<div class="ir-shell">
-  <div class="ir-content" style="padding:24px 28px 18px;">
+<!-- 정보 (S8.1) — designs/02-info.html 정합 (v1.1: 4 패널 2×2 + 실적 → S8.3 분리). Topbar는 layout.ejs. -->
 
-    <div style="margin-bottom:16px;">
-      <span class="ir-page-sub">Specification</span>
-      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">장비 <em>정보.</em></h1>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;flex:1;">
-
-      <!-- 장비 정보 -->
-      <div class="ir-card" style="padding:0;">
-        <div class="ir-card-header">장비 정보</div>
-        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
-          <div>· 일련 번호: <strong id="dev-serial">—</strong></div>
-          <div>· 모델 번호: <strong id="dev-model">—</strong></div>
-          <div>· 펌웨어 버전: <span id="dev-fw">—</span></div>
-          <div>· 펌웨어 업데이트 일자: <span id="dev-fw-date">—</span></div>
-          <div>· 타임존: <strong id="dev-tz">—</strong></div>
-          <div>· 최초 설치일: <span id="dev-install">—</span></div>
-        </div>
-      </div>
-
-      <!-- 보일러 정보 -->
-      <div class="ir-card" style="padding:0;">
-        <div class="ir-card-header">보일러 정보</div>
-        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
-          <div>· 일련 번호: <strong id="b-serial">—</strong></div>
-          <div>· 모델 번호: <strong id="b-model">—</strong></div>
-          <div>· 펌웨어 버전: <span id="b-fw">—</span></div>
-          <div>· 펌웨어 업데이트 일자: <span id="b-fw-date">—</span></div>
-          <div>· 워터펌프 모델: <span id="b-pump">—</span></div>
-          <div>· 솔 밸브: <span id="b-valve">—</span></div>
-          <div>· 온도: 최고 <span id="b-temp">—</span>도</div>
-        </div>
-      </div>
-
-      <!-- 물붓기 범위 -->
-      <div class="ir-card" style="padding:0;">
-        <div class="ir-card-header">물붓기 범위</div>
-        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
-          <div style="display:flex;gap:24px;color:var(--ir-fg-muted);font-weight:700;font-size:11px;letter-spacing:0.06em;">
-            <span style="flex:1;">범위</span><span style="flex:1;">반지름</span>
-          </div>
-          <div id="info-pour"></div>
-        </div>
-      </div>
-
-      <!-- 사용 실적 (yellow header) -->
-      <div class="ir-card" style="padding:0;">
-        <div class="ir-card-header is-yellow">사용 실적</div>
-        <div style="padding:14px 18px;font-size:13px;line-height:1.65;">
-          <div>· 총 추출횟수: <strong id="us-total">—</strong> 회</div>
-          <div style="margin-top:8px;font-size:12px;color:var(--ir-fg-muted);">· 레시피별 추출실적</div>
-          <table class="ir-table" id="us-table" style="margin-top:6px;font-size:12px;"></table>
-          <div style="margin-top:6px;font-size:12px;color:var(--ir-fg-muted);">· 부품 사용 실적 정보</div>
-        </div>
-      </div>
-
-      <!-- 환경 설정 -->
-      <div class="ir-card" style="padding:0;">
-        <div class="ir-card-header">환경 설정</div>
-        <div style="padding:14px 18px;font-size:13px;line-height:1.85;">
-          <div>· 추출 단위 (%, g): <strong id="g-unit-v">—</strong></div>
-          <div>· 알람: <strong id="g-alarm-v">—</strong></div>
-          <div>· 드립퍼 종류: <strong id="g-dripper-v">—</strong></div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Footer actions -->
-    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:12px;">
-      <a class="ir-btn ir-btn-pill" href="/main">복귀</a>
-      <a class="ir-btn ir-btn-pill ir-btn-primary" href="/info/security">보안 정보</a>
-    </div>
+<div class="sub-h">
+  <div class="sub-h-l">정보<em>S8.1 · 일반 (관리자 인증 후)</em></div>
+  <div class="sub-h-r">
+    <span>인증 <span class="ok">완료</span></span>
+    <span>로그인 <b>Admin</b></span>
+    <span>14:08</span>
   </div>
 </div>
 
+<div class="info-body">
+
+  <!-- Panel 1: 장비 정보 -->
+  <div class="panel">
+    <div class="panel-h">
+      <span class="panel-title"><span class="ico">⚙</span>장비 정보</span>
+      <span class="panel-id">8.1.1</span>
+    </div>
+    <div class="pr"><span class="pr-k">일련 번호</span><span class="pr-v mono" id="info-serial">R5KRW2600001<span class="ro">read-only</span></span></div>
+    <div class="pr"><span class="pr-k">모델 번호</span><span class="pr-v" id="info-model">iRHEA-Light-M5</span></div>
+    <div class="pr"><span class="pr-k">펌웨어 버전</span><span class="pr-v" id="info-fw">1.0 <em>(2026.03.01)</em></span></div>
+    <div class="pr"><span class="pr-k">타임존</span><span class="pr-v">Asia / Seoul <em>(UTC+9)</em></span></div>
+    <div class="pr"><span class="pr-k">최초 설치일</span><span class="pr-v" id="info-install">2026.03.17</span></div>
+    <div class="panel-foot"><span>관리자 메뉴에서 변경 가능</span><a href="/setup">변경 →</a></div>
+  </div>
+
+  <!-- Panel 2: 보일러 정보 -->
+  <div class="panel">
+    <div class="panel-h">
+      <span class="panel-title"><span class="ico">🔥</span>보일러 정보</span>
+      <span class="panel-id">8.1.2</span>
+    </div>
+    <div class="pr"><span class="pr-k">일련 번호</span><span class="pr-v mono" id="info-b-serial">R5KRM2600001<span class="ro">read-only</span></span></div>
+    <div class="pr"><span class="pr-k">모델 번호</span><span class="pr-v" id="info-b-model">iRHEA-Light-M5</span></div>
+    <div class="pr"><span class="pr-k">펌웨어</span><span class="pr-v" id="info-b-fw">1.0 <em>(2026.03.01)</em></span></div>
+    <div class="pr"><span class="pr-k">워터펌프</span><span class="pr-v" id="info-b-pump">SC3711PW <em>(12V)</em></span></div>
+    <div class="pr"><span class="pr-k">솔 밸브</span><span class="pr-v" id="info-b-valve">출수측 2 Way / 입수측 2 Way</span></div>
+    <div class="pr"><span class="pr-k">온도 최대</span><span class="pr-v" id="info-b-temp">95 °C</span></div>
+  </div>
+
+  <!-- Panel 3: 물붓기 범위 -->
+  <div class="panel">
+    <div class="panel-h">
+      <span class="panel-title"><span class="ico">💧</span>물붓기 범위</span>
+      <span class="panel-id">8.1.3</span>
+    </div>
+    <table class="rt">
+      <thead><tr><th>범위</th><th style="text-align:right;">반지름</th></tr></thead>
+      <tbody id="info-pour-rows"></tbody>
+    </table>
+    <div class="panel-foot"><span>image13 verbatim — "cup" 소문자 표기</span><a href="/settings/general">설정 →</a></div>
+  </div>
+
+  <!-- Panel 4: 사용 실적 (metric quick link) -->
+  <div class="panel metric">
+    <div class="metric-h">
+      <span class="panel-title"><span class="ico">📊</span>사용 실적 (요약)</span>
+      <span class="panel-id">8.1.4 → S8.3</span>
+    </div>
+    <div class="metric-grid">
+      <div class="metric-cell">
+        <span class="metric-num">1,247</span>
+        <span class="metric-lbl">총 추출</span>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-num brand">38</span>
+        <span class="metric-lbl">오늘 (KST)</span>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-num" style="font-size:18px; letter-spacing:-0.5px;">레시피 3</span>
+        <span class="metric-lbl">이번 주 1위 · 8회</span>
+      </div>
+    </div>
+    <div class="metric-foot">
+      <span class="timestamp">마지막 갱신 · 14:31 · 자정 자동 reset</span>
+      <a class="btn-detail" href="/info/security">상세 보기 →</a>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  /* info — designs/02-info.html 정합 */
+  .sub-h { height: 44px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
+  .sub-h-l { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .sub-h-l em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
+  .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
+  .sub-h-r b { color: var(--ink-2); font-weight: 600; }
+  .sub-h-r .ok { color: var(--brand); font-weight: 600; }
+
+  .info-body { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
+  .panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; background: var(--bg); }
+
+  .panel-h { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--hair); margin: 0; }
+  .panel-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .panel-title .ico { margin-right: 6px; font-weight: 400; }
+  .panel-id { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
+
+  .pr { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: baseline; padding: 5px 0; border-top: 1px solid var(--hair); font-size: 12.5px; }
+  .pr:first-of-type { border-top: none; padding-top: 2px; }
+  .pr-k { color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
+  .pr-v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+  .pr-v.mono { font-family: var(--font-mono); font-size: 12px; }
+  .pr-v em { color: var(--ink-3); font-weight: 500; font-style: normal; margin-left: 6px; }
+  .pr-v .ro { font-size: 9px; color: var(--ink-3); border: 1px solid var(--hair-2); padding: 1px 4px; margin-left: 6px; font-weight: 600; letter-spacing: 0.3px; }
+
+  .panel-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 10px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
+  .panel-foot a { color: var(--brand); font-weight: 600; text-decoration: none; }
+
+  /* metric card (warn-colored) */
+  .panel.metric { padding: 0; background: linear-gradient(180deg, #FFFAF2 0%, var(--bg) 60%); border-color: #C28200; }
+  .metric-h { padding: 12px 16px; border-bottom: 1px solid var(--hair); display: flex; align-items: baseline; justify-content: space-between; }
+  .metric-h .panel-title { color: #C28200; }
+  .metric-grid { padding: 14px 16px 8px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .metric-cell { display: flex; flex-direction: column; gap: 4px; padding: 6px 0; }
+  .metric-cell + .metric-cell { border-left: 1px solid var(--hair); padding-left: 12px; }
+  .metric-num { font-size: 28px; font-weight: 600; color: var(--ink); letter-spacing: -1.5px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .metric-num.brand { color: var(--brand); }
+  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
+  .metric-foot { padding: 8px 16px 12px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--hair); }
+  .metric-foot .timestamp { font-size: 10.5px; color: var(--ink-3); font-weight: 500; }
+  .btn-detail { font-size: 12px; padding: 6px 14px; border: 1px solid var(--ink); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+  .btn-detail:hover { background: var(--ink); color: #fff; }
+
+  .rt { width: 100%; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .rt th { text-align: left; padding: 5px 0; font-size: 10px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; border-bottom: 1px solid var(--hair); }
+  .rt td { padding: 5px 0; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--hair); }
+  .rt td:last-child { text-align: right; font-weight: 600; }
+  .rt tr:last-child td { border-bottom: none; }
+</style>
+
 <script>
 (function () {
-  Promise.all([
-    fetch('/api/system-config').then(function (r) { return r.json(); }),
-    fetch('/api/boiler-info').then(function (r) { return r.json(); }),
-    fetch('/api/pour-range').then(function (r) { return r.json(); }),
-    fetch('/api/usage-stats').then(function (r) { return r.json(); }),
-    fetch('/api/general-config').then(function (r) { return r.json(); })
-  ]).then(function (rs) {
-    var d = rs[0] || {}, b = rs[1] || {}, pr = rs[2] || [], us = rs[3] || {}, g = rs[4] || {};
-
-    document.getElementById('dev-serial').textContent  = d.serialNumber || '—';
-    document.getElementById('dev-model').textContent   = d.modelNumber || '—';
-    document.getElementById('dev-fw').textContent      = d.firmwareVersion || '—';
-    document.getElementById('dev-fw-date').textContent = d.firmwareDate || '—';
-    document.getElementById('dev-tz').textContent      = d.timezone || '—';
-    document.getElementById('dev-install').textContent = d.firstInstalledAt || '—';
-
-    document.getElementById('b-serial').textContent  = b.serialNumber || '—';
-    document.getElementById('b-model').textContent   = b.modelNumber || '—';
-    document.getElementById('b-fw').textContent      = b.firmwareVersion || '—';
-    document.getElementById('b-fw-date').textContent = b.firmwareDate || '—';
-    document.getElementById('b-pump').textContent    = b.waterPump || '—';
-    document.getElementById('b-valve').textContent   = b.valve || '—';
-    document.getElementById('b-temp').textContent    = b.tempMax || '—';
-
-    var pourBox = document.getElementById('info-pour');
-    pourBox.innerHTML = (pr || []).map(function (row) {
-      return '<div style="display:flex;gap:24px;align-items:center;padding:2px 0;">' +
-             '<span style="flex:1;font-weight:700;">' + row.cup + ' cup</span>' +
-             '<span style="flex:1;font-weight:700;">' + row.radius + 'mm</span></div>';
+  fetch('/api/system-config').then(r => r.json()).then(function (sc) {
+    if (sc.serialNumber) document.getElementById('info-serial').innerHTML =
+      sc.serialNumber + '<span class="ro">read-only</span>';
+    if (sc.modelName || sc.modelNumber) document.getElementById('info-model').textContent = sc.modelName || sc.modelNumber;
+    if (sc.firmwareVersion && sc.firmwareDate) document.getElementById('info-fw').innerHTML =
+      sc.firmwareVersion + ' <em>(' + sc.firmwareDate + ')</em>';
+    if (sc.installedAt) document.getElementById('info-install').textContent = sc.installedAt;
+  });
+  fetch('/api/boiler-info').then(r => r.json()).then(function (b) {
+    if (b.serialNumber) document.getElementById('info-b-serial').innerHTML = b.serialNumber + '<span class="ro">read-only</span>';
+    if (b.modelNumber) document.getElementById('info-b-model').textContent = b.modelNumber;
+    if (b.firmwareVersion && b.firmwareDate) document.getElementById('info-b-fw').innerHTML =
+      b.firmwareVersion + ' <em>(' + b.firmwareDate + ')</em>';
+    if (b.waterPump) document.getElementById('info-b-pump').textContent = b.waterPump;
+    if (b.valve) document.getElementById('info-b-valve').textContent = b.valve;
+    if (b.tempMax) document.getElementById('info-b-temp').textContent = b.tempMax + ' °C';
+  });
+  fetch('/api/pour-range').then(r => r.json()).then(function (rows) {
+    var html = rows.map(function (r) {
+      return '<tr><td>' + r.cup + ' cup</td><td>' + r.radius + ' mm</td></tr>';
     }).join('');
-
-    document.getElementById('us-total').textContent = us.totalBrews || '—';
-    var tbl = document.getElementById('us-table');
-    tbl.innerHTML = '<thead><tr><th>레시피명</th><th>추출횟수</th><th>사용원두량</th></tr></thead><tbody>' +
-      (us.perRecipe || []).map(function (r) {
-        return '<tr><td>' + r.name + '</td><td>' + r.count + '회</td><td>' + r.beanGrams + 'g</td></tr>';
-      }).join('') + '</tbody>';
-
-    document.getElementById('g-unit-v').textContent    = g.extractionUnit || '—';
-    document.getElementById('g-alarm-v').textContent   = (g.alarm === '예' ? 'YES' : (g.alarm === '아니오' ? 'NO' : '—'));
-    document.getElementById('g-dripper-v').textContent = g.defaultDripper || '—';
+    document.getElementById('info-pour-rows').innerHTML = html;
   });
 })();
 </script>
