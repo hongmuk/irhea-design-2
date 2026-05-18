@@ -1,323 +1,577 @@
-/* iRHEA-Light theme — Hand-Drip Cinema palette + 한국어 임베디드 키오스크 구조
- * --ir-* 토큰은 Cinema 팔레트(warm cream + noble gold + deep charcoal)에 매핑됨.
- * Cinema 시각 언어를 유지하면서, 명세 구조에 맞춘 새 화면을 렌더한다.
+/* iRHEA-Light theme — Design 2 Cinema Gold (Cream & Noble Gold)
+ * High-end specialty cafe aesthetic with Serif typography and 5-column grid.
  */
 
 :root {
-  /* Surfaces — warm cream */
-  --ir-bg:        #f6f4f1;
-  --ir-bg-2:      #fdfcfa;
-  --ir-bg-3:      #eae7e2;
-  --ir-panel:     #fdfcfa;
-  --ir-panel-hover: #f4f2ee;
+  /* Surfaces */
+  --bg: #FFFFFF;
+  --ink: #111111;
+  --ink-2: #555555;
+  --ink-3: #999999;
+  --hair: #ECECEC;
+  --hair-2: #DDDDDD;
+  --brand: #E60012; /* Red accent for active states */
+  --brand-dim: rgba(230,0,18,0.06);
+  
+  /* Status Colors */
+  --st-brewing: #E60012;
+  --st-done: #1A8054;
+  --st-rinse: #6E5A96;
+  --st-water: #3E7E96;
+  --st-idle: #B8B8B8;
 
-  /* Foreground — deep charcoal */
-  --ir-fg:        #1d1d1f;
-  --ir-fg-muted:  #48484a;
-  --ir-fg-subtle: #8a8580;
-
-  /* Lines / borders — soft brown hairlines */
-  --ir-line:        rgba(80, 50, 20, 0.18);
-  --ir-line-strong: rgba(60, 40, 20, 0.55);
-  --ir-line-soft:   rgba(80, 50, 20, 0.10);
-
-  /* Accents — noble gold */
-  --ir-orange:        #c5a059;            /* primary accent (active tab / 실행 / 추출) */
-  --ir-orange-hover:  #d6b067;
-  --ir-orange-deep:   #6A5B48;            /* gold-deep (eyebrow type) */
-  --ir-yellow:        #e0c896;             /* soft gold (header band / 알림) */
-  --ir-yellow-soft:   #efd9a8;
-
-  /* Status — apple-system tones */
-  --ir-status-error: #ff3b30;
-  --ir-status-warn:  #ff9500;
-  --ir-status-ok:    #34c759;
-  --ir-status-info:  #007aff;
-
-  /* Spout / 상태 칩 — muted earth/cool palette so it harmonizes with cream */
-  --ir-state-extracting: #1B3A4B;
-  --ir-state-complete:   #34c759;
-  --ir-state-rinsing:    #8a6cb6;
-  --ir-state-watering:   #007aff;
-  --ir-state-ready:      #c5a059;
-
-  /* Modal — cream paper with gold trim */
-  --ir-modal-overlay: rgba(40, 30, 20, 0.35);
-  --ir-modal-bg:      #fdfcfa;
-  --ir-modal-border:  rgba(60, 40, 20, 0.18);
+  /* Cinema Gold Specifics */
+  --gold: #C5A059;
+  --gold-deep: #6A5B48;
+  --paper: #FDFCFA;
+  --cream: #F6F4F1;
 
   /* Sizing */
-  --ir-radius-sm: 6px;
-  --ir-radius:    10px;
-  --ir-radius-lg: 16px;
-  --ir-radius-pill: 999px;
+  --radius-sm: 4px;
+  --radius: 8px;
+  
+  /* Fonts */
+  --font-main: 'Pretendard Variable', -apple-system, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  /* Type */
-  --ir-font:      'Pretendard Variable', Pretendard, 'Inter', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-  --ir-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --ir-font-display: 'Playfair Display', Georgia, serif;
+  /* Legacy --ir-* aliases — pages authored before the Cinema Gold rename
+     still reference these tokens. Keeping them mapped avoids a sweep of
+     every page on this WIP. */
+  --ir-bg: var(--bg);
+  --ir-bg-2: var(--paper);
+  --ir-bg-3: var(--cream);
+  --ir-panel: var(--paper);
+  --ir-panel-hover: var(--cream);
+  --ir-fg: var(--ink);
+  --ir-fg-muted: var(--ink-2);
+  --ir-fg-subtle: var(--ink-3);
+  --ir-line: var(--hair);
+  --ir-line-strong: var(--hair-2);
+  --ir-line-soft: rgba(0,0,0,0.04);
+  --ir-orange: var(--gold);
+  --ir-orange-hover: #d6b067;
+  --ir-orange-deep: var(--gold-deep);
+  --ir-yellow: #e0c896;
+  --ir-yellow-soft: #efd9a8;
+  --ir-brand: var(--brand);
+  --ir-brand-dim: var(--brand-dim);
+  --ir-status-error: var(--brand);
+  --ir-status-warn: #ff9500;
+  --ir-status-ok: var(--st-done);
+  --ir-status-info: var(--st-water);
+  --ir-state-extracting: var(--st-brewing);
+  --ir-state-complete: var(--st-done);
+  --ir-state-rinsing: var(--st-rinse);
+  --ir-state-watering: var(--st-water);
+  --ir-state-ready: var(--st-idle);
+  --ir-modal-overlay: rgba(0,0,0,0.35);
+  --ir-modal-bg: var(--paper);
+  --ir-modal-border: var(--hair-2);
+  --ir-radius-sm: var(--radius-sm);
+  --ir-radius: var(--radius);
+  --ir-font-display: var(--font-display);
+  --ir-font-mono: var(--font-mono);
 }
 
 /* ── Base ── */
-.ir, .ir * { box-sizing: border-box; }
-
-body.ir-theme {
-  margin: 0;
-  background: var(--ir-bg);
-  color: var(--ir-fg);
-  font-family: var(--ir-font);
-  font-feature-settings: 'tnum' 1, 'cv11' 1;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #1A1A1A; /* Outer backdrop */
+  color: var(--ink);
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  height: 100vh;
 }
 
-body.ir-theme .stage  { background: var(--ir-bg); }
-body.ir-theme .canvas {
-  background: var(--ir-bg);
-  color: var(--ir-fg);
+.viewport {
   width: 1280px;
   height: 800px;
-}
-
-/* Hide cinema legacy navrail when ir-theme rendering */
-body.ir-theme .navrail { display: none !important; }
-body.ir-theme .app-shell { padding: 0; }
-
-/* ── Layout shell ── */
-.ir-shell {
+  background: var(--bg);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
-  width: 1280px;
-  height: 800px;
   position: relative;
+}
+
+/* ── Topbar ─────────────────────────────────── */
+.topbar {
+  height: 60px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--hair);
+  flex-shrink: 0;
+}
+.brand { display: inline-flex; align-items: center; gap: 14px; }
+.brand-logo { height: 24px; display: block; }
+.brand-divider { width: 1px; height: 18px; background: var(--hair); }
+.brand-sub { font-size: 12px; color: var(--ink-3); font-weight: 500; line-height: 1.3; }
+.brand-sub b { color: var(--ink-2); font-weight: 600; }
+
+.topbar-right { display: inline-flex; align-items: center; gap: 18px; font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.tb-stat { display: inline-flex; align-items: baseline; gap: 5px; font-variant-numeric: tabular-nums; }
+.tb-stat .tb-lbl { font-size: 11px; color: var(--ink-3); font-weight: 500; }
+.tb-stat .tb-val { font-weight: 600; color: var(--ink); }
+.tb-sep { width: 1px; height: 12px; background: var(--hair); }
+.tb-live { display: inline-flex; align-items: center; gap: 7px; color: var(--st-done); font-weight: 600; font-size: 12px; }
+.tb-live::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
+
+.btn-shutdown {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--hair-2);
+  background: transparent;
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ── 5-Column Stations ───────────────────────── */
+.stations { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 0; }
+.st {
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  border-right: 1px solid var(--hair);
+  position: relative;
+  min-height: 0;
+}
+.st:last-child { border-right: none; }
+.st-1 { background: #FFF6F1; }
+.st-2 { background: #F1F8F3; }
+.st-3 { background: #F5F2FA; }
+.st-4 { background: #EEF4F7; }
+.st-5 { background: #F8F8F6; }
+.st.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
+
+.st-head { display: flex; align-items: flex-start; justify-content: space-between; }
+.st-num { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 40px; line-height: 0.8; color: var(--ink); opacity: 0.2; }
+.st.active .st-num { opacity: 1; color: var(--brand); }
+.st-head-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.st-state { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); }
+.st.active .st-state { color: var(--brand); }
+.st-state .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.st-count { font-size: 10px; color: var(--ink-3); font-weight: 500; }
+.st-count b { color: var(--ink-2); font-weight: 700; }
+
+.st-vis { display: flex; justify-content: center; align-items: center; padding: 4px 0; }
+.st-circle { width: 150px; height: 150px; position: relative; border-radius: 50%; overflow: hidden; background: #111; }
+.st-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.prog { position: absolute; inset: 0; transform: rotate(-90deg); }
+.prog-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #FFF; line-height: 1; }
+.prog-pct { font-size: 36px; font-weight: 700; font-family: var(--font-mono); }
+.prog-sub { font-size: 10px; font-weight: 700; opacity: 0.8; margin-top: 4px; letter-spacing: 0.05em; }
+
+.st-info { display: flex; flex-direction: column; gap: 4px; }
+.st-info-row { display: flex; justify-content: space-between; align-items: baseline; }
+.st-stage { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+.st-time { font-size: 15px; font-weight: 600; color: var(--ink); font-family: var(--font-mono); }
+.st-bar { height: 3px; background: rgba(0,0,0,0.06); position: relative; overflow: hidden; }
+.st-bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--brand); }
+
+.st-recipe-name { font-weight: 600; font-size: 14px; color: var(--ink); margin-top: 4px; }
+.st-recipe-meta { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+
+.st-slots { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+.st-slot { display: flex; flex-direction: column; gap: 2px; }
+.st-slot-top { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 600; }
+.st-slot-recipe { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.st-slot.active .st-slot-recipe { color: var(--brand); }
+.st-slot-desc { font-size: 9px; color: var(--ink-3); }
+
+/* ── Navigation ─────────────────────────────── */
+.nav { height: 48px; display: flex; align-items: center; justify-content: center; gap: 40px; border-top: 1px solid var(--hair); background: var(--bg); flex-shrink: 0; }
+.nav-item { font-size: 13px; color: var(--ink-3); font-weight: 500; text-decoration: none; padding: 14px 4px; position: relative; }
+.nav-item.active { color: var(--ink); font-weight: 600; }
+.nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 4px; right: 4px; height: 2px; background: var(--brand); }
+
+/* ── Shared shell scaffolding (used across recipes, brewing, info, settings) ── */
+.ir-shell { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--bg); }
+.ir-shell .col { display: flex; flex-direction: column; min-height: 0; }
+
+.ir-card {
+  border: 1px solid var(--hair);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.ir-card-header {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  border-bottom: 1px solid var(--hair);
+  background: var(--bg);
+}
+.ir-card-body { padding: 14px 16px; }
+
+/* Shared bottom action bar (Cinema Gold style) */
+.ir-action-bar-gold {
+  height: 56px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--hair);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+.ir-action-bar-gold .ab-check {
+  font-size: 12px;
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.ir-action-bar-gold .ab-check::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--hair-2);
+  border-radius: 3px;
+  display: inline-block;
+  background: var(--bg);
+}
+.ir-action-bar-gold .ab-check:has(input:checked) {
+  color: var(--gold);
+}
+.ir-action-bar-gold .ab-check:has(input:checked)::before {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 3px var(--bg);
+}
+.ir-action-bar-gold .ab-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--hair-2);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ir-action-bar-gold .ab-btn:hover { background: var(--cream); }
+.ir-action-bar-gold .ab-btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+.ir-action-bar-gold .ab-btn.primary:hover {
+  background: var(--gold-deep);
+  border-color: var(--gold-deep);
+}
+
+/* Shared button system */
+.ir-btn {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--hair-2);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.ir-btn:hover { background: var(--cream); }
+.ir-btn.ir-btn-primary,
+.ir-btn-primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+.ir-btn.ir-btn-primary:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
+.ir-btn.ir-btn-danger,
+.ir-btn-danger {
+  background: var(--bg);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.ir-btn.ir-btn-danger:hover {
+  background: var(--brand);
+  color: #fff;
+}
+.ir-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Settings tabs (settings-shell partial) */
+.ir-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  padding: 0 20px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--hair);
+  min-height: 56px;
+}
+.ir-tab {
+  padding: 12px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-decoration: none;
+  text-align: center;
+  line-height: 1.3;
+  border-bottom: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  letter-spacing: 0.02em;
+}
+.ir-tab:hover { color: var(--ink); }
+.ir-tab.is-active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.ir-action-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.ir-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+  opacity: 0.4;
 }
 
 .ir-content {
   flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Settings-page inline tab bar (.settings-tabs / .stab — used by settings-general) */
+.settings-tabs {
   display: flex;
-  flex-direction: column;
-  padding: 24px 32px 28px;
-  overflow: hidden;
+  align-items: stretch;
+  min-height: 56px;
+  padding: 0 24px;
+  gap: 4px;
 }
-
-/* ── Top tab bar (4-탭) ── */
-.ir-tabs {
-  display: flex;
-  gap: 16px;
-  padding: 18px 28px 0;
-}
-
-.ir-tab {
-  min-width: 140px;
-  padding: 12px 18px;
-  background: var(--ir-bg-2);
-  border: 1px solid var(--ir-line);
-  border-radius: var(--ir-radius);
-  color: var(--ir-fg);
-  font-family: var(--ir-font);
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-  box-shadow: 0 1px 2px rgba(50,30,10,0.04);
-}
-.ir-tab:hover {
-  background: var(--ir-panel-hover);
-  border-color: var(--ir-orange);
-}
-.ir-tab.is-active {
-  background: var(--ir-orange);
-  border-color: var(--ir-orange);
-  color: var(--ir-bg-2);
-  box-shadow: 0 4px 14px rgba(197,160,89,0.22);
-}
-
-/* Subtle gold divider under the tabs */
-.ir-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--ir-orange) 12%, var(--ir-orange) 88%, transparent);
-  opacity: 0.55;
-  margin: 24px 0 18px;
-}
-
-/* ── Buttons ── */
-.ir-action-row {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.ir-btn {
-  min-width: 96px;
-  padding: 10px 20px;
-  background: var(--ir-bg-2);
-  border: 1px solid var(--ir-line);
-  border-radius: var(--ir-radius);
-  color: var(--ir-fg);
-  font-family: var(--ir-font);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  text-align: center;
+.stab {
+  padding: 0 18px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-  box-shadow: 0 1px 2px rgba(50,30,10,0.04);
-}
-.ir-btn:hover { border-color: var(--ir-orange); background: var(--ir-panel-hover); }
-.ir-btn-primary {
-  background: var(--ir-orange);
-  border-color: var(--ir-orange);
-  color: var(--ir-bg-2);
-}
-.ir-btn-primary:hover { background: var(--ir-orange-hover); border-color: var(--ir-orange-hover); }
-
-.ir-btn-danger {
-  border-color: var(--ir-status-error);
-  color: var(--ir-status-error);
-}
-.ir-btn-danger:hover { background: rgba(255,59,48,0.06); }
-
-.ir-btn-ghost { background: transparent; }
-
-.ir-btn-pill {
-  border-radius: var(--ir-radius-pill);
-  padding: 12px 28px;
-}
-
-.ir-btn-fab {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--ir-orange);
-  border: none;
-  color: var(--ir-bg-2);
-  font-weight: 700;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 6px 20px rgba(197,160,89,0.30);
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.ir-btn-fab:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(197,160,89,0.36); }
-
-/* ── Cards / panels ── */
-.ir-card {
-  background: var(--ir-bg-2);
-  border: 1px solid var(--ir-line);
-  border-radius: var(--ir-radius);
-  padding: 16px 18px;
-  color: var(--ir-fg);
-  box-shadow: 0 2px 8px rgba(50,30,10,0.04);
-}
-
-.ir-card-header {
-  font-family: var(--ir-font-display);
-  font-size: 16px;
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: -0.01em;
-  text-align: center;
-  padding: 10px 0 12px;
-  border-bottom: 1px solid var(--ir-line);
-  margin: -16px -18px 14px;
-  background: var(--ir-bg-3);
-  border-top-left-radius: var(--ir-radius);
-  border-top-right-radius: var(--ir-radius);
-  color: var(--ir-fg);
-}
-.ir-card-header.is-yellow {
-  background: var(--ir-yellow);
-  color: #3a2d1c;
-}
-
-/* Tables */
-.ir-table {
-  width: 100%;
-  border-collapse: collapse;
   font-size: 13px;
-  color: var(--ir-fg);
+  font-weight: 600;
+  color: var(--ink-3);
+  border-bottom: 2px solid transparent;
+  letter-spacing: 0.02em;
 }
-.ir-table th, .ir-table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--ir-line-soft);
-  text-align: center;
-}
-.ir-table th {
-  background: var(--ir-bg-3);
-  font-weight: 700;
-  font-family: var(--ir-font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ir-orange-deep);
+.stab:hover { color: var(--ink); }
+.stab.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
 }
 
-/* Form rows */
-.ir-form-row {
+/* Standalone ab-btn (also used by ir-action-bar-gold scoped above) */
+.ab-btn {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--hair-2);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+.ab-btn:hover { background: var(--cream); }
+.ab-btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+.ab-btn.primary:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
+
+/* Page-level footer action bar (used by /info, etc.) */
+.action-bar {
+  height: 56px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--hair);
+  background: var(--paper);
+  flex-shrink: 0;
+}
+
+/* Sub-header (used by recipes, info, others) */
+.sub-h {
+  height: 48px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--ir-line-soft);
+  border-bottom: 1px solid var(--hair);
+  background: var(--bg);
+  flex-shrink: 0;
 }
-.ir-form-row:last-child { border-bottom: none; }
-
-.ir-input {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--ir-line-strong);
-  color: var(--ir-fg);
-  font-family: var(--ir-font);
-  font-size: 14px;
-  font-weight: 700;
-  padding: 4px 6px;
-  outline: none;
-  text-align: center;
-}
-.ir-input:focus { border-color: var(--ir-orange); }
-
-.ir-select {
-  background: var(--ir-bg-2);
-  border: 1px solid var(--ir-line);
-  border-radius: var(--ir-radius-sm);
-  color: var(--ir-fg);
-  font-family: var(--ir-font);
+.sub-h-l {
   font-size: 13px;
-  padding: 6px 10px;
-  cursor: pointer;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.sub-h-l em {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-3);
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+.sub-h-r {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--ink-2);
 }
 
-.ir-toggle {
-  display: inline-flex;
-  background: var(--ir-bg-3);
-  border: 1px solid var(--ir-line);
-  border-radius: var(--ir-radius-pill);
-  padding: 2px;
+/* Card-like panel (used by /info, /info-security) */
+.panel {
+  background: var(--paper);
+  border: 1px solid var(--hair);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
-.ir-toggle-opt {
-  padding: 6px 16px;
+.panel-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--hair);
+}
+.panel .card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+/* Key-value rows (used by /info, /recipes) */
+.pr {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid var(--hair);
+  font-size: 12px;
+  align-items: baseline;
+}
+.pr:first-of-type,
+.panel .pr:first-of-type { border-top: none; }
+.pr-k { color: var(--ink-3); font-weight: 500; }
+.pr-v { color: var(--ink); font-weight: 700; }
+
+/* Floating action button (used by /connect dev-toggle) */
+.ir-btn-fab {
+  border: 1px solid var(--hair-2);
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
+  text-align: center;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.ir-btn-fab:hover { background: var(--cream); }
+
+/* Layout utilities */
+.ir-row { display: flex; align-items: center; }
+.ir-col { display: flex; flex-direction: column; }
+.ir-grow { flex: 1; min-width: 0; min-height: 0; }
+.ir-center { display: flex; align-items: center; justify-content: center; }
+
+/* Side menu (engineering sub-nav) */
+.ir-side-menu {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--hair);
+  background: var(--paper);
+  padding: 14px 0;
+  align-self: stretch;
+}
+.ir-side-menu .ir-tab {
+  padding: 12px 18px;
   font-size: 13px;
   font-weight: 600;
-  border-radius: var(--ir-radius-pill);
-  cursor: pointer;
-  color: var(--ir-fg-muted);
-  user-select: none;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hair);
+  border-left: 3px solid transparent;
+  display: block;
+  letter-spacing: 0;
 }
-.ir-toggle-opt.is-active {
-  background: var(--ir-orange);
-  color: var(--ir-bg-2);
+.ir-side-menu .ir-tab:hover { background: var(--cream); }
+.ir-side-menu .ir-tab.is-active {
+  background: var(--cream);
+  color: var(--brand);
+  border-left-color: var(--brand);
+  border-bottom-color: var(--hair);
 }
 
-/* ── Modal / 알림 ── */
+/* Inputs */
+.ir-input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--hair-2);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  font-family: inherit;
+}
+.ir-input:focus { outline: none; border-color: var(--gold); }
+
+/* Modal */
 .ir-modal-overlay {
   position: fixed;
   inset: 0;
@@ -325,162 +579,82 @@ body.ir-theme .app-shell { padding: 0; }
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 100;
-  backdrop-filter: blur(2px);
+  z-index: 1000;
 }
 .ir-modal-overlay.is-open { display: flex; }
-
 .ir-modal {
-  min-width: 320px;
-  max-width: 540px;
-  background: var(--ir-modal-bg);
-  border: 1px solid var(--ir-modal-border);
-  border-radius: var(--ir-radius-lg);
-  overflow: hidden;
-  box-shadow: 0 18px 50px rgba(40,30,10,0.18);
-  color: var(--ir-fg);
-}
-
-.ir-modal-header {
-  background: var(--ir-yellow);
-  color: #3a2d1c;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 10px 14px;
-  font-family: var(--ir-font);
-  text-transform: uppercase;
-}
-
-.ir-modal-body {
-  padding: 28px 22px;
-  text-align: center;
-  font-family: var(--ir-font-display);
-  font-size: 22px;
-  font-style: italic;
-  font-weight: 500;
-  color: var(--ir-orange);
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-}
-.ir-modal-body.is-error { color: var(--ir-status-error); }
-.ir-modal-body.is-info  { color: var(--ir-fg); font-style: normal; font-family: var(--ir-font); font-weight: 600; font-size: 18px; }
-
-.ir-modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 14px;
-  padding: 6px 22px 22px;
-}
-
-.ir-modal-btn {
-  min-width: 64px;
-  height: 36px;
-  border-radius: var(--ir-radius-pill);
-  border: 1px solid var(--ir-line);
-  background: var(--ir-bg-2);
-  color: var(--ir-fg);
-  font-family: var(--ir-font);
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-}
-.ir-modal-btn:hover { border-color: var(--ir-orange); }
-.ir-modal-btn.is-primary { background: var(--ir-orange); border-color: var(--ir-orange); color: var(--ir-bg-2); }
-
-/* ── Status chips ── */
-.ir-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 12px;
-  border-radius: var(--ir-radius-sm);
-  font-family: var(--ir-font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  background: var(--ir-bg-3);
-  color: var(--ir-fg);
-  border: 1px solid var(--ir-line);
-}
-.ir-chip.is-ready    { background: rgba(197,160,89,0.16); color: var(--ir-orange-deep); border-color: rgba(197,160,89,0.40); }
-.ir-chip.is-extract  { background: rgba(27,58,75,0.10);   color: var(--ir-state-extracting); border-color: rgba(27,58,75,0.30); }
-.ir-chip.is-complete { background: rgba(52,199,89,0.12);  color: var(--ir-status-ok); border-color: rgba(52,199,89,0.32); }
-.ir-chip.is-rinse    { background: rgba(138,108,182,0.12); color: var(--ir-state-rinsing); border-color: rgba(138,108,182,0.32); }
-.ir-chip.is-water    { background: rgba(0,122,255,0.10);  color: var(--ir-state-watering); border-color: rgba(0,122,255,0.30); }
-.ir-chip.is-recipe   { background: var(--ir-yellow); color: #3a2d1c; border-color: rgba(60,40,20,0.18); letter-spacing: 0.06em; }
-
-/* ── Page header ── */
-.ir-page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0 18px;
-}
-.ir-page-title {
-  font-family: var(--ir-font-display);
-  font-size: clamp(28px, 4vw, 36px);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-.ir-page-title em {
-  color: var(--ir-orange-deep);
-  font-style: italic;
-}
-.ir-page-sub {
-  font-size: 11px;
-  color: var(--ir-fg-subtle);
-  font-family: var(--ir-font-mono);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-/* ── Progress ring shell (펌웨어/백업/공장초기화에서 공용) ── */
-.ir-progress-ring {
-  width: 84px;
-  height: 84px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  font-family: var(--ir-font-mono);
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--ir-fg);
-  background: var(--ir-bg-2);
-  border: 4px solid var(--ir-status-ok);
-  border-radius: 50%;
-}
-.ir-progress-ring::after {
-  content: 'PROGRESS';
-  position: absolute;
-  bottom: 14px;
-  font-size: 8px;
-  letter-spacing: 0.1em;
-  color: var(--ir-fg-subtle);
-}
-
-/* ── Side menu ── */
-.ir-side-menu {
+  background: var(--paper);
+  border: 1px solid var(--hair-2);
+  min-width: 360px;
+  max-width: 560px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 160px;
+  overflow: hidden;
 }
-.ir-side-menu .ir-tab {
-  width: 100%;
-  min-width: 0;
+.ir-modal-header {
+  height: 36px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
   font-size: 13px;
-  padding: 10px 12px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--gold);
+  letter-spacing: 0.04em;
 }
+.ir-modal-body {
+  padding: 26px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+  text-align: center;
+}
+.ir-modal-body.is-error { color: var(--brand); }
+.ir-modal-body.is-info { text-align: left; }
+.ir-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 0 20px 20px;
+}
+.ir-modal-btn {
+  height: 38px;
+  min-width: 80px;
+  padding: 0 18px;
+  border: 1px solid var(--hair-2);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ir-modal-btn:hover { background: var(--cream); }
+.ir-modal-btn.is-primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+.ir-modal-btn.is-primary:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
 
-/* Utility */
-.ir-grow   { flex: 1; }
-.ir-row    { display: flex; gap: 16px; }
-.ir-col    { display: flex; flex-direction: column; gap: 16px; }
-.ir-center { display: flex; align-items: center; justify-content: center; }
-.ir-spacer { flex: 1; }
-.ir-mt-auto { margin-top: auto; }
+/* Toggle segments (used by backup, firmware) */
+.ir-toggle {
+  display: inline-flex;
+  border: 1px solid var(--hair-2);
+  background: var(--bg);
+  padding: 2px;
+}
+.ir-toggle-opt {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.ir-toggle-opt.is-active {
+  background: var(--gold);
+  color: #fff;
+}

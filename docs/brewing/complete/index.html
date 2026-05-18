@@ -3,151 +3,213 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iRHEA-Light | Brewing Complete</title>
+<title>iRHEA-Light | 추출 완료</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/irhea-light-demo/css/app.css">
-<link rel="stylesheet" href="/irhea-light-demo/css/theme-irhea.css">
+<link rel="stylesheet" href="/irhea-design-2/css/app.css">
+<link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
+<script src="/irhea-design-2/js/state.js"></script>
+<script src="/irhea-design-2/js/recipe-picker.js"></script>
 
-  <script> window.BASE_PATH = "/irhea-light-demo"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-  <div class="topbar-brand">
-    <div class="logo-icon">iR</div>
-    <span class="logo-text">iRHEA-Light</span>
+<body class="ir-theme">
+  <div class="viewport">
+    <div class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="/irhea-design-2/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
+    <span class="brand-divider"></span>
+    <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
-  <h1 class="topbar-title">Brewing Complete</h1>
-  <div class="topbar-spacer"></div>
-  <div class="topbar-status">
-    <span class="status-dot"></span>
-    <span>Connected</span>
-  </div>
-  <div class="topbar-clock" id="topbar-clock"></div>
-</header>
-
-    <main class="content-area">
-      <div class="page-content">
-        <!-- Brewing Complete Page -->
-<div class="page-content">
-  <div class="flex items-center justify-center" style="min-height:calc(100vh - 140px);">
-    <div style="text-align:center;max-width:500px;width:100%;">
-      <!-- Complete Animation -->
-      <div class="brew-complete-icon">&#10003;</div>
-      <h2 style="font-size:28px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Brewing Complete!</h2>
-      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:32px;">Your pour-over is ready to serve</p>
-
-      <!-- Result Summary -->
-      <div class="glass-card glass-card-lg mb-24" style="text-align:left;">
-        <h3 style="font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Brew Summary</h3>
-        <div class="info-grid">
-          <div class="info-cell">
-            <div class="info-label">Recipe</div>
-            <div class="info-value">Ethiopia Yirgacheffe</div>
-          </div>
-          <div class="info-cell">
-            <div class="info-label">Spout</div>
-            <div class="info-value">Spout 1</div>
-          </div>
-          <div class="info-cell">
-            <div class="info-label">Duration</div>
-            <div class="info-value">3:15</div>
-          </div>
-          <div class="info-cell">
-            <div class="info-label">Water Used</div>
-            <div class="info-value">318 ml</div>
-          </div>
-          <div class="info-cell">
-            <div class="info-label">Avg Temperature</div>
-            <div class="info-value">92.8°C</div>
-          </div>
-          <div class="info-cell">
-            <div class="info-label">Stages Completed</div>
-            <div class="info-value">7 / 7</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex items-center justify-center gap-16">
-        <button class="btn btn-secondary btn-lg" onclick="location.href=nav('/')">
-          &#9632; Dashboard
-        </button>
-        <button class="btn btn-primary btn-lg" onclick="location.href=nav('/brewing')">
-          &#9654; Brew Again
-        </button>
-      </div>
+  <div class="topbar-right">
+    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
+    
+    <!-- Demo-style Language Switcher -->
+    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
+      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size:10px; opacity:0.5;">▼</span>
     </div>
+
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-live">연결됨</span>
+    <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
+        <line x1="12" y1="2" x2="12" y2="12"/>
+      </svg>
+    </button>
   </div>
 </div>
 
+<script>
+  (function() {
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('top-clock');
+      if (el) el.textContent = h + ':' + m;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
+      if (window.IRModal) {
+        window.IRModal.confirm({
+          title: '알림',
+          body: '장비를 종료하시겠습니까?',
+          onOk: function() { window.location.href = '/shutdown'; }
+        });
+      }
+    });
+
+    // Simple language toggle simulation
+    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
+       const lang = this.querySelector('span').textContent;
+       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
+       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    });
+  })();
+</script>
+
+    
+    <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <!-- 추출 완료 (Design 2 Cinema Gold Light) -->
+<div class="ir-shell">
+
+  <!-- Background (blurred main dashboard) -->
+  <div class="brew-complete-backdrop">
+    <div style="flex:1; display:grid; grid-template-columns: repeat(5, 1fr); gap: 10px; opacity: 0.1; filter: blur(6px);">
+      <div style="background:#C5A059; border:1px solid #E0C896;"></div><div style="background:#C5A059; border:1px solid #E0C896;"></div><div style="background:#C5A059; border:1px solid #E0C896;"></div><div style="background:#C5A059; border:1px solid #E0C896;"></div><div style="background:#C5A059; border:1px solid #E0C896;"></div>
+    </div>
+  </div>
+
+  <!-- Center Overlay Band -->
+  <div class="brew-complete-overlay-gold">
+    <div class="ov-left">
+      <div class="ov-cup">
+        <svg viewBox="0 0 40 40" width="52" height="52">
+          <path d="M10,15 L10,30 Q10,35 20,35 L20,35 Q30,35 30,30 L30,15 Z" fill="none" stroke="var(--ir-orange)" stroke-width="2"/>
+          <path d="M30,18 C35,18 35,26 30,26" fill="none" stroke="var(--ir-orange)" stroke-width="2"/>
+          <path d="M8,15 L32,15" stroke="var(--ir-orange)" stroke-width="1.5"/>
+        </svg>
+        <div class="ov-title">BREWING <span class="accent">COMPLETE</span></div>
       </div>
+      <div class="ov-time">
+        <span class="ov-time-big">03:42</span>
+        <span class="ov-time-unit">SEC</span>
+        <span class="ov-delta">▲ 3s</span>
+      </div>
+      <div class="ov-time-target">TARGET: 03:45 · RECIPE 03</div>
+    </div>
+
+    <div class="ov-right">
+      <div class="ov-donut">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          <circle cx="50" cy="50" r="46" fill="none" stroke="var(--ir-orange)" stroke-width="3" stroke-dasharray="289" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+        </svg>
+        <div class="ov-donut-num">
+          <span class="pct">100</span>
+          <span class="lbl">PERCENT</span>
+        </div>
+      </div>
+      <div class="ov-meta">
+        <div class="ov-meta-row">YIELD: <b>312.4g</b></div>
+        <div class="ov-meta-row">AVG TEMP: <b>93.2°C</b></div>
+      </div>
+    </div>
+
+    <div class="ov-progress-bar-gold"></div>
+    <div class="ov-close-hint">5초 후 자동 닫힘 · 호출 화면(S6.2)으로 복귀</div>
+  </div>
+
+  <footer class="ir-action-bar-gold">
+    <button class="ir-btn" id="bc-cancel">취소</button>
+    <button class="ir-btn" id="bc-save">저장</button>
+    <button class="ir-btn" id="bc-fav">즐겨찾기 등록</button>
+    <div style="flex:1;"></div>
+    <button class="ir-btn ir-btn-primary" id="bc-confirm">확인</button>
+  </footer>
+
+</div>
+
+<style>
+  .brew-complete-backdrop { position: absolute; inset: 0; padding: 20px; display: flex; flex-direction: column; z-index: 0; }
+  
+  .brew-complete-overlay-gold {
+    position: absolute; left: 0; right: 0; top: 0; bottom: 72px;
+    background: linear-gradient(180deg, #1D1D1F 0%, #2A2A2A 100%);
+    color: #FFFFFF;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    display: flex; align-items: stretch; padding: 40px 80px; gap: 70px;
+    z-index: 10; overflow: hidden;
+  }
+  .brew-complete-overlay-gold::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 15% 50%, rgba(197,160,89,0.12) 0%, transparent 65%);
+  }
+
+  .ov-left { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; position: relative; }
+  .ov-cup { display: flex; align-items: center; gap: 18px; }
+  .ov-title { font-family: var(--ir-font-display); font-size: 34px; font-weight: 500; letter-spacing: 0.05em; color: #FFF; text-transform: uppercase; }
+  .ov-title .accent { color: var(--ir-orange); font-style: italic; }
+
+  .ov-time { display: flex; align-items: baseline; gap: 12px; }
+  .ov-time-big { font-size: 72px; font-weight: 300; font-family: var(--ir-font-mono); color: #FFF; letter-spacing: -0.02em; }
+  .ov-time-unit { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 0.2em; text-transform: uppercase; }
+  .ov-time-target { font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 600; font-family: var(--ir-font-mono); }
+  .ov-delta { font-size: 12px; padding: 4px 12px; background: rgba(197,160,89,0.2); color: var(--ir-orange); font-weight: 800; border-radius: 2px; }
+
+  .ov-right { width: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; position: relative; }
+  .ov-donut { width: 170px; height: 170px; position: relative; }
+  .ov-donut svg { width: 100%; height: 100%; }
+  .ov-donut-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ov-donut-num .pct { font-size: 52px; font-weight: 400; color: #FFF; font-family: var(--ir-font-mono); }
+  .ov-donut-num .lbl { font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.3); letter-spacing: 0.25em; text-transform: uppercase; }
+  
+  .ov-meta { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .ov-meta-row { font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 0.05em; }
+  .ov-meta-row b { color: #FFF; font-weight: 800; }
+
+  .ov-progress-bar-gold { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,0.05); }
+  .ov-progress-bar-gold::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ir-orange); animation: ir-countdown 5s linear forwards; }
+  .ov-close-hint { position: absolute; right: 28px; bottom: 12px; font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 800; letter-spacing: 0.1em; }
+
+  .ir-action-bar-gold { height: 72px; padding: 0 32px; border-top: 1px solid var(--ir-line); display: flex; align-items: center; gap: 10px; background: var(--ir-bg-2); position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; }
+</style>
+
+<script>
+(function() {
+  var autoTimer = setTimeout(function () { window.location.href = '/main'; }, 5000);
+  function cancelAuto() { clearTimeout(autoTimer); var hint = document.querySelector('.ov-close-hint'); if (hint) hint.style.display = 'none'; var bar = document.querySelector('.ov-progress-bar-gold'); if (bar) bar.style.display = 'none'; }
+
+  document.getElementById('bc-cancel').onclick = function () { cancelAuto(); window.location.href = '/main'; };
+  document.getElementById('bc-save').onclick = function () { cancelAuto(); window.IRToast?.show('추출 결과를 저장했습니다.'); };
+  document.getElementById('bc-fav').onclick = function () { cancelAuto(); window.IRToast?.show('즐겨찾기에 추가되었습니다.'); };
+  document.getElementById('bc-confirm').onclick = function () { cancelAuto(); window.location.href = '/main'; };
+})();
+</script>
+
     </main>
-    <nav class="bottom-nav" id="bottom-nav">
-  <a href="/irhea-light-demo/" class="bnav-item ">
-    <span class="bnav-icon">&#9632;</span>
-    <span class="bnav-label">Control</span>
-  </a>
-  <a href="/irhea-light-demo/recipes" class="bnav-item ">
-    <span class="bnav-icon">&#9749;</span>
-    <span class="bnav-label">Recipes</span>
-  </a>
-  <a href="/irhea-light-demo/brewing" class="bnav-item active">
-    <span class="bnav-icon">&#9200;</span>
-    <span class="bnav-label">Brewing</span>
-  </a>
-  <a href="/irhea-light-demo/favorites" class="bnav-item ">
-    <span class="bnav-icon">&#9733;</span>
-    <span class="bnav-label">Favorites</span>
-  </a>
-  <button class="bnav-item " onclick="toggleMoreMenu()">
-    <span class="bnav-icon">&#8943;</span>
-    <span class="bnav-label">More</span>
-  </button>
+
+    <nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
+  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
+  <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/info">정보</a>
 </nav>
 
   </div>
-
-  <!-- More Menu Overlay -->
-  <div class="more-overlay" id="more-overlay" onclick="closeMoreMenu()"></div>
-  <div class="more-menu" id="more-menu">
-    <div class="more-menu-header">
-      <span>System</span>
-      <button class="more-menu-close" onclick="closeMoreMenu()">&times;</button>
-    </div>
-    <a href="/irhea-light-demo/alarms" class="more-menu-item ">
-      <span class="more-icon">&#9888;</span>
-      <span>Alarms</span>
-      <span class="nav-badge" id="alarm-badge-more">3</span>
-    </a>
-    <a href="/irhea-light-demo/usage" class="more-menu-item ">
-      <span class="more-icon">&#9636;</span>
-      <span>Usage History</span>
-    </a>
-    <a href="/irhea-light-demo/settings" class="more-menu-item ">
-      <span class="more-icon">&#9881;</span>
-      <span>Settings</span>
-    </a>
-    <a href="/irhea-light-demo/calibration" class="more-menu-item ">
-      <span class="more-icon">&#8982;</span>
-      <span>Calibration</span>
-    </a>
-    <a href="/irhea-light-demo/firmware" class="more-menu-item ">
-      <span class="more-icon">&#8635;</span>
-      <span>Firmware</span>
-    </a>
-    <a href="/irhea-light-demo/system-info" class="more-menu-item ">
-      <span class="more-icon">&#9432;</span>
-      <span>System Info</span>
-    </a>
-  </div>
-
-  <div class="toast-container" id="toast-container"></div>
 
   <!--
   iRHEA-Light — 표준 알림 모달 컨테이너 + 8 사전정의 알림.
@@ -274,27 +336,79 @@
 })();
 </script>
 
+  <div class="ir-toast-container" id="ir-toast-container"></div>
 
-  <!-- Global JS -->
-  <script src="/irhea-light-demo/js/app.js"></script>
+<style>
+  .ir-toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1100;
+  }
+  .ir-toast {
+    pointer-events: auto;
+    background: var(--ink, #111);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 160ms, transform 160ms;
+    max-width: 480px;
+    letter-spacing: 0.01em;
+  }
+  .ir-toast.is-show { opacity: 1; transform: translateY(0); }
+  .ir-toast.is-warn { background: var(--gold, #C5A059); color: #fff; }
+  .ir-toast.is-error { background: var(--brand, #E60012); color: #fff; }
+</style>
 
-  <!-- Component JS -->
-  <script src="/irhea-light-demo/js/components/gauge.js"></script>
-  <script src="/irhea-light-demo/js/components/progress-ring.js"></script>
-  <script src="/irhea-light-demo/js/components/timeline.js"></script>
+<script>
+(function () {
+  function show(msg, opts) {
+    opts = opts || {};
+    var container = document.getElementById('ir-toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'ir-toast' + (opts.type ? ' is-' + opts.type : '');
+    t.textContent = msg;
+    container.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('is-show'); });
+    setTimeout(function () {
+      t.classList.remove('is-show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, opts.duration || 2200);
+  }
+  window.IRToast = { show: show };
+})();
+</script>
 
-  <!-- Page JS -->
-  
-  
-  
-  
-  
-  <script src="/irhea-light-demo/js/pages/brewing.js"></script>
-  
-  
-  
-  
-  
+
+  <!-- Shared fitscreen script for 1280x800 target -->
+  <script>
+    (function() {
+      const W = 1280, H = 800;
+      function fit() {
+        const sw = window.innerWidth / W;
+        const sh = window.innerHeight / H;
+        const s = Math.min(sw, sh);
+        // Only scale down if viewport is smaller, or scale to fit
+        document.body.style.transform = 'scale(' + s + ')';
+        document.body.style.transformOrigin = 'center center';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+    })();
+  </script>
+
   
   
 </body>

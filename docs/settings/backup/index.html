@@ -10,46 +10,96 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/irhea-light-demo/css/app.css">
-<link rel="stylesheet" href="/irhea-light-demo/css/theme-irhea.css">
+<link rel="stylesheet" href="/irhea-design-2/css/app.css">
+<link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
+<script src="/irhea-design-2/js/state.js"></script>
+<script src="/irhea-design-2/js/recipe-picker.js"></script>
 
-  <script> window.BASE_PATH = "/irhea-light-demo"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-  <div class="topbar-brand">
-    <div class="logo-icon">iR</div>
-    <span class="logo-text">iRHEA-Light</span>
+<body class="ir-theme">
+  <div class="viewport">
+    <div class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="/irhea-design-2/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
+    <span class="brand-divider"></span>
+    <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
-  <h1 class="topbar-title">USB 백업/복구</h1>
-  <div class="topbar-spacer"></div>
-  <div class="topbar-status">
-    <span class="status-dot"></span>
-    <span>Connected</span>
-  </div>
-  <div class="topbar-clock" id="topbar-clock"></div>
-</header>
+  <div class="topbar-right">
+    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
+    
+    <!-- Demo-style Language Switcher -->
+    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
+      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size:10px; opacity:0.5;">▼</span>
+    </div>
 
-    <main class="content-area">
-      <div class="page-content">
-        
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-live">연결됨</span>
+    <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
+        <line x1="12" y1="2" x2="12" y2="12"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('top-clock');
+      if (el) el.textContent = h + ':' + m;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
+      if (window.IRModal) {
+        window.IRModal.confirm({
+          title: '알림',
+          body: '장비를 종료하시겠습니까?',
+          onOk: function() { window.location.href = '/shutdown'; }
+        });
+      }
+    });
+
+    // Simple language toggle simulation
+    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
+       const lang = this.querySelector('span').textContent;
+       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
+       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    });
+  })();
+</script>
+
+    
+    <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      
 
 
 
 
 <div class="ir-shell">
   <div class="ir-tabs">
-    <a class="ir-tab "     href="/irhea-light-demo/settings/general">설정</a>
-    <a class="ir-tab is-active"      href="/irhea-light-demo/settings/backup">백업/복구</a>
-    <a class="ir-tab " href="/irhea-light-demo/settings/engineering">엔지니어링<br>메뉴</a>
-    <a class="ir-tab "    href="/irhea-light-demo/settings/firmware">펌웨어<br>업그레이드</a>
+    <a class="ir-tab "     href="/irhea-design-2/settings/general">설정</a>
+    <a class="ir-tab is-active"      href="/irhea-design-2/settings/backup">백업/복구</a>
+    <a class="ir-tab " href="/irhea-design-2/settings/engineering">엔지니어링<br>메뉴</a>
+    <a class="ir-tab "    href="/irhea-design-2/settings/firmware">펌웨어<br>업그레이드</a>
 
     <div style="flex:1;"></div>
 
     <div class="ir-action-row" style="align-self:flex-start;margin-top:0;">
       
-      <a class="ir-btn" href="/irhea-light-demo/main">복귀</a>
+      <a class="ir-btn" href="/irhea-design-2/main">복귀</a>
     </div>
   </div>
 
@@ -160,68 +210,16 @@
 })();
 </script>
 
-      </div>
     </main>
-    <nav class="bottom-nav" id="bottom-nav">
-  <a href="/irhea-light-demo/" class="bnav-item ">
-    <span class="bnav-icon">&#9632;</span>
-    <span class="bnav-label">Control</span>
-  </a>
-  <a href="/irhea-light-demo/recipes" class="bnav-item ">
-    <span class="bnav-icon">&#9749;</span>
-    <span class="bnav-label">Recipes</span>
-  </a>
-  <a href="/irhea-light-demo/brewing" class="bnav-item ">
-    <span class="bnav-icon">&#9200;</span>
-    <span class="bnav-label">Brewing</span>
-  </a>
-  <a href="/irhea-light-demo/favorites" class="bnav-item ">
-    <span class="bnav-icon">&#9733;</span>
-    <span class="bnav-label">Favorites</span>
-  </a>
-  <button class="bnav-item " onclick="toggleMoreMenu()">
-    <span class="bnav-icon">&#8943;</span>
-    <span class="bnav-label">More</span>
-  </button>
+
+    <nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
+  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
+  <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/info">정보</a>
 </nav>
 
   </div>
-
-  <!-- More Menu Overlay -->
-  <div class="more-overlay" id="more-overlay" onclick="closeMoreMenu()"></div>
-  <div class="more-menu" id="more-menu">
-    <div class="more-menu-header">
-      <span>System</span>
-      <button class="more-menu-close" onclick="closeMoreMenu()">&times;</button>
-    </div>
-    <a href="/irhea-light-demo/alarms" class="more-menu-item ">
-      <span class="more-icon">&#9888;</span>
-      <span>Alarms</span>
-      <span class="nav-badge" id="alarm-badge-more">3</span>
-    </a>
-    <a href="/irhea-light-demo/usage" class="more-menu-item ">
-      <span class="more-icon">&#9636;</span>
-      <span>Usage History</span>
-    </a>
-    <a href="/irhea-light-demo/settings" class="more-menu-item ">
-      <span class="more-icon">&#9881;</span>
-      <span>Settings</span>
-    </a>
-    <a href="/irhea-light-demo/calibration" class="more-menu-item ">
-      <span class="more-icon">&#8982;</span>
-      <span>Calibration</span>
-    </a>
-    <a href="/irhea-light-demo/firmware" class="more-menu-item ">
-      <span class="more-icon">&#8635;</span>
-      <span>Firmware</span>
-    </a>
-    <a href="/irhea-light-demo/system-info" class="more-menu-item ">
-      <span class="more-icon">&#9432;</span>
-      <span>System Info</span>
-    </a>
-  </div>
-
-  <div class="toast-container" id="toast-container"></div>
 
   <!--
   iRHEA-Light — 표준 알림 모달 컨테이너 + 8 사전정의 알림.
@@ -348,27 +346,79 @@
 })();
 </script>
 
+  <div class="ir-toast-container" id="ir-toast-container"></div>
 
-  <!-- Global JS -->
-  <script src="/irhea-light-demo/js/app.js"></script>
+<style>
+  .ir-toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1100;
+  }
+  .ir-toast {
+    pointer-events: auto;
+    background: var(--ink, #111);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 160ms, transform 160ms;
+    max-width: 480px;
+    letter-spacing: 0.01em;
+  }
+  .ir-toast.is-show { opacity: 1; transform: translateY(0); }
+  .ir-toast.is-warn { background: var(--gold, #C5A059); color: #fff; }
+  .ir-toast.is-error { background: var(--brand, #E60012); color: #fff; }
+</style>
 
-  <!-- Component JS -->
-  <script src="/irhea-light-demo/js/components/gauge.js"></script>
-  <script src="/irhea-light-demo/js/components/progress-ring.js"></script>
-  <script src="/irhea-light-demo/js/components/timeline.js"></script>
+<script>
+(function () {
+  function show(msg, opts) {
+    opts = opts || {};
+    var container = document.getElementById('ir-toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'ir-toast' + (opts.type ? ' is-' + opts.type : '');
+    t.textContent = msg;
+    container.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('is-show'); });
+    setTimeout(function () {
+      t.classList.remove('is-show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, opts.duration || 2200);
+  }
+  window.IRToast = { show: show };
+})();
+</script>
 
-  <!-- Page JS -->
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+  <!-- Shared fitscreen script for 1280x800 target -->
+  <script>
+    (function() {
+      const W = 1280, H = 800;
+      function fit() {
+        const sw = window.innerWidth / W;
+        const sh = window.innerHeight / H;
+        const s = Math.min(sw, sh);
+        // Only scale down if viewport is smaller, or scale to fit
+        document.body.style.transform = 'scale(' + s + ')';
+        document.body.style.transformOrigin = 'center center';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+    })();
+  </script>
+
   
   
 </body>

@@ -3,252 +3,271 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iRHEA-Light | Brewing</title>
+<title>iRHEA-Light | 추출 중</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/irhea-light-demo/css/app.css">
-<link rel="stylesheet" href="/irhea-light-demo/css/theme-irhea.css">
+<link rel="stylesheet" href="/irhea-design-2/css/app.css">
+<link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
+<script src="/irhea-design-2/js/state.js"></script>
+<script src="/irhea-design-2/js/recipe-picker.js"></script>
 
-  <script> window.BASE_PATH = "/irhea-light-demo"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-  <div class="topbar-brand">
-    <div class="logo-icon">iR</div>
-    <span class="logo-text">iRHEA-Light</span>
+<body class="ir-theme">
+  <div class="viewport">
+    <div class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="/irhea-design-2/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
+    <span class="brand-divider"></span>
+    <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
-  <h1 class="topbar-title">Brewing</h1>
-  <div class="topbar-spacer"></div>
-  <div class="topbar-status">
-    <span class="status-dot"></span>
-    <span>Connected</span>
-  </div>
-  <div class="topbar-clock" id="topbar-clock"></div>
-</header>
-
-    <main class="content-area">
-      <div class="page-content">
-        <!-- Brewing Progress Page -->
-<div class="page-content">
-  <div class="flex items-center justify-center" style="min-height:calc(100vh - 140px);">
-    <div style="text-align:center;max-width:600px;width:100%;">
-      <!-- Hand-Drip Coffee Illustration -->
-      <div id="brew-illustration" style="margin-bottom:24px;">
-        <svg viewBox="0 0 300 370" width="300" height="370" class="brew-page-svg">
-          <defs>
-            <linearGradient id="bpCoffeeGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#4a342e"/>
-              <stop offset="100%" stop-color="#2c1e17"/>
-            </linearGradient>
-            <clipPath id="bpServerClip">
-              <path d="M127,240 L119,330 Q119,339 129,339 L187,339 Q197,339 197,330 L189,240 Z"/>
-            </clipPath>
-          </defs>
-
-          <!-- Base platform -->
-          <rect x="40" y="340" width="220" height="18" rx="4" fill="#d4b896"/>
-          <rect x="40" y="340" width="220" height="5" rx="2" fill="#c5a059" opacity="0.25"/>
-
-          <!-- Stand pole -->
-          <rect x="70" y="52" width="8" height="288" rx="3" fill="#8e8e93"/>
-          <rect x="71.5" y="52" width="2.5" height="288" rx="1" fill="rgba(255,255,255,0.18)"/>
-          <rect x="62" y="44" width="24" height="14" rx="7" fill="#71717a"/>
-
-          <!-- Horizontal arm -->
-          <rect x="78" y="128" width="80" height="6" rx="2" fill="#8e8e93"/>
-          <rect x="78" y="128" width="80" height="2" rx="1" fill="rgba(255,255,255,0.15)"/>
-
-          <!-- Clamp -->
-          <circle cx="158" cy="131" r="10" fill="#5c4a3a"/>
-          <circle cx="158" cy="131" r="4" fill="#a09080"/>
-          <circle cx="158" cy="131" r="1.5" fill="#71717a"/>
-
-          <!-- Dripper support rod -->
-          <rect x="155" y="141" width="6" height="14" rx="2" fill="#8e8e93"/>
-
-          <!-- Dripper ring (wire holder) -->
-          <ellipse cx="158" cy="156" rx="44" ry="5" fill="none" stroke="#8e8e93" stroke-width="2.5"/>
-
-          <!-- V60 Dripper -->
-          <rect x="113" y="153" width="90" height="10" rx="3" fill="#5c4a3a"/>
-          <polygon points="116,158 200,158 178,216 138,216" fill="#d4b896"/>
-          <polygon points="122,164 194,164 176,213 140,213" fill="#c5a059" opacity="0.12"/>
-          <!-- Ridges -->
-          <line x1="142" y1="164" x2="148" y2="210" stroke="#c5a059" stroke-width="0.6" opacity="0.35"/>
-          <line x1="152" y1="164" x2="153" y2="210" stroke="#c5a059" stroke-width="0.6" opacity="0.35"/>
-          <line x1="162" y1="164" x2="158" y2="210" stroke="#c5a059" stroke-width="0.6" opacity="0.35"/>
-          <line x1="172" y1="164" x2="163" y2="210" stroke="#c5a059" stroke-width="0.6" opacity="0.35"/>
-          <line x1="182" y1="164" x2="168" y2="210" stroke="#c5a059" stroke-width="0.6" opacity="0.35"/>
-          <!-- Dripper tip -->
-          <rect x="153" y="216" width="10" height="7" rx="3" fill="#3c2a21"/>
-
-          <!-- Water spiral in dripper -->
-          <g id="bp-spirals" class="bp-spirals-active">
-            <ellipse class="bp-spiral" cx="158" cy="178" rx="14" ry="5"/>
-            <ellipse class="bp-spiral bp-spiral-delay" cx="158" cy="178" rx="22" ry="7"/>
-          </g>
-
-          <!-- Server / Carafe -->
-          <path d="M126,238 L118,330 Q118,340 128,340 L188,340 Q198,340 198,330 L190,238 Z"
-                fill="rgba(255,255,255,0.35)" stroke="rgba(142,142,147,0.35)" stroke-width="2"/>
-          <line x1="124" y1="248" x2="120" y2="320" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
-          <!-- Handle -->
-          <path d="M198,262 C216,264 216,314 198,316" fill="none" stroke="rgba(142,142,147,0.4)" stroke-width="3" stroke-linecap="round"/>
-          <!-- Spout -->
-          <path d="M126,240 L116,230" fill="none" stroke="rgba(142,142,147,0.35)" stroke-width="2.5" stroke-linecap="round"/>
-
-          <!-- Coffee liquid -->
-          <g clip-path="url(#bpServerClip)">
-            <rect id="bp-liquid" x="116" y="339" width="84" height="0" fill="url(#bpCoffeeGrad)"/>
-            <ellipse id="bp-liquid-wave" cx="158" cy="339" rx="42" ry="3" fill="#5a3e30" opacity="0"/>
-          </g>
-
-          <!-- Stream (from dripper to server) -->
-          <g id="bp-stream" class="bp-stream-active">
-            <rect x="157" y="223" width="3" height="15" rx="1.5" fill="#4a342e" opacity="0.85"/>
-            <rect x="156" y="223" width="5" height="15" rx="2.5" fill="rgba(74,52,46,0.2)"/>
-            <circle class="bp-drip" cx="158.5" cy="238" r="2.5" fill="#4a342e"/>
-          </g>
-
-          <!-- Steam lines -->
-          <g id="bp-steam">
-            <path class="bp-steam-line" d="M118,230 Q114,216 118,202" fill="none" stroke="rgba(197,160,89,0.15)" stroke-width="2" stroke-linecap="round"/>
-            <path class="bp-steam-line bp-steam-d1" d="M126,232 Q122,216 126,200" fill="none" stroke="rgba(197,160,89,0.12)" stroke-width="2" stroke-linecap="round"/>
-            <path class="bp-steam-line bp-steam-d2" d="M110,228 Q106,214 110,200" fill="none" stroke="rgba(197,160,89,0.1)" stroke-width="2" stroke-linecap="round"/>
-          </g>
-        </svg>
-        <!-- Progress bar below illustration -->
-        <div style="display:flex;align-items:center;gap:12px;max-width:280px;margin:8px auto 0;">
-          <div style="flex:1;height:6px;background:var(--bg-tertiary);border-radius:3px;overflow:hidden;">
-            <div id="bp-progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--accent-noble),var(--accent-gold-light));transition:width 0.5s ease-out;border-radius:3px;"></div>
-          </div>
-          <span id="bp-progress-pct" style="font-size:16px;font-weight:700;color:var(--accent-noble);min-width:45px;text-align:right;font-variant-numeric:tabular-nums;">0%</span>
-        </div>
-      </div>
-
-      <!-- Current Stage Info -->
-      <div class="glass-card glass-card-lg mb-24" style="text-align:left;">
-        <div class="grid-3" style="text-align:center;">
-          <div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Stage</div>
-            <div style="font-size:18px;font-weight:600;color:var(--text-primary);" id="brew-stage">Bloom</div>
-          </div>
-          <div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Elapsed</div>
-            <div style="font-size:18px;font-weight:600;color:var(--accent-amber);font-variant-numeric:tabular-nums;" id="brew-elapsed">0:00</div>
-          </div>
-          <div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Remaining</div>
-            <div style="font-size:18px;font-weight:600;color:var(--text-primary);font-variant-numeric:tabular-nums;" id="brew-remaining">--:--</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Real-time Metrics -->
-      <div class="grid-3 mb-24">
-        <div class="glass-card text-center">
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Temperature</div>
-          <div style="font-size:24px;font-weight:700;color:var(--accent-amber);font-variant-numeric:tabular-nums;" id="brew-temp">92.8°C</div>
-        </div>
-        <div class="glass-card text-center">
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Flow Rate</div>
-          <div style="font-size:24px;font-weight:700;color:var(--status-info);font-variant-numeric:tabular-nums;" id="brew-flow">3.5 ml/s</div>
-        </div>
-        <div class="glass-card text-center">
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">Water Poured</div>
-          <div style="font-size:24px;font-weight:700;color:var(--status-ok);font-variant-numeric:tabular-nums;" id="brew-water">0 ml</div>
-        </div>
-      </div>
-
-      <!-- Stage Progress -->
-      <div class="glass-card glass-card-lg mb-24" style="text-align:left;">
-        <h3 style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">Stage Progress</h3>
-        <div id="brew-stages-bar"></div>
-      </div>
-
-      <!-- Recipe Info -->
-      <div class="glass-card" style="text-align:left;">
-        <div class="flex items-center gap-12">
-          <span style="font-size:18px;">&#9749;</span>
-          <div>
-            <div style="font-size:14px;font-weight:600;color:var(--text-primary);" id="brew-recipe-name">Ethiopia Yirgacheffe</div>
-            <div style="font-size:12px;color:var(--text-muted);" id="brew-recipe-info">V60 &middot; 20g / 320ml &middot; 93°C</div>
-          </div>
-          <div style="flex:1;"></div>
-          <span style="font-size:13px;color:var(--text-muted);" id="brew-spout">Spout 1</span>
-        </div>
-      </div>
+  <div class="topbar-right">
+    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
+    
+    <!-- Demo-style Language Switcher -->
+    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
+      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size:10px; opacity:0.5;">▼</span>
     </div>
+
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-live">연결됨</span>
+    <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
+        <line x1="12" y1="2" x2="12" y2="12"/>
+      </svg>
+    </button>
   </div>
 </div>
 
+<script>
+  (function() {
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('top-clock');
+      if (el) el.textContent = h + ':' + m;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
+      if (window.IRModal) {
+        window.IRModal.confirm({
+          title: '알림',
+          body: '장비를 종료하시겠습니까?',
+          onOk: function() { window.location.href = '/shutdown'; }
+        });
+      }
+    });
+
+    // Simple language toggle simulation
+    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
+       const lang = this.querySelector('span').textContent;
+       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
+       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    });
+  })();
+</script>
+
+    
+    <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <!-- 추출 중 (Design 2 Cinema Gold Light) -->
+<div class="ir-shell">
+
+  <main class="ir-brew-body">
+    <!-- Header -->
+    <div class="ir-brew-header">
+      <div class="ir-brew-kicker">NOW BREWING</div>
+      <h1 class="ir-brew-title">NT-iRHEA <em>Spout 1</em></h1>
+      <p class="ir-brew-recipe">RECIPE 03 · Ethiopia Aricha G1</p>
+    </div>
+
+    <!-- Main visual area -->
+    <div class="ir-brew-visual">
+      <div class="ir-brew-ring-wrap">
+        <svg viewBox="0 0 200 200" width="240" height="240">
+          <circle cx="100" cy="100" r="95" fill="none" stroke="var(--ir-line)" stroke-width="2"/>
+          <circle id="brew-ring-outer" cx="100" cy="100" r="95" fill="none" stroke="var(--ir-orange)" stroke-width="4"
+            stroke-dasharray="597" stroke-dashoffset="597" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+          
+          <circle cx="100" cy="100" r="75" fill="none" stroke="var(--ir-line-soft)" stroke-width="1"/>
+          <text x="100" y="98" text-anchor="middle" font-family="var(--ir-font-mono)" font-size="44" font-weight="400" fill="var(--ir-fg)" id="brew-pct">0%</text>
+          <text x="100" y="128" text-anchor="middle" font-family="var(--ir-font-mono)" font-size="11" font-weight="700" fill="var(--ir-fg-subtle)" style="letter-spacing: 0.15em;">EXTRACTING</text>
+        </svg>
       </div>
+
+      <!-- Real-time metrics grid -->
+      <div class="ir-brew-metrics">
+        <div class="ir-metric">
+          <div class="lbl">ELAPSED</div>
+          <div class="val" id="brew-elapsed">00:00</div>
+        </div>
+        <div class="ir-metric gold">
+          <div class="lbl">TEMP</div>
+          <div class="val" id="brew-temp">95.0°C</div>
+        </div>
+        <div class="ir-metric">
+          <div class="lbl">REMAINING</div>
+          <div class="val" id="brew-remaining">03:45</div>
+        </div>
+        <div class="ir-metric">
+          <div class="lbl">FLOW RATE</div>
+          <div class="val" id="brew-flow">3.5 <span class="unit">g/s</span></div>
+        </div>
+        <div class="ir-metric">
+          <div class="lbl">WEIGHT</div>
+          <div class="val" id="brew-weight">0.0 <span class="unit">g</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stage Progress Bar -->
+    <div class="ir-brew-stages-wrap">
+      <div class="ir-brew-stages-lbl">BREWING STAGES PROGRESS</div>
+      <div class="ir-brew-stages" id="brew-stages-container">
+        <!-- Stages injected by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="ir-action-bar-gold">
+    <button class="ir-btn ir-btn-danger" id="btn-stop">STOP BREWING</button>
+    <div style="flex:1;"></div>
+    <div style="font-family: var(--ir-font-display); font-style: italic; color: var(--ir-fg-subtle); font-size: 14px;">Specialty Coffee Excellence</div>
+  </footer>
+
+</div>
+
+<style>
+  .ir-brew-body { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 40px; background: var(--ir-bg); }
+  
+  .ir-brew-header { text-align: center; margin-bottom: 40px; }
+  .ir-brew-kicker { font-size: 11px; color: var(--ir-orange); font-weight: 800; letter-spacing: 0.25em; text-transform: uppercase; }
+  .ir-brew-title { font-family: var(--ir-font-display); font-size: 36px; font-weight: 400; color: var(--ir-fg); margin: 8px 0; letter-spacing: -0.01em; }
+  .ir-brew-title em { font-style: italic; color: var(--ir-orange-deep); font-weight: 500; }
+  .ir-brew-recipe { font-size: 14px; font-weight: 600; color: var(--ir-fg-subtle); font-family: var(--ir-font-mono); letter-spacing: 0.05em; }
+
+  .ir-brew-visual { display: flex; align-items: center; gap: 60px; margin-bottom: 56px; }
+  
+  .ir-brew-metrics { display: grid; grid-template-columns: 150px 150px; gap: 16px; }
+  .ir-metric { padding: 16px; border: 1px solid var(--ir-line); background: var(--ir-bg-2); border-radius: var(--ir-radius); }
+  .ir-metric.gold { border-color: var(--ir-orange); background: rgba(197,160,89,0.03); }
+  .ir-metric .lbl { font-size: 9px; font-weight: 800; color: var(--ir-fg-subtle); letter-spacing: 0.1em; margin-bottom: 6px; text-transform: uppercase; }
+  .ir-metric .val { font-size: 24px; font-weight: 400; color: var(--ir-fg); font-family: var(--ir-font-mono); }
+  .ir-metric .unit { font-size: 11px; color: var(--ir-fg-subtle); margin-left: 2px; }
+
+  .ir-brew-stages-wrap { width: 640px; }
+  .ir-brew-stages-lbl { font-size: 10px; font-weight: 800; color: var(--ir-fg-subtle); letter-spacing: 0.15em; margin-bottom: 14px; text-align: center; text-transform: uppercase; }
+  .ir-brew-stages { display: flex; height: 36px; background: var(--ir-bg-3); border: 1px solid var(--ir-line); padding: 4px; gap: 4px; border-radius: 4px; }
+  .ir-stage-item { flex: 1; height: 100%; background: #FFF; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--ir-fg-subtle); transition: all 0.3s; border-radius: 2px; }
+  .ir-stage-item.active { background: var(--ir-orange); color: #FFF; }
+  .ir-stage-item.done { background: var(--ir-fg); color: #FFF; }
+  .ir-stage-item .fill { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255,255,255,0.25); width: 0%; }
+
+  .ir-action-bar-gold { height: 72px; padding: 0 32px; border-top: 1px solid var(--ir-line); display: flex; align-items: center; background: var(--ir-bg-2); }
+</style>
+
+<script>
+(function() {
+  var progress = 0;
+  var elapsed = 0;
+  var total = 225; // 3:45
+
+  var stages = [
+    { name: 'BLOOM', dur: 45 },
+    { name: '1ST', dur: 45 },
+    { name: '2ND', dur: 45 },
+    { name: '3RD', dur: 45 },
+    { name: '4TH', dur: 45 }
+  ];
+
+  var container = document.getElementById('brew-stages-container');
+  stages.forEach((s, idx) => {
+    var el = document.createElement('div');
+    el.className = 'ir-stage-item';
+    el.innerHTML = `<span>${s.name}</span><div class="fill" id="stage-fill-${idx}"></div>`;
+    container.appendChild(el);
+  });
+
+  function fmt(s) {
+    var m = Math.floor(s / 60), sec = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+  }
+
+  var timer = setInterval(function() {
+    elapsed++;
+    progress = Math.min(100, Math.floor((elapsed / total) * 100));
+    
+    document.getElementById('brew-pct').textContent = progress + '%';
+    document.getElementById('brew-elapsed').textContent = fmt(elapsed);
+    document.getElementById('brew-remaining').textContent = fmt(total - elapsed);
+    document.getElementById('brew-weight').innerHTML = (elapsed * 1.4).toFixed(1) + ' <span class="unit">g</span>';
+    
+    var ring = document.getElementById('brew-ring-outer');
+    ring.style.strokeDashoffset = 597 * (1 - progress / 100);
+
+    // Update stages
+    var runningDur = 0;
+    stages.forEach((s, idx) => {
+      var el = container.children[idx];
+      var fill = el.querySelector('.fill');
+      if (elapsed > runningDur + s.dur) {
+        el.className = 'ir-stage-item done';
+        fill.style.width = '100%';
+      } else if (elapsed > runningDur) {
+        el.className = 'ir-stage-item active';
+        fill.style.width = ((elapsed - runningDur) / s.dur * 100) + '%';
+      } else {
+        el.className = 'ir-stage-item';
+        fill.style.width = '0%';
+      }
+      runningDur += s.dur;
+    });
+
+    if (elapsed >= total) {
+      clearInterval(timer);
+      setTimeout(function() {
+        window.location.href = '/brewing/complete';
+      }, 500);
+    }
+  }, 100);
+
+  document.getElementById('btn-stop').addEventListener('click', function() {
+    window.IRModal.confirm({
+      title: 'STOP BREWING',
+      body: '추출을 중단하시겠습니까?<br>ARE YOU SURE TO ABORT?',
+      onOk: function() {
+        clearInterval(timer);
+        window.location.href = '/main';
+      }
+    });
+  });
+})();
+</script>
+
     </main>
-    <nav class="bottom-nav" id="bottom-nav">
-  <a href="/irhea-light-demo/" class="bnav-item ">
-    <span class="bnav-icon">&#9632;</span>
-    <span class="bnav-label">Control</span>
-  </a>
-  <a href="/irhea-light-demo/recipes" class="bnav-item ">
-    <span class="bnav-icon">&#9749;</span>
-    <span class="bnav-label">Recipes</span>
-  </a>
-  <a href="/irhea-light-demo/brewing" class="bnav-item active">
-    <span class="bnav-icon">&#9200;</span>
-    <span class="bnav-label">Brewing</span>
-  </a>
-  <a href="/irhea-light-demo/favorites" class="bnav-item ">
-    <span class="bnav-icon">&#9733;</span>
-    <span class="bnav-label">Favorites</span>
-  </a>
-  <button class="bnav-item " onclick="toggleMoreMenu()">
-    <span class="bnav-icon">&#8943;</span>
-    <span class="bnav-label">More</span>
-  </button>
+
+    <nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
+  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
+  <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/info">정보</a>
 </nav>
 
   </div>
-
-  <!-- More Menu Overlay -->
-  <div class="more-overlay" id="more-overlay" onclick="closeMoreMenu()"></div>
-  <div class="more-menu" id="more-menu">
-    <div class="more-menu-header">
-      <span>System</span>
-      <button class="more-menu-close" onclick="closeMoreMenu()">&times;</button>
-    </div>
-    <a href="/irhea-light-demo/alarms" class="more-menu-item ">
-      <span class="more-icon">&#9888;</span>
-      <span>Alarms</span>
-      <span class="nav-badge" id="alarm-badge-more">3</span>
-    </a>
-    <a href="/irhea-light-demo/usage" class="more-menu-item ">
-      <span class="more-icon">&#9636;</span>
-      <span>Usage History</span>
-    </a>
-    <a href="/irhea-light-demo/settings" class="more-menu-item ">
-      <span class="more-icon">&#9881;</span>
-      <span>Settings</span>
-    </a>
-    <a href="/irhea-light-demo/calibration" class="more-menu-item ">
-      <span class="more-icon">&#8982;</span>
-      <span>Calibration</span>
-    </a>
-    <a href="/irhea-light-demo/firmware" class="more-menu-item ">
-      <span class="more-icon">&#8635;</span>
-      <span>Firmware</span>
-    </a>
-    <a href="/irhea-light-demo/system-info" class="more-menu-item ">
-      <span class="more-icon">&#9432;</span>
-      <span>System Info</span>
-    </a>
-  </div>
-
-  <div class="toast-container" id="toast-container"></div>
 
   <!--
   iRHEA-Light — 표준 알림 모달 컨테이너 + 8 사전정의 알림.
@@ -375,27 +394,79 @@
 })();
 </script>
 
+  <div class="ir-toast-container" id="ir-toast-container"></div>
 
-  <!-- Global JS -->
-  <script src="/irhea-light-demo/js/app.js"></script>
+<style>
+  .ir-toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1100;
+  }
+  .ir-toast {
+    pointer-events: auto;
+    background: var(--ink, #111);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 160ms, transform 160ms;
+    max-width: 480px;
+    letter-spacing: 0.01em;
+  }
+  .ir-toast.is-show { opacity: 1; transform: translateY(0); }
+  .ir-toast.is-warn { background: var(--gold, #C5A059); color: #fff; }
+  .ir-toast.is-error { background: var(--brand, #E60012); color: #fff; }
+</style>
 
-  <!-- Component JS -->
-  <script src="/irhea-light-demo/js/components/gauge.js"></script>
-  <script src="/irhea-light-demo/js/components/progress-ring.js"></script>
-  <script src="/irhea-light-demo/js/components/timeline.js"></script>
+<script>
+(function () {
+  function show(msg, opts) {
+    opts = opts || {};
+    var container = document.getElementById('ir-toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'ir-toast' + (opts.type ? ' is-' + opts.type : '');
+    t.textContent = msg;
+    container.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('is-show'); });
+    setTimeout(function () {
+      t.classList.remove('is-show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, opts.duration || 2200);
+  }
+  window.IRToast = { show: show };
+})();
+</script>
 
-  <!-- Page JS -->
-  
-  
-  
-  
-  <script src="/irhea-light-demo/js/pages/brewing.js"></script>
-  
-  
-  
-  
-  
-  
+
+  <!-- Shared fitscreen script for 1280x800 target -->
+  <script>
+    (function() {
+      const W = 1280, H = 800;
+      function fit() {
+        const sw = window.innerWidth / W;
+        const sh = window.innerHeight / H;
+        const s = Math.min(sw, sh);
+        // Only scale down if viewport is smaller, or scale to fit
+        document.body.style.transform = 'scale(' + s + ')';
+        document.body.style.transformOrigin = 'center center';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+    })();
+  </script>
+
   
   
 </body>

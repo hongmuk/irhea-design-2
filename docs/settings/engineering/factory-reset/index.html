@@ -10,231 +10,277 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/irhea-light-demo/css/app.css">
-<link rel="stylesheet" href="/irhea-light-demo/css/theme-irhea.css">
+<link rel="stylesheet" href="/irhea-design-2/css/app.css">
+<link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
+<script src="/irhea-design-2/js/state.js"></script>
+<script src="/irhea-design-2/js/recipe-picker.js"></script>
 
-  <script> window.BASE_PATH = "/irhea-light-demo"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
-<body>
-  <div class="app-shell">
-    <header class="topbar">
-  <div class="topbar-brand">
-    <div class="logo-icon">iR</div>
-    <span class="logo-text">iRHEA-Light</span>
+<body class="ir-theme">
+  <div class="viewport">
+    <div class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="/irhea-design-2/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
+    <span class="brand-divider"></span>
+    <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
-  <h1 class="topbar-title">공장 초기화</h1>
-  <div class="topbar-spacer"></div>
-  <div class="topbar-status">
-    <span class="status-dot"></span>
-    <span>Connected</span>
-  </div>
-  <div class="topbar-clock" id="topbar-clock"></div>
-</header>
-
-    <main class="content-area">
-      <div class="page-content">
-        
-
-
-
-
-<div class="ir-shell">
-  <div class="ir-tabs">
-    <a class="ir-tab "     href="/irhea-light-demo/settings/general">설정</a>
-    <a class="ir-tab "      href="/irhea-light-demo/settings/backup">백업/복구</a>
-    <a class="ir-tab is-active" href="/irhea-light-demo/settings/engineering">엔지니어링<br>메뉴</a>
-    <a class="ir-tab "    href="/irhea-light-demo/settings/firmware">펌웨어<br>업그레이드</a>
-
-    <div style="flex:1;"></div>
-
-    <div class="ir-action-row" style="align-self:flex-start;margin-top:0;">
-      
-      <a class="ir-btn" href="/irhea-light-demo/main">복귀</a>
+  <div class="topbar-right">
+    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
+    
+    <!-- Demo-style Language Switcher -->
+    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
+      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size:10px; opacity:0.5;">▼</span>
     </div>
-  </div>
 
-  <div class="ir-divider"></div>
-
-  <div class="ir-content" style="padding-top:0;">
-
-
-  <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
-
-    <aside class="ir-side-menu">
-      <a class="ir-tab is-active" href="/irhea-light-demo/settings/engineering/factory-reset">공장초기화</a>
-      <a class="ir-tab" href="/irhea-light-demo/settings/engineering/connection">장비 연결 설정</a>
-    </aside>
-
-    <section class="ir-grow ir-center" style="min-height:420px;">
-      <div class="ir-card" style="max-width:520px;width:100%;padding:28px 32px;">
-        <div style="text-align:center;font-family:var(--ir-font-display);font-style:italic;font-size:22px;margin-bottom:24px;color:var(--ir-fg);">공장 <em style="color:var(--ir-orange-deep);">초기화.</em></div>
-
-        <div id="fr-list" style="display:flex;flex-direction:column;gap:14px;font-size:16px;font-weight:600;">
-          
-          
-            <label class="fr-row" data-cat="log" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-              <span style="flex:1;">1. 로그 &amp; 오류 데이터</span>
-              <span class="fr-dot" data-on="true" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:var(--ir-status-ok);"></span>
-            </label>
-          
-            <label class="fr-row" data-cat="recipe" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-              <span style="flex:1;">2. 레시피 데이터</span>
-              <span class="fr-dot" data-on="false" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:transparent;"></span>
-            </label>
-          
-            <label class="fr-row" data-cat="user" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-              <span style="flex:1;">3. 사용자 데이터</span>
-              <span class="fr-dot" data-on="true" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:var(--ir-status-ok);"></span>
-            </label>
-          
-            <label class="fr-row" data-cat="device" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-              <span style="flex:1;">4. 장비 설정 데이터</span>
-              <span class="fr-dot" data-on="false" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:transparent;"></span>
-            </label>
-          
-            <label class="fr-row" data-cat="security" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-              <span style="flex:1;">5. 보안 데이터</span>
-              <span class="fr-dot" data-on="true" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:var(--ir-status-ok);"></span>
-            </label>
-          
-        </div>
-
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;gap:12px;">
-          <button class="ir-btn ir-btn-primary" id="fr-run">실행</button>
-          <div class="ir-progress-ring" id="fr-progress" style="display:none;">20%</div>
-          <button class="ir-btn" id="fr-cancel">취소</button>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-live">연결됨</span>
+    <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
+        <line x1="12" y1="2" x2="12" y2="12"/>
+      </svg>
+    </button>
   </div>
 </div>
 
+<script>
+  (function() {
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('top-clock');
+      if (el) el.textContent = h + ':' + m;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
+      if (window.IRModal) {
+        window.IRModal.confirm({
+          title: '알림',
+          body: '장비를 종료하시겠습니까?',
+          onOk: function() { window.location.href = '/shutdown'; }
+        });
+      }
+    });
+
+    // Simple language toggle simulation
+    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
+       const lang = this.querySelector('span').textContent;
+       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
+       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    });
+  })();
+</script>
+
+    
+    <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <!-- 공장 초기화 (S4.2) — designs/02-factory-reset.html 정합. Topbar는 layout.ejs. -->
+
+<div class="settings-tabs">
+  <a href="/irhea-design-2/settings/general" class="stab">설정</a>
+  <a href="/irhea-design-2/settings/backup" class="stab">백업 / 복구</a>
+  <a href="/irhea-design-2/settings/engineering" class="stab active">관리자 메뉴</a>
+  <a href="/irhea-design-2/settings/firmware" class="stab">펌웨어 업그레이드</a>
+  <span class="stab-spacer"></span>
+  <div class="stab-actions">
+    <button class="stab-btn ghost" onclick="history.back()">복귀</button>
+  </div>
+</div>
+
+<div class="eng-body">
+  <nav class="side">
+    <div class="side-h">관리자</div>
+    <a class="side-i active" href="/irhea-design-2/settings/engineering/factory-reset"><span class="ico">⚠</span>공장 초기화</a>
+    <a class="side-i" href="/irhea-design-2/settings/engineering/connection"><span class="ico">📡</span>연결 설정</a>
+    <a class="side-i" href="/irhea-design-2/info/security"><span class="ico">🛡</span>보안 정보</a>
+  </nav>
+
+  <div class="content">
+    <div class="ch-h">
+      <span class="ch-title">공장 초기화</span>
+      <span class="ch-id">S4.2 · IMAGE19 · 다중 선택 5개</span>
+    </div>
+
+    <div class="danger-banner">
+      <span class="ico">!</span>
+      <div class="text">
+        <b>이 작업은 복구할 수 없습니다.</b> 선택한 데이터가 영구 삭제되며 실행 중 취소가 불가능합니다.
+        보안 데이터 초기화 시 관리자 비밀번호가 디폴트로 복원되어 재인증이 필요합니다.
+      </div>
+    </div>
+
+    <div class="radio-list">
+      <div class="ritem selected" data-id="logs">
+        <span class="num">01</span>
+        <div class="ritem-info">
+          <span class="ritem-name">로그 &amp; 오류 데이터</span>
+          <span class="ritem-desc">콘솔 부팅 로그 · 오류 발생 이력 · 디버그 트레이스. 일상 운영에 영향 없음.</span>
+        </div>
+        <span class="risk low">권장</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem" data-id="recipes">
+        <span class="num">02</span>
+        <div class="ritem-info">
+          <span class="ritem-name">레시피 데이터</span>
+          <span class="ritem-desc">12 레시피 · 즐겨찾기 매핑 (5×2 슬롯) · 사용자 정의 Stage 값 — 영구 삭제.</span>
+        </div>
+        <span class="risk high">위험</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem selected" data-id="users">
+        <span class="num">03</span>
+        <div class="ritem-info">
+          <span class="ritem-name">사용자 데이터</span>
+          <span class="ritem-desc">계정 3명 · 권한 분포 (운용2·디스트리뷰터2·개발자1) · 로그인 기록.</span>
+        </div>
+        <span class="risk mid">중간</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem" data-id="machine">
+        <span class="num">04</span>
+        <div class="ritem-info">
+          <span class="ritem-name">장비 설정 데이터</span>
+          <span class="ritem-desc">5+1 설정 카드 · 펌프 교정 5행 · 보일러 95° · 워터/린스 파라미터 — 재교정 필요.</span>
+        </div>
+        <span class="risk high">재교정</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem selected" data-id="security">
+        <span class="num">05</span>
+        <div class="ritem-info">
+          <span class="ritem-name">보안 데이터</span>
+          <span class="ritem-desc">Admin 비밀번호 디폴트 복원 · 잠금 카운터 reset · WiFi 등록 머신 유지.</span>
+        </div>
+        <span class="risk mid">PW 리셋</span>
+        <span class="radio-mark"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="fr-action-bar">
+  <div class="ab-l">선택됨: <b id="fr-selected-count">3 / 5</b> · <span id="fr-selected-list">1, 3, 5</span></div>
+  <div class="ab-r">
+    <button class="fr-ab-btn" onclick="history.back()">취소</button>
+    <button class="fr-ab-btn primary" id="fr-run">실행 →</button>
+  </div>
+</div>
+
+<style>
+  /* factory-reset — designs/02-factory-reset.html 정합 */
+  .stab-spacer { flex: 1; }
+  .stab-actions { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; }
+  .stab-btn { font-size: 12px; padding: 8px 18px; font-weight: 600; cursor: pointer; line-height: 1; font-family: inherit; border: none; }
+  .stab-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
+  .stab-btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+  .eng-body { flex: 1; display: grid; grid-template-columns: 200px 1fr; min-height: 0; }
+  .side { display: flex; flex-direction: column; padding: 16px 12px; gap: 4px; border-right: 1px solid var(--hair); background: #FCFCFC; }
+  .side-h { font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.8px; padding: 6px 12px; text-transform: uppercase; }
+  .side-i { padding: 11px 14px; font-size: 13px; color: var(--ink-2); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 10px; text-decoration: none; letter-spacing: -0.1px; }
+  .side-i:hover { background: var(--bg); color: var(--ink); }
+  .side-i.active { background: var(--ink); color: #FFF; font-weight: 600; }
+  .side-i .ico { font-size: 14px; opacity: 0.7; }
+  .side-i.active .ico { opacity: 1; }
+
+  .content { padding: 22px 28px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
+  .ch-h { display: flex; align-items: baseline; justify-content: space-between; }
+  .ch-title { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -0.4px; }
+  .ch-id { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
+
+  .danger-banner { padding: 14px 18px; border: 1px solid var(--brand); background: var(--brand-dim); display: flex; gap: 14px; align-items: flex-start; }
+  .danger-banner .ico { width: 36px; height: 36px; background: var(--brand); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+  .danger-banner .text { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+  .danger-banner b { color: var(--brand); font-weight: 700; }
+
+  .radio-list { display: flex; flex-direction: column; gap: 10px; }
+  .ritem { display: grid; grid-template-columns: 32px 1fr auto auto; gap: 14px; align-items: center; padding: 14px 18px; border: 1px solid var(--hair); cursor: pointer; transition: all 0.15s; }
+  .ritem:hover { border-color: var(--ink-3); }
+  .ritem.selected { border-color: var(--ink); background: #FAFAFA; }
+  .ritem .num { font-size: 13px; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; letter-spacing: 0.4px; text-align: center; }
+  .ritem.selected .num { color: var(--ink); }
+  .ritem-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .ritem-name { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .ritem-desc { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .risk { font-size: 10px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .risk.low { background: #1A8054; color: #fff; }
+  .risk.mid { background: #C28200; color: #fff; }
+  .risk.high { background: var(--brand); color: #fff; }
+  .radio-mark { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--hair-2); position: relative; flex-shrink: 0; }
+  .ritem.selected .radio-mark { border-color: var(--ink); }
+  .ritem.selected .radio-mark::after { content: ''; position: absolute; inset: 4px; background: var(--ink); border-radius: 50%; }
+
+  .fr-action-bar { height: 64px; padding: 0 28px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #FCFCFC; }
+  .ab-l { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .ab-l b { color: var(--ink); font-weight: 700; }
+  .ab-r { display: inline-flex; gap: 10px; align-items: center; }
+  .fr-ab-btn { padding: 10px 22px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .fr-ab-btn.primary { background: var(--brand); color: #FFF; border-color: var(--brand); }
+</style>
 
 <script>
 (function () {
-  if (location.search.indexOf('dev=1') >= 0) sessionStorage.setItem('ir-admin-ok', '1');
-  if (sessionStorage.getItem('ir-admin-ok') !== '1') {
-    window.location.href = '/settings/engineering';
-    return;
-  }
-
-  // Toggle dot rows
-  document.querySelectorAll('.fr-row').forEach(function (row) {
-    row.addEventListener('click', function () {
-      var dot = row.querySelector('.fr-dot');
-      var on = dot.dataset.on === 'true';
-      dot.dataset.on = (!on).toString();
-      dot.style.background = !on ? 'var(--ir-status-ok)' : 'transparent';
+  function updateCount() {
+    var items = document.querySelectorAll('.ritem');
+    var selected = [];
+    items.forEach(function (el, idx) {
+      if (el.classList.contains('selected')) selected.push(idx + 1);
     });
-  });
-
-  document.getElementById('fr-cancel').addEventListener('click', function () {
-    window.location.href = '/settings/engineering';
+    document.getElementById('fr-selected-count').textContent = selected.length + ' / 5';
+    document.getElementById('fr-selected-list').textContent = selected.length ? selected.join(', ') : '없음';
+  }
+  document.querySelectorAll('.ritem').forEach(function (item) {
+    item.addEventListener('click', function () { item.classList.toggle('selected'); updateCount(); });
   });
 
   document.getElementById('fr-run').addEventListener('click', function () {
-    var cats = [];
-    document.querySelectorAll('.fr-row').forEach(function (row) {
-      if (row.querySelector('.fr-dot').dataset.on === 'true') cats.push(row.dataset.cat);
-    });
-    if (cats.length === 0) {
-      window.IRModal.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
+    var selected = Array.from(document.querySelectorAll('.ritem.selected')).map(function (el) { return el.dataset.id; });
+    if (selected.length === 0) {
+      window.IRModal?.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
       return;
     }
-    window.IRModal.confirm({
-      body: '복구불가<br>진행하시겠습니까?',
+    window.IRModal?.confirm({
+      title: '공장 초기화 실행',
       bodyClass: 'is-error',
+      body: '복구불가<br>진행하시겠습니까?',
       onOk: function () {
-        var ring = document.getElementById('fr-progress');
-        ring.style.display = 'inline-flex';
-        ring.textContent = '0%';
-        var p = 0;
-        var iv = setInterval(function () {
-          p += 8;
-          ring.textContent = Math.min(p, 100) + '%';
-          if (p >= 100) {
-            clearInterval(iv);
-            fetch('/api/factory-reset', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ categories: cats })
-            }).then(function () {
-              window.IRModal.info({ body: '초기화 완료' });
-              ring.style.display = 'none';
-            });
-          }
-        }, 120);
+        fetch('/api/factory-reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ categories: selected })
+        }).then(function () {
+          window.IRToast?.show('공장 초기화가 완료되었습니다.', { type: 'error' });
+        });
       }
     });
   });
 })();
 </script>
 
-      </div>
     </main>
-    <nav class="bottom-nav" id="bottom-nav">
-  <a href="/irhea-light-demo/" class="bnav-item ">
-    <span class="bnav-icon">&#9632;</span>
-    <span class="bnav-label">Control</span>
-  </a>
-  <a href="/irhea-light-demo/recipes" class="bnav-item ">
-    <span class="bnav-icon">&#9749;</span>
-    <span class="bnav-label">Recipes</span>
-  </a>
-  <a href="/irhea-light-demo/brewing" class="bnav-item ">
-    <span class="bnav-icon">&#9200;</span>
-    <span class="bnav-label">Brewing</span>
-  </a>
-  <a href="/irhea-light-demo/favorites" class="bnav-item ">
-    <span class="bnav-icon">&#9733;</span>
-    <span class="bnav-label">Favorites</span>
-  </a>
-  <button class="bnav-item " onclick="toggleMoreMenu()">
-    <span class="bnav-icon">&#8943;</span>
-    <span class="bnav-label">More</span>
-  </button>
+
+    <nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
+  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
+  <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/info">정보</a>
 </nav>
 
   </div>
-
-  <!-- More Menu Overlay -->
-  <div class="more-overlay" id="more-overlay" onclick="closeMoreMenu()"></div>
-  <div class="more-menu" id="more-menu">
-    <div class="more-menu-header">
-      <span>System</span>
-      <button class="more-menu-close" onclick="closeMoreMenu()">&times;</button>
-    </div>
-    <a href="/irhea-light-demo/alarms" class="more-menu-item ">
-      <span class="more-icon">&#9888;</span>
-      <span>Alarms</span>
-      <span class="nav-badge" id="alarm-badge-more">3</span>
-    </a>
-    <a href="/irhea-light-demo/usage" class="more-menu-item ">
-      <span class="more-icon">&#9636;</span>
-      <span>Usage History</span>
-    </a>
-    <a href="/irhea-light-demo/settings" class="more-menu-item ">
-      <span class="more-icon">&#9881;</span>
-      <span>Settings</span>
-    </a>
-    <a href="/irhea-light-demo/calibration" class="more-menu-item ">
-      <span class="more-icon">&#8982;</span>
-      <span>Calibration</span>
-    </a>
-    <a href="/irhea-light-demo/firmware" class="more-menu-item ">
-      <span class="more-icon">&#8635;</span>
-      <span>Firmware</span>
-    </a>
-    <a href="/irhea-light-demo/system-info" class="more-menu-item ">
-      <span class="more-icon">&#9432;</span>
-      <span>System Info</span>
-    </a>
-  </div>
-
-  <div class="toast-container" id="toast-container"></div>
 
   <!--
   iRHEA-Light — 표준 알림 모달 컨테이너 + 8 사전정의 알림.
@@ -361,27 +407,79 @@
 })();
 </script>
 
+  <div class="ir-toast-container" id="ir-toast-container"></div>
 
-  <!-- Global JS -->
-  <script src="/irhea-light-demo/js/app.js"></script>
+<style>
+  .ir-toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1100;
+  }
+  .ir-toast {
+    pointer-events: auto;
+    background: var(--ink, #111);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 160ms, transform 160ms;
+    max-width: 480px;
+    letter-spacing: 0.01em;
+  }
+  .ir-toast.is-show { opacity: 1; transform: translateY(0); }
+  .ir-toast.is-warn { background: var(--gold, #C5A059); color: #fff; }
+  .ir-toast.is-error { background: var(--brand, #E60012); color: #fff; }
+</style>
 
-  <!-- Component JS -->
-  <script src="/irhea-light-demo/js/components/gauge.js"></script>
-  <script src="/irhea-light-demo/js/components/progress-ring.js"></script>
-  <script src="/irhea-light-demo/js/components/timeline.js"></script>
+<script>
+(function () {
+  function show(msg, opts) {
+    opts = opts || {};
+    var container = document.getElementById('ir-toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'ir-toast' + (opts.type ? ' is-' + opts.type : '');
+    t.textContent = msg;
+    container.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('is-show'); });
+    setTimeout(function () {
+      t.classList.remove('is-show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, opts.duration || 2200);
+  }
+  window.IRToast = { show: show };
+})();
+</script>
 
-  <!-- Page JS -->
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+  <!-- Shared fitscreen script for 1280x800 target -->
+  <script>
+    (function() {
+      const W = 1280, H = 800;
+      function fit() {
+        const sw = window.innerWidth / W;
+        const sh = window.innerHeight / H;
+        const s = Math.min(sw, sh);
+        // Only scale down if viewport is smaller, or scale to fit
+        document.body.style.transform = 'scale(' + s + ')';
+        document.body.style.transformOrigin = 'center center';
+      }
+      window.addEventListener('resize', fit);
+      fit();
+    })();
+  </script>
+
   
   
 </body>
