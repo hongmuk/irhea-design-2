@@ -226,6 +226,43 @@
       return '<div>' + l.replace(/</g, '&lt;') + '</div>';
     }).join('') || '<div style="color:var(--ir-fg-muted);font-style:italic;">— 일치하는 로그 없음 —</div>';
   }
+  var STATUS_KO = { idle: '대기', extracting: '추출 중', complete: '완료', rinsing: '린스 중', watering: '온수 중', error: '⚠ 오류' };
+  function showDetail(e) {
+    document.getElementById('ed-date').textContent    = e.date;
+    document.getElementById('ed-code').textContent    = e.code;
+    document.getElementById('ed-source').textContent  = e.source;
+    document.getElementById('ed-message').textContent = e.message;
+
+    var surround = document.getElementById('ed-surrounding');
+    if (e.surrounding && e.surrounding.spouts) {
+      var rows = e.surrounding.spouts.map(function (sp) {
+        var st = STATUS_KO[sp.status] || sp.status;
+        var stColor = sp.status === 'error' ? 'color:var(--ir-status-error);font-weight:800;'
+                    : sp.status === 'idle' ? 'color:var(--ir-fg-muted);'
+                    : 'color:var(--ir-fg);font-weight:600;';
+        var recipeStr = sp.recipeId != null ? ' · 레시피 ' + sp.recipeId : '';
+        return '<div style="display:flex;justify-content:space-between;padding:2px 0;">' +
+                 '<span>추출구 ' + sp.id + recipeStr + '</span>' +
+                 '<span style="' + stColor + '">' + st + '</span>' +
+               '</div>';
+      }).join('');
+      var env = '<div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--ir-line);color:var(--ir-fg-muted);font-size:10.5px;">' +
+                  '보일러 ' + (e.surrounding.boilerTemp || '?') + '°C · 외기 ' + (e.surrounding.ambientTemp || '?') + '°C' +
+                '</div>';
+      surround.innerHTML = rows + env;
+    } else {
+      surround.innerHTML = '<span style="color:var(--ir-fg-muted);">주변 상태 데이터 없음</span>';
+    }
+  }
+  function bindRowClick() {
+    var tbl = document.getElementById('sec-err');
+    tbl.querySelectorAll('tr[data-i]').forEach(function (tr) {
+      tr.addEventListener('click', function () {
+        var idx = parseInt(tr.dataset.i, 10);
+        showDetail(allErrs[idx]);
+      });
+    });
+  }
   function renderErrs() {
     var errs = filterErrs();
     var tbl = document.getElementById('sec-err');
@@ -282,46 +319,7 @@
 
     renderLog();
     renderErrs();
-    // 회의 피드백 v1.2: 오류 발생 시 주변 추출구 상태 함께 표시
-    var STATUS_KO = { idle: '대기', extracting: '추출 중', complete: '완료', rinsing: '린스 중', watering: '온수 중', error: '⚠ 오류' };
-    function showDetail(e) {
-      document.getElementById('ed-date').textContent    = e.date;
-      document.getElementById('ed-code').textContent    = e.code;
-      document.getElementById('ed-source').textContent  = e.source;
-      document.getElementById('ed-message').textContent = e.message;
-
-      var surround = document.getElementById('ed-surrounding');
-      if (e.surrounding && e.surrounding.spouts) {
-        var rows = e.surrounding.spouts.map(function (sp) {
-          var st = STATUS_KO[sp.status] || sp.status;
-          var stColor = sp.status === 'error' ? 'color:var(--ir-status-error);font-weight:800;'
-                      : sp.status === 'idle' ? 'color:var(--ir-fg-muted);'
-                      : 'color:var(--ir-fg);font-weight:600;';
-          var recipeStr = sp.recipeId != null ? ' · 레시피 ' + sp.recipeId : '';
-          return '<div style="display:flex;justify-content:space-between;padding:2px 0;">' +
-                   '<span>추출구 ' + sp.id + recipeStr + '</span>' +
-                   '<span style="' + stColor + '">' + st + '</span>' +
-                 '</div>';
-        }).join('');
-        var env = '<div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--ir-line);color:var(--ir-fg-muted);font-size:10.5px;">' +
-                    '보일러 ' + (e.surrounding.boilerTemp || '?') + '°C · 외기 ' + (e.surrounding.ambientTemp || '?') + '°C' +
-                  '</div>';
-        surround.innerHTML = rows + env;
-      } else {
-        surround.innerHTML = '<span style="color:var(--ir-fg-muted);">주변 상태 데이터 없음</span>';
-      }
-    }
-    function bindRowClick() {
-      var tbl = document.getElementById('sec-err');
-      tbl.querySelectorAll('tr[data-i]').forEach(function (tr) {
-        tr.addEventListener('click', function () {
-          var idx = parseInt(tr.dataset.i, 10);
-          showDetail(allErrs[idx]);
-        });
-      });
-    }
-    bindRowClick();
-    // 첫 항목 자동 선택
+    // 첫 항목 자동 선택 (renderErrs 가 이미 bindRowClick 호출함)
     if (allErrs.length) showDetail(allErrs[0]);
 
     var pump = us.pumpUsage || {};
