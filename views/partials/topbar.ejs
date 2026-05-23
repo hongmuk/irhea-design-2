@@ -15,11 +15,17 @@
     </button>
 
     <span class="tb-sep"></span>
+    <!-- v1.1 S2.1.2 — 메인 헤더 보강: 클라우드 접속 / 총 추출 / 타임존 -->
+    <span class="tb-stat" id="top-cloud" title="AWS 클라우드 접속 상태"><span class="tb-cloud-ico">📡</span><span class="tb-val">클라우드</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat" id="top-totalbrew" title="설치 후 누적 추출"><span class="tb-lbl">총 추출</span><span class="tb-val" id="top-totalbrew-val">—</span><span class="tb-tz" style="font-size:10px; margin-left:2px; opacity:0.6;">회</span></span>
+    <span class="tb-sep"></span>
     <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;" id="top-tz">KST · UTC+9</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-live">연결됨</span>
+    <!-- 5/13 §1: 연결 정상 = 초록, 오류 = 빨강 -->
+    <span class="tb-live tb-live-ok" id="top-live"><span class="tb-live-dot"></span>연결됨</span>
     <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
@@ -40,6 +46,17 @@
     }
     setInterval(updateClock, 1000);
     updateClock();
+
+    // v1.1 S2.1.2 — 총 추출 합 (spouts.extractCount 누적)
+    function updateTotalBrew() {
+      fetch('/api/spouts').then(function (r) { return r.json(); }).then(function (sps) {
+        var total = (sps || []).reduce(function (s, sp) { return s + (sp.extractCount || 0); }, 0);
+        var el = document.getElementById('top-totalbrew-val');
+        if (el) el.textContent = total.toLocaleString();
+      }).catch(function () {});
+    }
+    setInterval(updateTotalBrew, 5000);
+    updateTotalBrew();
 
     document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
       // Shutdown flow per designs/02-shutdown-progress.html → 02-shutdown-complete.html.

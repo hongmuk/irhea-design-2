@@ -62,6 +62,12 @@
   .st { padding: 14px 12px 14px; display: flex; flex-direction: column; align-items: stretch; gap: 10px; border-right: 1px solid var(--hair); position: relative; min-height: 0; min-width: 0; }
   .st:last-child { border-right: none; }
   .st.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
+  /* 5/13 §1.2: 추출구별 파스텔톤 배경 차별화 — 순차 배색 (난잡하지 않게 매우 옅게) */
+  .st-1 { background: linear-gradient(180deg, #FEF7F0 0%, var(--bg) 100%); }
+  .st-2 { background: linear-gradient(180deg, #F3F9F0 0%, var(--bg) 100%); }
+  .st-3 { background: linear-gradient(180deg, #F0F4FA 0%, var(--bg) 100%); }
+  .st-4 { background: linear-gradient(180deg, #F8F4FA 0%, var(--bg) 100%); }
+  .st-5 { background: linear-gradient(180deg, #FAFAF5 0%, var(--bg) 100%); }
   .st-head { display: flex; align-items: flex-start; justify-content: space-between; }
   .st-num { font-weight: 700; font-size: 34px; line-height: 0.9; letter-spacing: -1px; color: var(--ink); font-variant-numeric: tabular-nums; }
   .st-1 .st-num { color: var(--st-brewing); }

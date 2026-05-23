@@ -123,6 +123,16 @@ body {
 .tb-sep { width: 1px; height: 12px; background: var(--hair); }
 .tb-live { display: inline-flex; align-items: center; gap: 7px; color: var(--st-done); font-weight: 600; font-size: 12px; }
 .tb-live::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
+/* 5/13 §1: 정상=초록 / 오류=빨강 */
+.tb-live.tb-live-err { color: var(--brand); }
+.tb-live.tb-live-err::before { animation: pulse-err 1s ease-in-out infinite; }
+@keyframes pulse-err { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* v1.1 S2.1.2 — 클라우드 접속 인디케이터 */
+.tb-cloud-ico { font-size: 12px; opacity: 0.85; margin-right: 4px; }
+#top-cloud .tb-val { color: var(--st-done); font-weight: 600; }
+#top-cloud.is-offline .tb-val { color: var(--ink-3); }
+#top-cloud.is-offline .tb-cloud-ico { filter: grayscale(1); opacity: 0.45; }
 
 .btn-shutdown {
   width: 32px;
