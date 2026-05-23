@@ -347,8 +347,13 @@
     renderDetail();
   });
 
-  // Search filter
+  // Search filter — 한글 IME 조합 중에는 필터링 억제 (회의 v1.3 §7 한글 입력 검증)
   document.getElementById('rcp-search').addEventListener('input', function (ev) {
+    if (ev.isComposing) return;
+    searchQuery = ev.target.value.trim();
+    renderList();
+  });
+  document.getElementById('rcp-search').addEventListener('compositionend', function (ev) {
     searchQuery = ev.target.value.trim();
     renderList();
   });
@@ -392,8 +397,8 @@
     body.className = 'ir-modal-body is-info';
     body.style.padding = '14px 18px';
     body.style.textAlign = 'left';
-    // 스테이지 편집 영역 위해 모달 넓게
-    modal.style.maxWidth = '860px';
+    // 1024px 환경: 모달은 92vw, 가로 스택이 아니라 세로 stack 이라 720px 으로도 충분
+    modal.style.maxWidth = '720px';
     modal.style.width = '92vw';
 
     var defaultStages = [
@@ -785,6 +790,7 @@
       title: '레시피 삭제 (' + targets.length + '개)',
       bodyClass: 'is-error',
       body: '레시피 ' + targets.join(', ') + '<br>복구불가 / 진행하시겠습니까?',
+      ok: '삭제 진행',
       onOk: function () {
         var overlay = window.IRState.getRecipeOverlay();
         targets.forEach(function (id) {
@@ -850,9 +856,10 @@
 </script>
 
 <style>
-  /* ───── 레시피 폼 v2 — 위계: 라벨(11.5 회색) / input(13.5 검정) ───── */
-  .rfv { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 100%; }
-  @media (max-width: 720px) { .rfv { grid-template-columns: 1fr; } }
+  /* ───── 레시피 폼 v3 — 10인치(1024) 실측 후 vertical stack ─────
+     이전 2-col에서 스테이지 영역 ~270px → input 폭 ~32px 으로 좁아져
+     숫자가 안 보이는 문제. 이제 메인 정보 위 / 스테이지 아래 */
+  .rfv { display: flex; flex-direction: column; gap: 14px; max-width: 100%; }
 
   .rfv-main { display: flex; flex-direction: column; gap: 12px; }
   .rfv-grid { display: grid; gap: 10px 14px; }
