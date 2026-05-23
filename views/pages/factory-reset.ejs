@@ -1,20 +1,19 @@
 <!-- 공장 초기화 (S4.2) — settings-shell partial 사용으로 다른 설정 페이지와 통일 -->
 <%- include('../partials/settings-shell', { activeTab: 'engineering' }) %>
 
-<div class="eng-body">
-  <nav class="side">
-    <div class="side-h">관리자</div>
-    <a class="side-i active" href="/settings/engineering/factory-reset"><span class="ico">⚠</span>공장 초기화</a>
-    <a class="side-i" href="/settings/engineering/connection"><span class="ico">📡</span>연결 설정</a>
-    <a class="side-i" href="/settings/engineering/pump-calibration"><span class="ico">⚙</span>펌프 교정</a>
-    <a class="side-i" href="/settings/engineering/parts"><span class="ico">🔩</span>부품 시리얼</a>
-    <a class="side-i" href="/info/security"><span class="ico">🛡</span>보안 정보</a>
-  </nav>
+<div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
+  <aside class="ir-side-menu">
+    <a class="ir-tab is-active" href="/settings/engineering/factory-reset">공장초기화</a>
+    <a class="ir-tab" href="/settings/engineering/connection">장비 연결 설정</a>
+    <a class="ir-tab" href="/settings/engineering/pump-calibration">펌프 교정</a>
+    <a class="ir-tab" href="/settings/engineering/parts">부품 시리얼</a>
+  </aside>
 
-  <div class="content">
-    <div class="ch-h">
-      <span class="ch-title">공장 초기화</span>
-      <span class="ch-id">카테고리 5개 중 선택</span>
+  <section class="ir-grow" style="padding:24px 28px;flex-direction:column;gap:16px;display:flex;">
+    <div>
+      <span class="ir-page-sub">Engineering · factory-reset</span>
+      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">공장 <em>초기화.</em></h1>
+      <p style="margin-top:8px;font-size:12px;color:var(--ir-fg-muted);">카테고리 5개 중 선택. 복구 불가 — 신중히.</p>
     </div>
 
     <div class="danger-banner">
@@ -76,7 +75,7 @@
         <span class="radio-mark"></span>
       </div>
     </div>
-  </div>
+  </section>
 </div>
 
 <div class="fr-action-bar">
@@ -90,21 +89,7 @@
 <%- include('../partials/settings-shell-close') %>
 
 <style>
-  /* factory-reset — settings-shell partial 사용 (탭/액션 통일) */
-  .eng-body { flex: 1; display: grid; grid-template-columns: 200px 1fr; min-height: 0; }
-  .side { display: flex; flex-direction: column; padding: 16px 12px; gap: 4px; border-right: 1px solid var(--hair); background: #FCFCFC; }
-  .side-h { font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.8px; padding: 6px 12px; text-transform: uppercase; }
-  .side-i { padding: 11px 14px; font-size: 13px; color: var(--ink-2); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 10px; text-decoration: none; letter-spacing: -0.1px; }
-  .side-i:hover { background: var(--bg); color: var(--ink); }
-  .side-i.active { background: var(--ink); color: #FFF; font-weight: 600; }
-  .side-i .ico { font-size: 14px; opacity: 0.7; }
-  .side-i.active .ico { opacity: 1; }
-
-  .content { padding: 22px 28px; display: flex; flex-direction: column; gap: 18px; overflow-y: auto; }
-  .ch-h { display: flex; align-items: baseline; justify-content: space-between; }
-  .ch-title { font-size: 18px; font-weight: 700; color: var(--ink); letter-spacing: -0.4px; }
-  .ch-id { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
-
+  /* factory-reset — settings-shell partial + .ir-side-menu 통일 */
   .danger-banner { padding: 14px 18px; border: 1px solid var(--brand); background: var(--brand-dim); display: flex; gap: 14px; align-items: flex-start; }
   .danger-banner .ico { width: 36px; height: 36px; background: var(--brand); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
   .danger-banner .text { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
