@@ -1,17 +1,5 @@
-<!-- 설정 (S3.1) — designs/02-settings.html 정합. Topbar는 layout.ejs에서 렌더. -->
-
-<!-- 회의 피드백 v1.2: 탭 순서 변경 (엔지니어링 맨 뒤) + 명칭 정리 + i18n -->
-<div class="settings-tabs">
-  <a href="/settings/general"     class="stab active"      data-i18n="tab.general">장비 설정</a>
-  <a href="/settings/backup"      class="stab"             data-i18n="tab.backup">백업 / 복구</a>
-  <a href="/settings/firmware"    class="stab"             data-i18n="tab.firmware">펌웨어 업그레이드</a>
-  <a href="/settings/engineering" class="stab stab-admin"  data-i18n="tab.engineering">🔒 관리자 메뉴</a>
-  <span class="stab-spacer"></span>
-  <div class="stab-actions">
-    <button class="stab-btn primary" id="btn-save-settings" data-i18n="btn.save">저장</button>
-    <button class="stab-btn ghost" onclick="history.back()" data-i18n="btn.back">복귀</button>
-  </div>
-</div>
+<!-- 설정 (S3.1) — 다른 설정 페이지와 동일한 settings-shell partial 사용 (디자인 통일) -->
+<%- include('../partials/settings-shell', { activeTab: 'general', showSave: true }) %>
 
 <div class="cards">
 
@@ -126,17 +114,10 @@
 
 </div>
 
-<style>
-  /* settings-general specific layout — matches designs/02-settings.html */
-  .stab-spacer { flex: 1; }
-  .stab-actions { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; }
-  .stab-btn { font-size: 12px; padding: 8px 18px; font-weight: 600; cursor: pointer; line-height: 1; transition: all 0.15s; font-family: inherit; border: none; }
-  .stab-btn.primary { background: var(--brand); color: #fff; border: 1px solid var(--brand); }
-  .stab-btn.primary:hover { background: #c8000f; border-color: #c8000f; }
-  .stab-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
-  .stab-btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
+<%- include('../partials/settings-shell-close') %>
 
-  /* 2 행 균등 분할로 카드 내용이 row 높이 초과해 nav 침범하던 문제 → max-content + overflow hidden */
+<style>
+  /* settings-general — 카드 그리드만 (탭/액션은 settings-shell partial 사용) */
   .cards { flex: 1; padding: 16px 24px 14px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(0, 1fr); gap: 12px; min-height: 0; overflow-y: auto; }
   .card { background: var(--bg); border: 1px solid var(--hair); padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; overflow: hidden; }
   .card.accent { border: 1px solid var(--brand); background: linear-gradient(180deg, #FFFAFA 0%, var(--bg) 30%); }
@@ -441,8 +422,8 @@
     b.addEventListener('click', function () { openValuePicker(b); });
   });
 
-  // Save
-  document.getElementById('btn-save-settings')?.addEventListener('click', function () {
+  // Save — settings-shell 의 [data-ir-save] 셀렉터로 통일
+  document.querySelector('[data-ir-save]')?.addEventListener('click', function () {
     window.IRModal?.confirm({
       title: '설정 저장',
       body: '변경된 설정값을 저장하시겠습니까?',
