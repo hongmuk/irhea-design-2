@@ -397,9 +397,11 @@
     body.className = 'ir-modal-body is-info';
     body.style.padding = '14px 18px';
     body.style.textAlign = 'left';
-    // 1024px 환경: 모달은 92vw, 가로 스택이 아니라 세로 stack 이라 720px 으로도 충분
+    // 1024px 환경: 모달은 92vw, 세로 stack 이라 720px 으로 충분
     modal.style.maxWidth = '720px';
     modal.style.width = '92vw';
+    // 768px 뷰포트에 들어가도록 — body 가 스크롤 (액션 바는 고정)
+    modal.style.maxHeight = 'calc(100vh - 48px)';
 
     var defaultStages = [
       { type: 'bloom', label: 'Bloom',     time: 30, waterAmount: 40, flowRate: 3, pourRate: 2.0 },
