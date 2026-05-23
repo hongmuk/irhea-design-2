@@ -251,7 +251,10 @@
   }
   function update() {
     Promise.all([fetch('/api/spouts').then(r => r.json()), loadRecipes()])
-      .then(([spouts, recipes]) => {
+      .then(([spoutsRaw, recipes]) => {
+        // BUG #1 fix: 매뉴얼 레시피 변경은 localStorage override 로 영구화
+        // (실 환경에서는 API PUT /api/spouts/:id 가 백엔드에 쓰므로 이 layer 불필요)
+        const spouts = window.IRState ? window.IRState.applySpoutOverrides(spoutsRaw) : spoutsRaw;
         spouts.forEach(s => {
           const card = document.querySelector('.spout-card[data-spout="' + s.id + '"]');
           if (!card) return;
@@ -329,9 +332,9 @@
                 '<b>' + currentName + '</b> → <b>' + newName + '</b>로 변경합니다.<br>장비에 새 레시피를 적용할까요?',
           ok: '변경',
           onOk: function () {
-            // mock: 다음 polling 에서 currentRecipeId 갱신되도록 sessionStorage 활용 (실제 백엔드 연동 전)
+            // BUG #1 fix: localStorage override 에 저장 → 폴링이 덮어쓰지 못함
+            window.IRState.setSpoutOverride(spoutId, newRid);
             window.IRToast?.show('추출구 ' + spoutId + ' → ' + newName + ' 적용 (장비 sync 중)');
-            // 사용자한테는 즉시 카드에 반영해 줌
             if (sp) sp.currentRecipeId = newRid;
             var card = document.querySelector('.spout-card[data-spout="' + spoutId + '"]');
             if (card) applyRecipe(card, newR);

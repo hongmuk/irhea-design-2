@@ -102,6 +102,24 @@
     return Object.values(byId).sort(function (a, b) { return a.id - b.id; });
   }
 
+  // Spout currentRecipe overrides — 회의 v1.1 / 5/24 §2.2 매뉴얼 변경 영구화.
+  // mock spouts.json 의 currentRecipeId 를 localStorage 로 덮어쓴다. 폴링이 mock 으로
+  // 되돌리는 BUG #1 (메인 카드 변경이 1초 뒤 사라짐) 방지용. 실 환경에서는 API
+  // PUT /api/spouts/:id 가 mcp_app 에 쓰고 GET /api/spouts 가 반영되므로 이 layer 없음.
+  function getSpoutOverrides() { return get('spoutOverrides', {}); }
+  function setSpoutOverride(spoutId, recipeId) {
+    var ov = getSpoutOverrides();
+    ov[spoutId] = recipeId;
+    set('spoutOverrides', ov);
+  }
+  function applySpoutOverrides(spouts) {
+    var ov = getSpoutOverrides();
+    return spouts.map(function (s) {
+      if (ov[s.id] != null) return Object.assign({}, s, { currentRecipeId: ov[s.id] });
+      return s;
+    });
+  }
+
   // Brewing — current run state
   function getBrewing() { return get('brewing', null); }
   function startBrewing(spoutId, recipeId) {
@@ -123,6 +141,7 @@
     getFavorites: getFavorites, setFavorite: setFavorite, swapFavorites: swapFavorites, clearAllFavorites: clearAllFavorites,
     getSettings: getSettings, setSetting: setSetting,
     getRecipeOverlay: getRecipeOverlay, setRecipeOverlay: setRecipeOverlay, applyOverlay: applyOverlay,
+    getSpoutOverrides: getSpoutOverrides, setSpoutOverride: setSpoutOverride, applySpoutOverrides: applySpoutOverrides,
     getBrewing: getBrewing, startBrewing: startBrewing, updateBrewing: updateBrewing, endBrewing: endBrewing
   };
 })();
