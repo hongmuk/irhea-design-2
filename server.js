@@ -58,6 +58,7 @@ app.get('/settings/engineering', (req, res) => renderIR(res, 'settings-engineeri
 app.get('/settings/engineering/factory-reset',     (req, res) => renderIR(res, 'factory-reset',     { title: '공장 초기화', activeNav: 'engineering' }));
 app.get('/settings/engineering/connection',        (req, res) => renderIR(res, 'connection-config', { title: '연결 설정',   activeNav: 'engineering' }));
 app.get('/settings/engineering/pump-calibration',  (req, res) => renderIR(res, 'pump-calibration',  { title: '펌프 교정',   activeNav: 'engineering' }));
+app.get('/settings/engineering/parts',              (req, res) => renderIR(res, 'parts-serial',      { title: '부품 시리얼', activeNav: 'engineering' }));
 app.get('/settings/firmware',    (req, res) => renderIR(res, 'firmware-upgrade',     { title: '펌웨어 업그레이드', activeNav: 'firmware' }));
 
 app.get('/info',          (req, res) => renderIR(res, 'info',          { title: '정보' }));

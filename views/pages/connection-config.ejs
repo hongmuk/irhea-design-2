@@ -5,42 +5,107 @@
     <aside class="ir-side-menu">
       <a class="ir-tab" href="/settings/engineering/factory-reset">공장초기화</a>
       <a class="ir-tab is-active" href="/settings/engineering/connection">장비 연결 설정</a>
+      <a class="ir-tab" href="/settings/engineering/pump-calibration">펌프 교정</a>
+      <a class="ir-tab" href="/settings/engineering/parts">부품 시리얼</a>
     </aside>
 
-    <section class="ir-row ir-grow" style="gap:18px;">
+    <section class="ir-grow" style="display:flex;flex-direction:column;gap:14px;padding-bottom:8px;">
 
-      <!-- 장비 연결 설정 -->
-      <div class="ir-card" style="flex:1;min-height:300px;">
-        <div class="ir-card-header">장비 연결 설정</div>
-        <div style="display:flex;flex-direction:column;gap:14px;font-size:14px;align-items:center;text-align:center;padding-top:18px;">
-          <label style="font-size:15px;">장비 IP address:</label>
-          <input class="ir-input" id="dev-ip" value="192.168.1.100" style="min-width:200px;font-size:18px;font-weight:700;"/>
-          <button class="ir-btn ir-btn-primary" id="dev-connect" style="margin-top:18px;">연결</button>
-          <div id="dev-status" style="font-size:12px;color:var(--ir-fg-muted);height:16px;"></div>
+      <!-- v1.1 S4.3.2: 원본 IP/클라우드 폼 제거 → "등록 머신 관리" 카드로 대체 -->
+      <div class="ir-card">
+        <div class="ir-card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>등록된 머신 (<span id="rm-count">2</span>)</span>
+          <button class="ir-btn ir-btn-primary" id="rm-new" style="font-size:12px;padding:6px 14px;">＋ 신규 등록</button>
+        </div>
+
+        <div class="rm-list" id="rm-list" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+          <!-- 현재 머신 (연결됨) -->
+          <div class="rm-card is-current">
+            <div class="rm-card-h">
+              <span class="rm-icon">☕</span>
+              <span class="rm-name">NT-iRhea 1호기</span>
+              <span class="rm-badge connected">● 연결됨</span>
+              <span class="rm-badge current">현재 사용 중</span>
+            </div>
+            <div class="rm-card-meta">
+              <span>SN: <b>R5KrW2600001</b></span>
+              <span>SSID: <b>iRHEA-A3F7B219</b></span>
+              <span>등록: <b>2026-03-17</b></span>
+              <span>마지막 연결: <b>방금 전</b></span>
+            </div>
+            <div class="rm-card-actions">
+              <button class="rm-act" data-act="rename" data-id="1">별칭 수정</button>
+              <button class="rm-act danger" data-act="unregister" data-id="1">등록 해제</button>
+            </div>
+          </div>
+
+          <!-- 오프라인 머신 -->
+          <div class="rm-card">
+            <div class="rm-card-h">
+              <span class="rm-icon">☕</span>
+              <span class="rm-name">NT-iRhea 2호기</span>
+              <span class="rm-badge offline">● 오프라인</span>
+            </div>
+            <div class="rm-card-meta">
+              <span>SN: <b>R5KrW2600002</b></span>
+              <span>SSID: <b>iRHEA-B8E2D447</b></span>
+              <span>등록: <b>2026-04-02</b></span>
+              <span>마지막 연결: <b>3일 전</b></span>
+            </div>
+            <div class="rm-card-actions">
+              <button class="rm-act" data-act="connect" data-id="2">연결 시도</button>
+              <button class="rm-act" data-act="rename" data-id="2">별칭 수정</button>
+              <button class="rm-act danger" data-act="unregister" data-id="2">등록 해제</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- 클라우드 인증 -->
-      <div class="ir-card" style="flex:1;min-height:300px;">
-        <div class="ir-card-header">클라우드 인증</div>
-        <div style="display:grid;grid-template-columns:auto 1fr;column-gap:18px;row-gap:12px;font-size:15px;font-weight:600;align-items:center;padding-top:14px;">
-          <div>매장:</div>      <input class="ir-input" id="cl-store"  value="CafénobleT"/>
-          <div>장비:</div>      <input class="ir-input" id="cl-device" value="1f3c5a8a"/>
-          <div>권한:</div>      <select class="ir-select" id="cl-role">
-            <option value="admin">admin</option>
-            <option value="operator">operator</option>
-          </select>
-          <div>아이디:</div>    <input class="ir-input" id="cl-user"   value="Nobletree"/>
-          <div>비밀번호:</div>  <input class="ir-input" id="cl-pw"     type="password" value="********"/>
+      <!-- 고급 파라미터 (v1.1 4.3.3 회의 추가 — 접힘) -->
+      <details class="ir-card" id="adv-params">
+        <summary class="ir-card-header" style="cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <span>고급 파라미터</span>
+          <span style="font-size:11px;color:var(--ir-fg-muted);font-weight:500;">⚠ 노블트리 엔지니어만 변경</span>
+        </summary>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:auto 1fr auto 1fr;column-gap:14px;row-gap:10px;align-items:center;font-size:13px;">
+          <div>장비 IP:</div>      <input class="ir-input" id="dev-ip" value="192.168.1.100"/>
+          <div>AWS 매장:</div>     <input class="ir-input" id="cl-store" value="CafénobleT"/>
+          <div>AWS 장비 ID:</div>  <input class="ir-input" id="cl-device" value="1f3c5a8a"/>
+          <div>권한:</div>         <select class="ir-select" id="cl-role"><option value="admin">admin</option><option value="operator">operator</option><option value="distributor">distributor</option></select>
+          <div>AWS ID:</div>       <input class="ir-input" id="cl-user" value="Nobletree"/>
+          <div>AWS PW:</div>       <input class="ir-input" id="cl-pw" type="password" value="********"/>
         </div>
-        <div style="display:flex;justify-content:center;margin-top:18px;">
-          <button class="ir-btn ir-btn-primary" id="cl-auth">인증</button>
+        <div style="padding:8px 16px 14px;display:flex;justify-content:flex-end;">
+          <button class="ir-btn" id="cl-auth" style="font-size:12px;padding:6px 14px;">AWS 인증 테스트</button>
         </div>
-        <div id="cl-status" style="font-size:12px;color:var(--ir-fg-muted);text-align:center;margin-top:8px;height:16px;"></div>
-      </div>
+      </details>
 
     </section>
   </div>
+
+  <style>
+    /* v1.1 등록 머신 관리 (S4.3.2) */
+    .rm-card { border: 1px solid var(--ir-line); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .rm-card.is-current { border-color: var(--ir-orange); background: rgba(197,160,89,0.04); }
+    .rm-card-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .rm-icon { font-size: 18px; }
+    .rm-name { font-size: 14px; font-weight: 700; color: var(--ir-fg); }
+    .rm-badge { font-size: 10.5px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.3px; }
+    .rm-badge.connected { background: #D1FAE5; color: #065F46; }
+    .rm-badge.offline { background: #F3F4F6; color: #6B7280; }
+    .rm-badge.current { background: var(--ir-orange); color: #fff; }
+    .rm-card-meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 11.5px; color: var(--ir-fg-muted); }
+    .rm-card-meta b { color: var(--ir-fg); font-weight: 600; font-family: var(--ir-font-mono, monospace); }
+    .rm-card-actions { display: flex; gap: 6px; padding-top: 4px; border-top: 1px solid var(--ir-line-soft); margin-top: 2px; }
+    .rm-act { font-size: 11px; padding: 5px 10px; border: 1px solid var(--ir-line-strong); background: var(--ir-bg); cursor: pointer; font-family: inherit; color: var(--ir-fg); }
+    .rm-act:hover { background: #FAFAFA; }
+    .rm-act.danger { color: #DC2626; border-color: #FCA5A5; }
+    .rm-act.danger:hover { background: #FEE2E2; }
+    /* 고급 파라미터 details */
+    #adv-params summary::-webkit-details-marker { display: none; }
+    #adv-params summary::before { content: '▸ '; font-size: 11px; transition: transform 0.15s; }
+    #adv-params[open] summary::before { content: '▾ '; }
+  </style>
 
 <%- include('../partials/settings-shell-close') %>
 
@@ -63,18 +128,35 @@
     }
   });
 
-  document.getElementById('dev-connect').addEventListener('click', function () {
-    var s = document.getElementById('dev-status');
-    s.textContent = '연결 중…';
-    fetch('/api/connection/test', { method: 'POST' })
-      .then(function (r) { return r.json(); })
-      .then(function (j) { s.textContent = j.ok ? '연결 성공 (' + j.latencyMs + 'ms)' : '연결 실패'; });
+  // v1.1 등록 머신 관리 — 신규/해제/별칭/연결
+  document.getElementById('rm-new').addEventListener('click', function () {
+    window.IRModal.confirm({
+      title: '신규 머신 등록',
+      body: 'AP 스캔 화면으로 이동합니다.<br>등록할 머신을 머신 AP 모드로 진입시킨 후 진행해 주세요.',
+      ok: '진행',
+      onOk: function () { window.location.href = '/connect/ap-scan'; }
+    });
+  });
+  document.querySelectorAll('.rm-act').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var act = btn.dataset.act;
+      var id = btn.dataset.id;
+      if (act === 'unregister') {
+        window.IRModal.open('confirm-irreversible', function (v) {
+          if (v === 'ok') window.IRToast?.show('머신 #' + id + ' 등록 해제됨', { type: 'error' });
+        });
+      } else if (act === 'rename') {
+        window.IRModal.info({ title: '별칭 수정', body: '머신 #' + id + ' 별칭 수정 (mock)' });
+      } else if (act === 'connect') {
+        window.IRToast?.show('머신 #' + id + ' 연결 시도 중…');
+      }
+    });
   });
 
-  document.getElementById('cl-auth').addEventListener('click', function () {
-    var s = document.getElementById('cl-status');
-    s.textContent = '인증 중…';
-    setTimeout(function () { s.textContent = '인증 성공'; }, 600);
+  // 고급 파라미터 — AWS 인증 (옛 cl-auth 유지)
+  document.getElementById('cl-auth')?.addEventListener('click', function () {
+    window.IRToast?.show('AWS 인증 테스트 중… (mock)');
+    setTimeout(function () { window.IRToast?.show('AWS 인증 성공'); }, 700);
   });
 
   // Save → confirm before applying

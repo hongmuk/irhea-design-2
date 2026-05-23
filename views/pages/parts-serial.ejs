@@ -1,0 +1,113 @@
+<!-- 부품 시리얼 (S4.5 · v1.1 신규) — 와이어프레임 v6.0 4.5.1 부품 표 verbatim -->
+<div class="ir-shell">
+  <div class="ir-tabs">
+    <a class="ir-tab" href="/settings/general">설정</a>
+    <a class="ir-tab" href="/settings/backup">백업 / 복구</a>
+    <a class="ir-tab is-active" href="/settings/engineering" data-i18n="tab.engineering">🔒 관리자 메뉴</a>
+    <a class="ir-tab" href="/settings/firmware">펌웨어 업그레이드</a>
+  </div>
+
+  <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
+    <aside class="ir-side-menu">
+      <a class="ir-tab" href="/settings/engineering/factory-reset">공장초기화</a>
+      <a class="ir-tab" href="/settings/engineering/connection">장비 연결 설정</a>
+      <a class="ir-tab" href="/settings/engineering/pump-calibration">펌프 교정</a>
+      <a class="ir-tab is-active" href="/settings/engineering/parts">부품 시리얼</a>
+    </aside>
+
+    <section class="ir-grow" style="padding:24px 28px;flex-direction:column;gap:16px;display:flex;">
+      <div>
+        <span class="ir-page-sub">Admin · parts</span>
+        <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">부품 <em>시리얼.</em></h1>
+        <p style="margin-top:8px;font-size:12px;color:var(--ir-fg-muted);">교체·수리 시 부품별 시리얼 변경 또는 실적 초기화. 디스트리뷰터=조회만 / 개발자=변경 OK.</p>
+      </div>
+
+      <div class="parts-card">
+        <table class="parts-t">
+          <thead>
+            <tr>
+              <th>부품</th><th>시리얼</th><th>설치/사용량</th><th>한계</th><th>상태</th><th style="text-align:right;">작업</th>
+            </tr>
+          </thead>
+          <tbody id="parts-rows"></tbody>
+        </table>
+      </div>
+
+      <p style="font-size:11px;color:var(--ir-fg-muted);font-style:italic;margin-top:auto;">⚠ 시리얼 변경은 복구 불가능합니다. 출고/교체 시에만 변경하세요.</p>
+    </section>
+  </div>
+</div>
+
+<style>
+  .parts-card { border: 1px solid var(--ir-line); padding: 0; }
+  .parts-t { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .parts-t th { text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 700; color: var(--ir-fg-muted); letter-spacing: 0.4px; text-transform: uppercase; border-bottom: 1px solid var(--ir-line); background: #FAFAFA; }
+  .parts-t th:last-child { text-align: right; }
+  .parts-t td { padding: 12px 14px; font-size: 12.5px; color: var(--ir-fg); border-bottom: 1px solid var(--ir-line-soft); }
+  .parts-t td:last-child { text-align: right; }
+  .parts-t tr:last-child td { border-bottom: none; }
+  .parts-t .part-name { font-weight: 700; color: var(--ir-fg); }
+  .parts-t .part-serial { font-family: var(--ir-font-mono, monospace); font-size: 11.5px; color: var(--ir-fg-muted); }
+  .parts-t .part-usage { color: var(--ir-fg); font-weight: 600; }
+  .parts-t .part-limit { color: var(--ir-fg-muted); font-size: 11.5px; }
+  .parts-t .status { padding: 3px 8px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px; display: inline-block; }
+  .parts-t .status.ok { background: #D1FAE5; color: #065F46; }
+  .parts-t .status.warn { background: #FEF3C7; color: #92400E; }
+  .parts-t .status.bad { background: #FEE2E2; color: #991B1B; }
+  .parts-action-btn { font-size: 11px; padding: 5px 10px; border: 1px solid var(--ir-line-strong); background: var(--ir-bg); cursor: pointer; font-family: inherit; color: var(--ir-fg); margin-left: 4px; }
+  .parts-action-btn:hover { background: #FAFAFA; }
+  .parts-action-btn.danger { color: #DC2626; border-color: #FCA5A5; }
+  .parts-action-btn.danger:hover { background: #FEE2E2; }
+</style>
+
+<script>
+(function () {
+  // 와이어프레임 v6.0 4.5.1 부품 표 verbatim
+  var PARTS = [
+    { name: '메인 본체',       serial: 'R5KrW2600001',   usage: '설치 2026.03.17', limit: '—',           status: 'ok',   actions: ['시리얼 변경'] },
+    { name: '보일러',          serial: 'R5KRM2600001',   usage: '1,247 시간',      limit: '5년',         status: 'ok',   actions: ['시리얼 변경'] },
+    { name: '워터펌프',        serial: 'SC3711PW (12V)', usage: '1,247 시간',      limit: '5,000 시간',  status: 'warn', actions: ['변경', '실적 초기화'] },
+    { name: '솔밸브 (출수)',   serial: '2 Way',           usage: '548 사이클',      limit: '10,000',      status: 'ok',   actions: ['변경'] },
+    { name: '솔밸브 (입수)',   serial: '2 Way',           usage: '548 사이클',      limit: '10,000',      status: 'ok',   actions: ['변경'] },
+    { name: '실리콘 가스켓',   serial: '—',               usage: '548 회',          limit: '2,000 회',    status: 'ok',   actions: ['사이클 초기화'] }
+  ];
+  var STATUS_LABEL = { ok: '정상', warn: '주의 (25%)', bad: '교체 필요' };
+
+  function render() {
+    var tbody = document.getElementById('parts-rows');
+    tbody.innerHTML = PARTS.map(function (p, i) {
+      var actions = p.actions.map(function (a) {
+        var danger = a.indexOf('초기화') >= 0 ? ' danger' : '';
+        return '<button class="parts-action-btn' + danger + '" data-i="' + i + '" data-a="' + a + '">' + a + '</button>';
+      }).join('');
+      return '<tr>' +
+        '<td class="part-name">' + p.name + '</td>' +
+        '<td class="part-serial">' + p.serial + '</td>' +
+        '<td class="part-usage">' + p.usage + '</td>' +
+        '<td class="part-limit">' + p.limit + '</td>' +
+        '<td><span class="status ' + p.status + '">' + STATUS_LABEL[p.status] + '</span></td>' +
+        '<td>' + actions + '</td>' +
+      '</tr>';
+    }).join('');
+
+    tbody.querySelectorAll('.parts-action-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(btn.dataset.i, 10);
+        var part = PARTS[i];
+        var action = btn.dataset.a;
+        // 모든 부품 작업은 복구불가 confirm
+        window.IRModal.confirm({
+          title: part.name + ' — ' + action,
+          body: '복구불가<br>' + action + '을(를) 진행하시겠습니까?',
+          bodyClass: 'is-error',
+          ok: '진행',
+          onOk: function () {
+            window.IRToast?.show(part.name + ' · ' + action + ' 완료 (mock)', { type: 'error' });
+          }
+        });
+      });
+    });
+  }
+  render();
+})();
+</script>
