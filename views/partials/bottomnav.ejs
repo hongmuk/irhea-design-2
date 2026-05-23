@@ -1,6 +1,9 @@
+<!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
 <nav class="nav">
-  <a class="nav-item <%= activeNav === 'settings' ? 'active' : '' %>" href="/settings/general">설정</a>
-  <a class="nav-item <%= activeNav === 'recipes' ? 'active' : '' %>" href="/recipes">레시피</a>
-  <a class="nav-item <%= activeNav === 'favorites' ? 'active' : '' %>" href="/favorites">즐겨찾기</a>
-  <a class="nav-item <%= activeNav === 'info' ? 'active' : '' %>" href="/info">정보</a>
+  <a class="nav-item <%= (activeNav === 'main' || activeNav === 'dashboard') ? 'active' : '' %>" href="/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item <%= activeNav === 'recipes' ? 'active' : '' %>" href="/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item <%= activeNav === 'favorites' ? 'active' : '' %>" href="/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item <%= activeNav === 'history' ? 'active' : '' %>" href="/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item <%= (activeNav === 'info' || activeNav === 'system-info') ? 'active' : '' %>" href="/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item <%= (activeNav === 'settings' || activeNav === 'general') ? 'active' : '' %>" href="/settings/general" data-i18n="nav.settings">설정</a>
 </nav>

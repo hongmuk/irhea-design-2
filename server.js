@@ -55,12 +55,14 @@ app.get('/brewing/complete', (req, res) => renderIR(res, 'brewing-complete', { t
 app.get('/settings/general',     (req, res) => renderIR(res, 'settings-general',     { title: '설정',         activeNav: 'general' }));
 app.get('/settings/backup',      (req, res) => renderIR(res, 'settings-backup',      { title: 'USB 백업/복구', activeNav: 'backup' }));
 app.get('/settings/engineering', (req, res) => renderIR(res, 'settings-engineering', { title: '엔지니어링',    activeNav: 'engineering' }));
-app.get('/settings/engineering/factory-reset', (req, res) => renderIR(res, 'factory-reset',     { title: '공장 초기화', activeNav: 'engineering' }));
-app.get('/settings/engineering/connection',    (req, res) => renderIR(res, 'connection-config', { title: '연결 설정',   activeNav: 'engineering' }));
+app.get('/settings/engineering/factory-reset',     (req, res) => renderIR(res, 'factory-reset',     { title: '공장 초기화', activeNav: 'engineering' }));
+app.get('/settings/engineering/connection',        (req, res) => renderIR(res, 'connection-config', { title: '연결 설정',   activeNav: 'engineering' }));
+app.get('/settings/engineering/pump-calibration',  (req, res) => renderIR(res, 'pump-calibration',  { title: '펌프 교정',   activeNav: 'engineering' }));
 app.get('/settings/firmware',    (req, res) => renderIR(res, 'firmware-upgrade',     { title: '펌웨어 업그레이드', activeNav: 'firmware' }));
 
 app.get('/info',          (req, res) => renderIR(res, 'info',          { title: '정보' }));
 app.get('/info/security', (req, res) => renderIR(res, 'info-security', { title: '보안 정보' }));
+app.get('/history',       (req, res) => renderIR(res, 'history',       { title: '추출 실적', activeNav: 'history' }));
 
 // ── APIs ─────────────────────────────────────────────────
 

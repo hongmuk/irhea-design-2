@@ -20,10 +20,11 @@
       var html = '<div class="picker-grid">';
       recipes.forEach(function (r) {
         var sel = opts.selectedId === r.id ? ' is-selected' : '';
-        html += '<button class="picker-i' + sel + '" data-rid="' + r.id + '">' +
+        var name = r.name || ('레시피 ' + r.id);
+        html += '<button class="picker-i' + sel + '" data-rid="' + r.id + '" title="' + name.replace(/"/g, '&quot;') + '">' +
                 '<span class="picker-num">' + String(r.id).padStart(2, '0') + '</span>' +
-                '<span class="picker-name">레시피 ' + r.id + '</span>' +
-                '<span class="picker-meta">' + (r.coffeeWeight || '--') + 'g · ' + (r.ratio || '--') + '</span>' +
+                '<span class="picker-name">' + name + '</span>' +
+                '<span class="picker-meta">' + (r.coffeeWeight || '--') + 'g · ' + (r.ratio || '--') + ' · ' + (r.waterWeight || '--') + 'g</span>' +
                 '</button>';
       });
       html += '</div>';

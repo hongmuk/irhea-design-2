@@ -32,28 +32,41 @@
     save(state);
   }
 
-  // Favorites: per spout, array [aRecipeId, bRecipeId]
+  // Favorites: per spout, array [r0, r1, r2, r3, r4] — 최대 5 슬롯 (회의 피드백 v1.1)
+  var FAV_SLOTS = 5;
   function getFavorites(spouts) {
     var saved = get('favorites', null);
-    if (saved) return saved;
+    if (saved) {
+      // 기존 2-슬롯 데이터를 5-슬롯으로 마이그레이션
+      Object.keys(saved).forEach(function (k) {
+        var arr = saved[k] || [];
+        while (arr.length < FAV_SLOTS) arr.push(null);
+        saved[k] = arr.slice(0, FAV_SLOTS);
+      });
+      return saved;
+    }
     var seed = {};
     (spouts || []).forEach(function (s) {
-      seed[s.id] = (s.favoriteRecipeIds || []).slice(0, 2);
+      var arr = (s.favoriteRecipeIds || []).slice(0, FAV_SLOTS);
+      while (arr.length < FAV_SLOTS) arr.push(null);
+      seed[s.id] = arr;
     });
     set('favorites', seed);
     return seed;
   }
-  function setFavorite(spoutId, slot /* 0 = A, 1 = B */, recipeId) {
+  function setFavorite(spoutId, slot /* 0..4 */, recipeId) {
     var fav = get('favorites', {});
-    if (!fav[spoutId]) fav[spoutId] = [null, null];
+    if (!fav[spoutId]) fav[spoutId] = [null, null, null, null, null];
     fav[spoutId][slot] = recipeId;
     set('favorites', fav);
   }
+  // swapFavorites: 회의 피드백 v1.1 — A↔B 스왑 개념 폐기 (추출구 고정 매핑)
+  // 호환성 유지 위해 함수는 남기되, 단순 첫 두 슬롯 교환만 수행
   function swapFavorites(spoutId) {
     var fav = get('favorites', {});
     if (!fav[spoutId]) return;
     var a = fav[spoutId][0], b = fav[spoutId][1];
-    fav[spoutId] = [b, a];
+    fav[spoutId][0] = b; fav[spoutId][1] = a;
     set('favorites', fav);
   }
   function clearAllFavorites() {

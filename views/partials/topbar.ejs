@@ -6,13 +6,13 @@
     <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
   <div class="topbar-right">
-    <a href="/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
-    
-    <!-- Demo-style Language Switcher -->
-    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
-      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+    <!-- 홈 아이콘은 사이드바로 이관 (회의 피드백: 다른 메뉴는 다 사이드바인데 홈만 위에 있으면 위화감) -->
+
+    <!-- 언어 토글 — 회의 피드백 v1.2: 실제 작동하도록 (i18n.js 연동) -->
+    <button class="tb-lang-wrap" id="tb-lang-btn" type="button" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer; background:transparent; font-family:inherit;">
+      <span id="tb-lang-label" style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
       <span style="font-size:10px; opacity:0.5;">▼</span>
-    </div>
+    </button>
 
     <span class="tb-sep"></span>
     <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
@@ -65,11 +65,18 @@
       });
     });
 
-    // Simple language toggle simulation
-    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
-       const lang = this.querySelector('span').textContent;
-       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
-       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    // 언어 토글 — i18n.js 와 연동 (회의 피드백 v1.2)
+    function syncLangLabel() {
+      var label = document.getElementById('tb-lang-label');
+      if (label && window.IRI18n) label.textContent = window.IRI18n.lang.toUpperCase();
+    }
+    syncLangLabel();
+    document.getElementById('tb-lang-btn')?.addEventListener('click', function () {
+      if (!window.IRI18n) return;
+      var next = window.IRI18n.lang === 'ko' ? 'en' : 'ko';
+      window.IRI18n.set(next);
+      syncLangLabel();
+      window.IRToast?.show(next === 'ko' ? '한국어로 변경되었습니다.' : 'Changed to English.');
     });
   })();
 </script>

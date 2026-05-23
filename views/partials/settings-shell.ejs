@@ -6,11 +6,13 @@
 <% var __backHref  = (typeof backHref  !== 'undefined') ? backHref  : '/main'; %>
 
 <div class="ir-shell">
+  <!-- 회의 피드백 v1.2: 탭 순서 — 사용자용 먼저, 엔지니어링은 맨 뒤
+       (현재는 일반 / 백업 / 펌웨어 → 엔지니어링) -->
   <div class="ir-tabs">
-    <a class="ir-tab <%= __activeTab === 'general' ? 'is-active' : '' %>"     href="/settings/general">설정</a>
-    <a class="ir-tab <%= __activeTab === 'backup' ? 'is-active' : '' %>"      href="/settings/backup">백업/복구</a>
-    <a class="ir-tab <%= __activeTab === 'engineering' ? 'is-active' : '' %>" href="/settings/engineering">엔지니어링<br>메뉴</a>
-    <a class="ir-tab <%= __activeTab === 'firmware' ? 'is-active' : '' %>"    href="/settings/firmware">펌웨어<br>업그레이드</a>
+    <a class="ir-tab <%= __activeTab === 'general' ? 'is-active' : '' %>"     href="/settings/general"     data-i18n="tab.general">장비 설정</a>
+    <a class="ir-tab <%= __activeTab === 'backup' ? 'is-active' : '' %>"      href="/settings/backup"      data-i18n="tab.backup">백업 / 복구</a>
+    <a class="ir-tab <%= __activeTab === 'firmware' ? 'is-active' : '' %>"    href="/settings/firmware"    data-i18n="tab.firmware">펌웨어 업그레이드</a>
+    <a class="ir-tab is-admin <%= __activeTab === 'engineering' ? 'is-active' : '' %>" href="/settings/engineering" data-i18n="tab.engineering">🔒 엔지니어링 메뉴</a>
 
     <div style="flex:1;"></div>
 

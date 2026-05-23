@@ -4,51 +4,33 @@
     <span class="logo-text">iRHEA-Light</span>
   </div>
   <nav class="sidebar-nav">
-    <div class="nav-section-title">Main</div>
-    <a href="/" class="nav-item <%= activeNav === 'dashboard' ? 'active' : '' %>">
-      <span class="nav-icon">&#9632;</span>
-      <span class="nav-label">Dashboard</span>
+    <a href="/" class="nav-item <%= activeNav === 'home' ? 'active' : '' %>">
+      <span class="nav-icon">&#8962;</span>
+      <span class="nav-label" data-i18n="nav.home">홈</span>
+    </a>
+    <a href="/main" class="nav-item <%= (activeNav === 'main' || activeNav === 'dashboard') ? 'active' : '' %>">
+      <span class="nav-icon">&#9678;</span>
+      <span class="nav-label" data-i18n="nav.main">메인</span>
     </a>
     <a href="/recipes" class="nav-item <%= activeNav === 'recipes' ? 'active' : '' %>">
       <span class="nav-icon">&#9749;</span>
-      <span class="nav-label">Recipes</span>
-    </a>
-    <a href="/brewing" class="nav-item <%= activeNav === 'brewing' ? 'active' : '' %>">
-      <span class="nav-icon">&#9200;</span>
-      <span class="nav-label">Brewing</span>
+      <span class="nav-label" data-i18n="nav.recipes">레시피</span>
     </a>
     <a href="/favorites" class="nav-item <%= activeNav === 'favorites' ? 'active' : '' %>">
       <span class="nav-icon">&#9733;</span>
-      <span class="nav-label">Favorites</span>
+      <span class="nav-label" data-i18n="nav.favorites">즐겨찾기</span>
     </a>
-
-    <div class="nav-section-title">Monitor</div>
-    <a href="/alarms" class="nav-item <%= activeNav === 'alarms' ? 'active' : '' %>">
-      <span class="nav-icon">&#9888;</span>
-      <span class="nav-label">Alarms</span>
-      <span class="nav-badge" id="alarm-badge">3</span>
-    </a>
-    <a href="/usage" class="nav-item <%= activeNav === 'usage' ? 'active' : '' %>">
-      <span class="nav-icon">&#9636;</span>
-      <span class="nav-label">Usage History</span>
-    </a>
-
-    <div class="nav-section-title">System</div>
-    <a href="/settings" class="nav-item <%= activeNav === 'settings' ? 'active' : '' %>">
-      <span class="nav-icon">&#9881;</span>
-      <span class="nav-label">Settings</span>
-    </a>
-    <a href="/calibration" class="nav-item <%= activeNav === 'calibration' ? 'active' : '' %>">
-      <span class="nav-icon">&#8982;</span>
-      <span class="nav-label">Calibration</span>
-    </a>
-    <a href="/firmware" class="nav-item <%= activeNav === 'firmware' ? 'active' : '' %>">
-      <span class="nav-icon">&#8635;</span>
-      <span class="nav-label">Firmware</span>
-    </a>
-    <a href="/system-info" class="nav-item <%= activeNav === 'system-info' ? 'active' : '' %>">
+    <a href="/info" class="nav-item <%= (activeNav === 'info' || activeNav === 'system-info') ? 'active' : '' %>">
       <span class="nav-icon">&#9432;</span>
-      <span class="nav-label">System Info</span>
+      <span class="nav-label" data-i18n="nav.info">정보</span>
+    </a>
+    <a href="/history" class="nav-item <%= activeNav === 'history' ? 'active' : '' %>">
+      <span class="nav-icon">&#9636;</span>
+      <span class="nav-label" data-i18n="nav.history">추출 실적</span>
+    </a>
+    <a href="/settings" class="nav-item <%= activeNav === 'settings' || activeNav === 'general' ? 'active' : '' %>">
+      <span class="nav-icon">&#9881;</span>
+      <span class="nav-label" data-i18n="nav.settings">설정</span>
     </a>
   </nav>
 </aside>

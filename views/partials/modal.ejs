@@ -24,15 +24,16 @@
 <script>
 (function () {
   // Standard preset alerts — name, body, buttons[], optional class
+  // 회의 피드백 v1.1: O/X → 직관적 텍스트 (확인/취소, 진행/취소, 재시도/취소)
   var PRESETS = {
-    'alert-password-error':     { body: '암호 오류',                                       bodyClass: 'is-error', buttons: [{ label: 'X' }] },
-    'alert-extract-press':      { body: '추출 진행<br>추출구의 버튼을 눌러주세요',         buttons: [{ label: 'X' }] },
+    'alert-password-error':     { body: '암호 오류',                                       bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-extract-press':      { body: '추출 진행<br>추출구의 버튼을 눌러주세요',         buttons: [{ label: '닫기' }] },
     'alert-shutdown':           { body: '장비를 종료합니다.<br>기다려 주세요',             buttons: [] },
     'alert-shutdown-done':      { body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',        buttons: [{ label: '확인', primary: true }] },
-    'confirm-firmware':         { body: '펌웨어를 업그레이드 합니다.',                      buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-change':{ body: '장치 연결 설정을 변경 합니다.',                    buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-fail':  { body: '연결 실패<br>재시도?',                              bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-irreversible':     { body: '복구불가<br>진행하시겠습니까?',                    bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] }
+    'confirm-firmware':         { body: '펌웨어를 업그레이드 합니다.',                      buttons: [{ label: '진행',   primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-change':{ body: '장치 연결 설정을 변경 합니다.',                    buttons: [{ label: '변경',   primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-fail':  { body: '연결 실패<br>재시도하시겠습니까?',                  bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-irreversible':     { body: '복구불가<br>진행하시겠습니까?',                    bodyClass: 'is-error', buttons: [{ label: '진행',   primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] }
   };
 
   function el(id) { return document.getElementById(id); }
@@ -79,10 +80,10 @@
       });
     },
     confirm: function (opts) {
-      // opts: { title, body, bodyClass, ok = 'O', cancel = 'X', onOk, onCancel }
+      // opts: { title, body, bodyClass, ok = '확인', cancel = '취소', onOk, onCancel }
       var buttons = [
-        { label: opts.ok || 'O', primary: true, value: 'ok' },
-        { label: opts.cancel || 'X', value: 'cancel' }
+        { label: opts.ok || '확인', primary: true, value: 'ok' },
+        { label: opts.cancel || '취소', value: 'cancel' }
       ];
       openWith({
         title: opts.title || '알림',
