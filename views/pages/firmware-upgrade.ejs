@@ -22,7 +22,18 @@
         </div>
       </div>
 
-      <!-- 보드별 진행 — 회의 피드백 v1.3: WHP / MCP / 5천원 / 백 프론트 (4종) -->
+      <!-- 모듈 선택 (v1.1 S5.1.4 — "전체 또는 선택") + 보드별 진행 -->
+      <div class="fw-module-select">
+        <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">업그레이드 대상 (다중 선택)</div>
+        <div class="fw-modules">
+          <label class="fw-mod"><input type="checkbox" data-mod="WHP" checked><span class="fw-mod-mk">✓</span><span>WHP <em>(워터 히터 펌프)</em></span></label>
+          <label class="fw-mod"><input type="checkbox" data-mod="MCP" checked><span class="fw-mod-mk">✓</span><span>MCP <em>(메인 컴 · 클라우드)</em></span></label>
+          <label class="fw-mod"><input type="checkbox" data-mod="5000" checked><span class="fw-mod-mk">✓</span><span>5천원 <em>(서브 보드)</em></span></label>
+          <label class="fw-mod"><input type="checkbox" data-mod="FRONT" checked><span class="fw-mod-mk">✓</span><span>백 프론트 <em>(LED + 버튼)</em></span></label>
+        </div>
+      </div>
+
+      <!-- 보드별 진행 — 회의 v1.3: WHP / MCP / 5천원 / 백 프론트 (4종) -->
       <div class="fw-boards" id="fw-boards" style="display:none;">
         <div class="fw-board" data-board="WHP">
           <span class="fw-board-name">WHP <em>(워터 히터 펌프)</em></span>
@@ -93,6 +104,19 @@
     .fw-board-status { font-size: 11px; font-weight: 700; color: var(--ir-fg-muted); text-align: right; font-variant-numeric: tabular-nums; }
     .fw-board[data-state="active"] .fw-board-status { color: var(--ir-orange-deep); }
     .fw-board[data-state="done"] .fw-board-status { color: var(--ir-status-ok, #15803D); }
+    .fw-board.is-skipped { opacity: 0.4; }
+    .fw-board.is-skipped .fw-board-status { color: var(--ir-fg-muted); }
+
+    /* 모듈 선택 (v1.1 S5.1.4) */
+    .fw-module-select { padding: 14px 16px 12px; border: 1px solid var(--ir-line); background: var(--ir-bg-2); margin-bottom: 12px; }
+    .fw-modules { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .fw-mod { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--ir-line); cursor: pointer; font-size: 12.5px; }
+    .fw-mod:has(input:checked) { border-color: var(--ir-orange); background: rgba(197,160,89,0.04); }
+    .fw-mod input { display: none; }
+    .fw-mod-mk { width: 16px; height: 16px; border: 2px solid var(--ir-line-strong); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .fw-mod:has(input:checked) .fw-mod-mk { background: var(--ir-orange); border-color: var(--ir-orange); }
+    .fw-mod:not(:has(input:checked)) .fw-mod-mk { color: transparent; }
+    .fw-mod em { color: var(--ir-fg-muted); font-style: normal; font-weight: 400; margin-left: 4px; font-size: 10.5px; }
   </style>
 
 <%- include('../partials/settings-shell-close') %>
@@ -172,19 +196,35 @@
   }
 
   document.getElementById('fw-upgrade').addEventListener('click', function () {
+    // v1.1 S5.1.4: 선택된 모듈만 업그레이드
+    var selected = Array.from(document.querySelectorAll('.fw-mod input:checked')).map(function (i) { return i.dataset.mod; });
+    if (selected.length === 0) {
+      window.IRModal.info({ body: '업그레이드할 모듈을 1개 이상 선택해 주세요.', bodyClass: 'is-error' });
+      return;
+    }
     window.IRModal.confirm({
       title: '펌웨어 업그레이드',
-      body: '펌웨어를 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.',
+      body: '선택한 ' + selected.length + '개 모듈을 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.',
       ok: '진행',
       onOk: function () {
         var boardsWrap = document.getElementById('fw-boards');
         boardsWrap.style.display = 'flex';
-        var boards = boardsWrap.querySelectorAll('.fw-board');
-        // 보드 순차 업그레이드 — 회의 v1.3: 4 보드 (WHP / MCP / 5천원 / 프론트)
-        runBoardUpgrade(boards[0], 1800)
-          .then(function () { return runBoardUpgrade(boards[1], 1400); })
-          .then(function () { return runBoardUpgrade(boards[2], 1100); })
-          .then(function () { return runBoardUpgrade(boards[3], 900); })
+        var boards = Array.from(boardsWrap.querySelectorAll('.fw-board'));
+        // 선택 안 된 보드는 skipped 표시
+        boards.forEach(function (b) {
+          if (selected.indexOf(b.dataset.board) < 0) {
+            b.classList.add('is-skipped');
+            b.querySelector('.fw-board-status').textContent = '건너뜀';
+          }
+        });
+        var targets = boards.filter(function (b) { return selected.indexOf(b.dataset.board) >= 0; });
+        var durations = [1800, 1400, 1100, 900];
+        // 순차 업그레이드
+        var p = Promise.resolve();
+        targets.forEach(function (b, i) {
+          p = p.then(function () { return runBoardUpgrade(b, durations[i] || 1000); });
+        });
+        p
           // 회의 피드백 v1.2: 통신 실패 시 IRError 자동
           .then(function () { return (window.IRFetch || fetch)('/api/firmware/upgrade', { method: 'POST' }); })
           .then(function () {

@@ -1,8 +1,35 @@
-<!-- 보안 정보 — 엔지니어 모드 (회의 피드백 v1.2: 패스워드 게이트 + 일반 사용자 차단) -->
+<!-- 보안 정보 — 엔지니어 모드 (회의 v1.1: 패스워드 게이트 + 검색 + FATAL 마스킹) -->
+<style>
+  /* v1.1 S4.4.0 검색 바 */
+  .sec-filter {
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr auto;
+    gap: 8px; margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--ir-line);
+    background: var(--ir-bg-2);
+  }
+  .sec-input, .sec-select {
+    height: 32px; padding: 0 10px;
+    border: 1px solid var(--ir-line);
+    background: var(--ir-bg);
+    font-size: 12.5px; color: var(--ir-fg);
+    font-family: inherit;
+  }
+  .sec-input:focus, .sec-select:focus { outline: none; border-color: var(--ir-fg); }
+  .sec-select:disabled { background: #F3F4F6; color: var(--ir-fg-muted); cursor: not-allowed; }
+  .sec-clear {
+    height: 32px; padding: 0 14px;
+    border: 1px solid var(--ir-line-strong);
+    background: var(--ir-bg); color: var(--ir-fg);
+    font-size: 11.5px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+  .sec-clear:hover { background: #FAFAFA; }
+</style>
 <div class="ir-shell">
   <div class="ir-content" style="padding:24px 28px 18px;">
 
-    <div style="margin-bottom:16px;display:flex;align-items:baseline;justify-content:space-between;">
+    <div style="margin-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;">
       <div>
         <span class="ir-page-sub">🔒 Engineer mode · audit</span>
         <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">보안 <em>정보.</em></h1>
@@ -10,7 +37,36 @@
       <span style="font-size:11px;color:var(--ir-fg-muted);padding:4px 10px;border:1px solid var(--ir-line);background:var(--ir-bg-2);letter-spacing:0.3px;">로그인 <b style="color:var(--ir-fg);">Admin</b> · <a href="#" id="sec-logout" style="color:var(--ir-orange-deep);text-decoration:none;font-weight:700;">로그아웃</a></span>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px;flex:1;">
+    <!-- v1.1 S4.4.0: 검색 바 (기간 / 코드 / 소스 / 심각도 / 키워드) — 4분할 전체에 적용 -->
+    <div class="sec-filter">
+      <input type="text" class="sec-input" id="sec-q" placeholder="🔍  코드 / 메시지 키워드">
+      <select class="sec-select" id="sec-period">
+        <option value="all">전체 기간</option>
+        <option value="7d">최근 7일</option>
+        <option value="30d">최근 30일</option>
+        <option value="90d">최근 90일</option>
+      </select>
+      <select class="sec-select" id="sec-source">
+        <option value="all">전체 소스</option>
+        <option value="Spout1">Spout1</option>
+        <option value="Spout2">Spout2</option>
+        <option value="Spout3">Spout3</option>
+        <option value="Spout4">Spout4</option>
+        <option value="Spout5">Spout5</option>
+        <option value="Boiler">Boiler</option>
+        <option value="MCP">MCP</option>
+      </select>
+      <select class="sec-select" id="sec-severity">
+        <option value="all">전체 심각도</option>
+        <option value="FATAL">FATAL (디스트리뷰터 마스킹)</option>
+        <option value="ERROR">ERROR</option>
+        <option value="WARN">WARN</option>
+        <option value="INFO">INFO</option>
+      </select>
+      <button class="sec-clear" id="sec-clear">초기화</button>
+    </div>
+
+    <div class="sec-grid" style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:14px;flex:1;">
 
       <!-- 로그 정보 -->
       <div class="ir-card" style="padding:0;">
@@ -135,6 +191,55 @@
     setTimeout(function () { location.href = '/info'; }, 400);
   });
 
+  // v1.1 S4.4.0: 권한 체크 (현재 sessionStorage는 admin만 — 디스트리뷰터/개발자는 백엔드 협의 시 분리)
+  // 일단 sessionStorage 에 ir-role 이 distributor 인 경우 FATAL 마스킹
+  var userRole = sessionStorage.getItem('ir-role') || 'developer'; // 기본은 개발자 (전체 노출)
+  var maskFATAL = (userRole === 'distributor');
+
+  // 검색 필터 상태
+  var allErrs = [], allLog = [];
+  var filter = { q: '', period: 'all', source: 'all', severity: 'all' };
+
+  function filterErrs() {
+    return allErrs.filter(function (e) {
+      if (maskFATAL && /FATAL/i.test(e.severity || '')) return false;
+      if (filter.q && !((e.code + ' ' + (e.message || '')).toLowerCase().indexOf(filter.q.toLowerCase()) >= 0)) return false;
+      if (filter.source !== 'all' && e.source !== filter.source) return false;
+      if (filter.severity !== 'all' && (e.severity || 'ERROR') !== filter.severity) return false;
+      if (filter.period !== 'all') {
+        var days = filter.period === '7d' ? 7 : filter.period === '30d' ? 30 : 90;
+        var cutoff = Date.now() - days * 86400 * 1000;
+        var t = new Date(e.date.replace(/[.]/g, '-')).getTime();
+        if (t < cutoff) return false;
+      }
+      return true;
+    });
+  }
+  function filterLog() {
+    if (!filter.q) return allLog;
+    var q = filter.q.toLowerCase();
+    return allLog.filter(function (l) { return String(l).toLowerCase().indexOf(q) >= 0; });
+  }
+
+  function renderLog() {
+    document.getElementById('sec-log').innerHTML = filterLog().map(function (l) {
+      return '<div>' + l.replace(/</g, '&lt;') + '</div>';
+    }).join('') || '<div style="color:var(--ir-fg-muted);font-style:italic;">— 일치하는 로그 없음 —</div>';
+  }
+  function renderErrs() {
+    var errs = filterErrs();
+    var tbl = document.getElementById('sec-err');
+    tbl.innerHTML = '<thead><tr><th>일시</th><th>오류코드</th></tr></thead><tbody>' +
+      (errs.length ? errs.map(function (e) {
+        var origIdx = allErrs.indexOf(e);
+        var hl = e.highlight ? 'style="color:var(--ir-status-error);font-weight:800;cursor:pointer;" data-i="' + origIdx + '"'
+                             : 'style="cursor:pointer;" data-i="' + origIdx + '"';
+        return '<tr ' + hl + '><td>' + e.date + '</td><td>' + e.code + '</td></tr>';
+      }).join('') : '<tr><td colspan="2" style="text-align:center;color:var(--ir-fg-muted);padding:14px 0;font-style:italic;">— 일치하는 오류 없음 —</td></tr>') +
+      '</tbody>';
+    bindRowClick();
+  }
+
   // 인증 후 데이터 로드
   requireAdminAuth().then(function () {
     return Promise.all([
@@ -143,19 +248,40 @@
       fetch('/api/usage-stats').then(function (r) { return r.json(); })
     ]);
   }).then(function (rs) {
-    var sysLog = rs[0] || [], errs = rs[1] || [], us = rs[2] || {};
+    allLog = rs[0] || []; allErrs = rs[1] || []; var us = rs[2] || {};
 
-    document.getElementById('sec-log').innerHTML = sysLog.map(function (l) {
-      return '<div>' + l.replace(/</g, '&lt;') + '</div>';
-    }).join('');
+    // 검색 바 권한 안내
+    if (maskFATAL) {
+      var sev = document.getElementById('sec-severity');
+      sev.disabled = true;
+      sev.title = '디스트리뷰터 권한 — FATAL 항목은 마스킹됩니다';
+    }
+    // 검색 바 입력 바인딩
+    document.getElementById('sec-q').addEventListener('input', function (ev) {
+      if (ev.isComposing) return;
+      filter.q = ev.target.value.trim();
+      renderLog(); renderErrs();
+    });
+    document.getElementById('sec-q').addEventListener('compositionend', function (ev) {
+      filter.q = ev.target.value.trim(); renderLog(); renderErrs();
+    });
+    ['sec-period','sec-source','sec-severity'].forEach(function (id) {
+      document.getElementById(id).addEventListener('change', function (ev) {
+        filter[id.replace('sec-','')] = ev.target.value;
+        renderErrs();
+      });
+    });
+    document.getElementById('sec-clear').addEventListener('click', function () {
+      filter = { q:'', period:'all', source:'all', severity:'all' };
+      document.getElementById('sec-q').value = '';
+      document.getElementById('sec-period').value = 'all';
+      document.getElementById('sec-source').value = 'all';
+      if (!maskFATAL) document.getElementById('sec-severity').value = 'all';
+      renderLog(); renderErrs();
+    });
 
-    var tbl = document.getElementById('sec-err');
-    tbl.innerHTML = '<thead><tr><th>일시</th><th>오류코드</th></tr></thead><tbody>' +
-      errs.map(function (e, i) {
-        var hl = e.highlight ? 'style="color:var(--ir-status-error);font-weight:800;cursor:pointer;" data-i="' + i + '"'
-                             : 'style="cursor:pointer;" data-i="' + i + '"';
-        return '<tr ' + hl + '><td>' + e.date + '</td><td>' + e.code + '</td></tr>';
-      }).join('') + '</tbody>';
+    renderLog();
+    renderErrs();
     // 회의 피드백 v1.2: 오류 발생 시 주변 추출구 상태 함께 표시
     var STATUS_KO = { idle: '대기', extracting: '추출 중', complete: '완료', rinsing: '린스 중', watering: '온수 중', error: '⚠ 오류' };
     function showDetail(e) {
@@ -185,14 +311,18 @@
         surround.innerHTML = '<span style="color:var(--ir-fg-muted);">주변 상태 데이터 없음</span>';
       }
     }
-    tbl.querySelectorAll('tr[data-i]').forEach(function (tr) {
-      tr.addEventListener('click', function () {
-        var idx = parseInt(tr.dataset.i, 10);
-        showDetail(errs[idx]);
+    function bindRowClick() {
+      var tbl = document.getElementById('sec-err');
+      tbl.querySelectorAll('tr[data-i]').forEach(function (tr) {
+        tr.addEventListener('click', function () {
+          var idx = parseInt(tr.dataset.i, 10);
+          showDetail(allErrs[idx]);
+        });
       });
-    });
+    }
+    bindRowClick();
     // 첫 항목 자동 선택
-    if (errs.length) showDetail(errs[0]);
+    if (allErrs.length) showDetail(allErrs[0]);
 
     var pump = us.pumpUsage || {};
     document.getElementById('sec-pump').innerHTML =
