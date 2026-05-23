@@ -11,15 +11,17 @@
 
 <div class="hist-body">
 
-  <!-- 기간 필터 -->
+  <!-- 검색 바 + 기간 필터 (회의 v1.1 S8.3: 기간/레시피명/키워드 검색) -->
   <div class="hist-period">
+    <input type="text" class="hist-search" id="hist-search" placeholder="🔍  레시피명 / 키워드">
+    <span class="hist-period-spacer"></span>
     <button class="hist-pbtn is-active" data-p="all">전체</button>
     <button class="hist-pbtn" data-p="month">이번 달</button>
     <button class="hist-pbtn" data-p="week">이번 주</button>
     <button class="hist-pbtn" data-p="today">오늘</button>
   </div>
 
-  <!-- Panel 1: 요약 메트릭 + 인사이트 -->
+  <!-- Panel 1: KPI 4 카드 (회의 v1.1 S8.3.3) + 인사이트 -->
   <div class="panel metric">
     <div class="metric-h">
       <span class="panel-title"><span class="ico">📊</span><span id="hist-summary-title">요약</span></span>
@@ -27,19 +29,35 @@
     <div class="metric-grid">
       <div class="metric-cell">
         <span class="metric-num" id="hist-total">—</span>
-        <span class="metric-lbl">총 추출 횟수</span>
+        <span class="metric-lbl">총 추출</span>
+        <span class="metric-comp" id="hist-total-comp">설치 후 누적</span>
       </div>
       <div class="metric-cell">
-        <span class="metric-num brand" id="hist-water">—</span>
-        <span class="metric-lbl">총 사용 물량 (mL)</span>
+        <span class="metric-num" id="hist-today">—</span>
+        <span class="metric-lbl">오늘 (KST)</span>
+        <span class="metric-comp" id="hist-today-comp">전일 대비 —</span>
       </div>
       <div class="metric-cell">
-        <span class="metric-num" id="hist-avg-dur" style="font-size:24px;">—</span>
-        <span class="metric-lbl">평균 추출 시간</span>
+        <span class="metric-num" id="hist-week">—</span>
+        <span class="metric-lbl">이번 주</span>
+        <span class="metric-comp" id="hist-week-comp">전주 대비 —</span>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-num" id="hist-month">—</span>
+        <span class="metric-lbl">이번 달</span>
+        <span class="metric-comp" id="hist-month-comp">전월 대비 —</span>
       </div>
     </div>
-    <!-- 인사이트 (회의 피드백: 화요일 날 유독 많이 나갔어 같은 메시지) -->
     <div class="hist-insight" id="hist-insight">— 데이터 분석 중 —</div>
+  </div>
+
+  <!-- Panel: 일별 막대 (회의 v1.1 S8.3 — 신규) — 최근 14일 -->
+  <div class="panel">
+    <div class="panel-h">
+      <span class="panel-title"><span class="ico">📈</span>일별 추출 (최근 14일)</span>
+      <span class="panel-hint">왼쪽=오래된, 오른쪽=오늘</span>
+    </div>
+    <div class="hist-daily" id="hist-daily"></div>
   </div>
 
   <!-- Panel 2: 레시피별 (클릭 → drill-down) -->
@@ -94,20 +112,27 @@
   .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
   .sub-h-r b { color: var(--ink-2); font-weight: 700; }
 
-  /* 4행 그리드: period(auto) / metric(span2) / 레시피별·요일시간(2col, 명시 높이) / 최근(span2)
-     viewport 668px 내에서 차트 row squeeze 방지 → 명시 최소 높이 + body overflow-y */
+  /* v1.1 보강: 그리드 5행 (검색바·KPI·일별차트·레시피별/요일시간·최근) */
   .hist-body {
     flex: 1; padding: 14px 24px 18px;
     display: grid; grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto minmax(220px, 1fr) auto;
+    grid-template-rows: auto auto auto minmax(220px, 1fr) auto;
     gap: 12px; min-height: 0;
     overflow-y: auto;
   }
-  /* 최근 추출 패널을 가로 전체로 (회의 피드백: 균형감) */
+  /* 최근 추출 패널을 가로 전체로 + 일별 차트 패널도 전폭 */
   .hist-body > .panel:last-child { grid-column: 1 / -1; }
+  .hist-body > .panel.metric { grid-column: 1 / -1; }
+  /* 일별 막대 — 전폭, KPI 다음 행 */
+  .hist-body > .panel:nth-of-type(2) { grid-column: 1 / -1; }
   /* 최근 추출 표 — viewport 짧을 때도 최대 5행만 노출 (스크롤) */
   .hist-rt-wrap { max-height: 200px; overflow-y: auto; }
-  .hist-period { grid-column: 1 / -1; display: flex; gap: 8px; }
+  .hist-period { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
+  /* 검색 input (v1.1 S8.3.2) */
+  .hist-search { flex: 1; max-width: 280px; height: 36px; padding: 0 12px; border: 1px solid var(--hair-2); background: var(--bg); font-size: 12.5px; color: var(--ink); font-family: inherit; outline: none; }
+  .hist-search:focus { border-color: var(--ink); }
+  .hist-search::placeholder { color: var(--ink-3); }
+  .hist-period-spacer { flex: 1; }
   /* 터치 타겟은 min-height 36 유지 (회의: "한국 사람 손가락"), 폰트는 합리적으로 */
   .hist-pbtn { padding: 8px 16px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--hair-2); background: var(--bg); color: var(--ink-3); cursor: pointer; letter-spacing: -0.1px; min-height: 36px; }
   .hist-pbtn:hover { color: var(--ink); }
@@ -124,13 +149,27 @@
   .panel.metric { padding: 0; background: linear-gradient(180deg, #FFFAF2 0%, var(--bg) 60%); border-color: #C28200; grid-column: 1 / -1; }
   .metric-h { padding: 12px 16px; border-bottom: 1px solid var(--hair); display: flex; align-items: baseline; justify-content: space-between; }
   .metric-h .panel-title { color: #C28200; font-size: 13px; }
-  .metric-grid { padding: 14px 16px 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .metric-cell { display: flex; flex-direction: column; gap: 4px; padding: 4px 0; }
-  .metric-cell + .metric-cell { border-left: 1px solid var(--hair); padding-left: 16px; }
-  /* 위계 핵심: 숫자만 강조 (28px), 라벨은 보조 (11px 회색) */
-  .metric-num { font-size: 28px; font-weight: 600; color: var(--ink); letter-spacing: -1px; line-height: 1; font-variant-numeric: tabular-nums; }
+  /* v1.1 KPI 4개로 확장 — 1fr 4번 */
+  .metric-grid { padding: 14px 16px 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .metric-cell { display: flex; flex-direction: column; gap: 3px; padding: 4px 0; }
+  .metric-cell + .metric-cell { border-left: 1px solid var(--hair); padding-left: 14px; }
+  /* 위계 핵심: 숫자만 강조 (28px), 라벨은 보조, 비교는 더 작게 */
+  .metric-num { font-size: 26px; font-weight: 600; color: var(--ink); letter-spacing: -1px; line-height: 1; font-variant-numeric: tabular-nums; }
   .metric-num.brand { color: var(--brand); }
-  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: -0.1px; margin-top: 6px; }
+  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: -0.1px; margin-top: 5px; }
+  .metric-comp { font-size: 10px; color: var(--ink-3); font-weight: 500; margin-top: 2px; }
+  .metric-comp.up { color: #15803D; font-weight: 700; }
+  .metric-comp.down { color: var(--brand); font-weight: 700; }
+
+  /* 일별 막대 차트 (회의 v1.1 S8.3 신규) — 최근 14일 */
+  .hist-daily { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; min-height: 90px; padding-top: 8px; }
+  .hist-daily-col { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
+  .hist-daily-bar { width: 100%; background: var(--brand); min-height: 2px; transition: filter 0.15s; }
+  .hist-daily-bar:hover { filter: brightness(1.2); }
+  .hist-daily-col.today .hist-daily-bar { background: #C28200; }
+  .hist-daily-val { font-size: 9.5px; color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hist-daily-lbl { font-size: 9px; color: var(--ink-3); font-weight: 600; padding-top: 3px; border-top: 1px solid var(--hair); width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
+  .hist-daily-col.today .hist-daily-lbl { color: #C28200; font-weight: 700; }
 
   /* 레시피별 막대 — 클릭 가능. 터치 영역(min-h 36)만 보장, 폰트는 합리적 */
   .hist-bars { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; padding-top: 4px; }
@@ -218,6 +257,7 @@
   var currentPeriod = 'all';
   var recipeSortMode = 'count';
   var drillRecipe = null; // 드릴다운 대상 레시피명 (null = 전체)
+  var searchQuery = '';   // v1.1 S8.3.2 — 레시피명/키워드 검색
 
   var DOW_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -231,13 +271,21 @@
            String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   }
   function filterByPeriod(sessions, period) {
-    if (period === 'all') return sessions;
-    var now = new Date();
-    var cutoff = new Date(now);
-    if (period === 'today') cutoff.setHours(0, 0, 0, 0);
-    else if (period === 'week') cutoff.setDate(now.getDate() - 7);
-    else if (period === 'month') cutoff.setMonth(now.getMonth() - 1);
-    return sessions.filter(function (s) { return new Date(s.startTime) >= cutoff; });
+    var out = sessions;
+    if (period !== 'all') {
+      var now = new Date();
+      var cutoff = new Date(now);
+      if (period === 'today') cutoff.setHours(0, 0, 0, 0);
+      else if (period === 'week') cutoff.setDate(now.getDate() - 7);
+      else if (period === 'month') cutoff.setMonth(now.getMonth() - 1);
+      out = out.filter(function (s) { return new Date(s.startTime) >= cutoff; });
+    }
+    // v1.1 S8.3.2 검색 필터 — 레시피명 부분 일치
+    if (searchQuery) {
+      var q = searchQuery.toLowerCase();
+      out = out.filter(function (s) { return (s.recipeName || '').toLowerCase().indexOf(q) >= 0; });
+    }
+    return out;
   }
 
   // 회의 피드백: 인사이트 메시지 자동 생성
@@ -290,13 +338,70 @@
       document.getElementById('hist-drill-back').style.display = 'none';
     }
 
-    // 요약
-    var total = sessions.length;
-    var water = sessions.reduce(function (sum, s) { return sum + (s.waterUsed || 0); }, 0);
-    var avgDur = total ? sessions.reduce(function (sum, s) { return sum + (s.duration || 0); }, 0) / total : 0;
-    document.getElementById('hist-total').textContent = total.toLocaleString();
-    document.getElementById('hist-water').textContent = water.toLocaleString();
-    document.getElementById('hist-avg-dur').textContent = total ? fmtDur(Math.round(avgDur)) : '—';
+    // v1.1 S8.3.3: KPI 4 카드 — 총 추출 / 오늘 / 이번 주 / 이번 달 + 전 기간 대비
+    var now = new Date();
+    var startOfToday = new Date(now); startOfToday.setHours(0,0,0,0);
+    var startOfYesterday = new Date(startOfToday); startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+    var startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - 7);
+    var startOfPrevWeek = new Date(startOfWeek); startOfPrevWeek.setDate(startOfPrevWeek.getDate() - 7);
+    var startOfMonth = new Date(now); startOfMonth.setMonth(now.getMonth() - 1);
+    var startOfPrevMonth = new Date(startOfMonth); startOfPrevMonth.setMonth(startOfPrevMonth.getMonth() - 1);
+    function cntInRange(from, to) {
+      return allSessions.filter(function (s) {
+        var d = new Date(s.startTime);
+        return d >= from && (!to || d < to);
+      }).length;
+    }
+    var totalAll = allSessions.length;
+    var cntToday = cntInRange(startOfToday);
+    var cntYesterday = cntInRange(startOfYesterday, startOfToday);
+    var cntWeek = cntInRange(startOfWeek);
+    var cntPrevWeek = cntInRange(startOfPrevWeek, startOfWeek);
+    var cntMonth = cntInRange(startOfMonth);
+    var cntPrevMonth = cntInRange(startOfPrevMonth, startOfMonth);
+    function pctDiff(cur, prev) {
+      if (prev === 0) return cur > 0 ? '+∞%' : '—';
+      var d = Math.round((cur - prev) / prev * 100);
+      return (d > 0 ? '+' : '') + d + '%';
+    }
+    function setComp(id, cur, prev, label) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var diff = cur - prev;
+      el.className = 'metric-comp' + (diff > 0 ? ' up' : diff < 0 ? ' down' : '');
+      el.textContent = label + ' ' + pctDiff(cur, prev);
+    }
+    document.getElementById('hist-total').textContent = totalAll.toLocaleString();
+    document.getElementById('hist-today').textContent = cntToday;
+    setComp('hist-today-comp', cntToday, cntYesterday, '전일 대비');
+    document.getElementById('hist-week').textContent = cntWeek;
+    setComp('hist-week-comp', cntWeek, cntPrevWeek, '전주 대비');
+    document.getElementById('hist-month').textContent = cntMonth;
+    setComp('hist-month-comp', cntMonth, cntPrevMonth, '전월 대비');
+
+    // 일별 차트 (최근 14일) — v1.1 신규
+    var daily = new Array(14).fill(0);
+    var dayLabels = new Array(14);
+    for (var i = 0; i < 14; i++) {
+      var d = new Date(startOfToday); d.setDate(startOfToday.getDate() - (13 - i));
+      dayLabels[i] = { date: d, lbl: (d.getMonth()+1) + '/' + d.getDate() };
+    }
+    allSessions.forEach(function (s) {
+      var d = new Date(s.startTime); d.setHours(0,0,0,0);
+      for (var i = 0; i < 14; i++) {
+        if (d.getTime() === dayLabels[i].date.getTime()) { daily[i]++; break; }
+      }
+    });
+    var dailyMax = Math.max.apply(null, daily) || 1;
+    document.getElementById('hist-daily').innerHTML = daily.map(function (n, i) {
+      var h = (n / dailyMax * 56).toFixed(0);
+      var isToday = i === 13;
+      return '<div class="hist-daily-col' + (isToday ? ' today' : '') + '" title="' + dayLabels[i].lbl + ' · ' + n + '회">' +
+        '<span class="hist-daily-val">' + (n || '·') + '</span>' +
+        '<div class="hist-daily-bar" style="height:' + h + 'px;"></div>' +
+        '<span class="hist-daily-lbl">' + dayLabels[i].lbl + '</span>' +
+      '</div>';
+    }).join('');
 
     // 인사이트
     document.getElementById('hist-insight').innerHTML = buildInsight(sessions);
@@ -415,6 +520,17 @@
   // 드릴다운 해제
   document.getElementById('hist-drill-back').addEventListener('click', function () {
     drillRecipe = null;
+    render();
+  });
+
+  // v1.1 S8.3.2: 검색 (IME composition 가드)
+  document.getElementById('hist-search').addEventListener('input', function (ev) {
+    if (ev.isComposing) return;
+    searchQuery = ev.target.value.trim();
+    render();
+  });
+  document.getElementById('hist-search').addEventListener('compositionend', function (ev) {
+    searchQuery = ev.target.value.trim();
     render();
   });
 })();
