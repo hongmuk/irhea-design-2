@@ -112,11 +112,11 @@
   .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
   .sub-h-r b { color: var(--ink-2); font-weight: 700; }
 
-  /* v1.1 보강: 5행 그리드 — period / metric(전폭) / daily(전폭) / 레시피·요일시간(2col) / 최근(전폭) */
+  /* v1.1 5행 그리드 — auto 행이 content 합산보다 작게 잠기는 문제 → max-content 명시 */
   .hist-body {
     flex: 1; padding: 14px 24px 18px;
     display: grid; grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto minmax(220px, 1fr) auto;
+    grid-template-rows: auto max-content max-content minmax(220px, 1fr) auto;
     gap: 12px; min-height: 0;
     overflow-y: auto;
   }
@@ -166,8 +166,8 @@
   .metric-comp.up { color: #15803D; font-weight: 700; }
   .metric-comp.down { color: var(--brand); font-weight: 700; }
 
-  /* 일별 막대 차트 (회의 v1.1 S8.3 신규) — 최근 14일 */
-  .hist-daily { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; min-height: 90px; padding-top: 8px; }
+  /* 일별 막대 차트 (v1.1 S8.3) — 최근 14일. min-height 늘려 라벨 영역까지 보장 */
+  .hist-daily { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; min-height: 108px; padding-top: 6px; }
   .hist-daily-col { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
   .hist-daily-bar { width: 100%; background: var(--brand); min-height: 2px; transition: filter 0.15s; }
   .hist-daily-bar:hover { filter: brightness(1.2); }
