@@ -2,7 +2,7 @@
   {
     "id": "BS001",
     "recipeId": 1,
-    "recipeName": "Ethiopia Yirgacheffe",
+    "recipeName": "에티오피아 예가체프",
     "spoutId": 2,
     "startTime": "2026-03-31T09:15:00Z",
     "endTime": "2026-03-31T09:18:15Z",
@@ -14,7 +14,7 @@
   {
     "id": "BS002",
     "recipeId": 6,
-    "recipeName": "Panama Geisha",
+    "recipeName": "파나마 게이샤",
     "spoutId": 1,
     "startTime": "2026-03-31T09:05:00Z",
     "endTime": "2026-03-31T09:07:50Z",
@@ -26,7 +26,7 @@
   {
     "id": "BS003",
     "recipeId": 2,
-    "recipeName": "Colombia Supremo",
+    "recipeName": "콜롬비아 수프리모",
     "spoutId": 3,
     "startTime": "2026-03-31T08:50:00Z",
     "endTime": "2026-03-31T08:53:30Z",
@@ -38,7 +38,7 @@
   {
     "id": "BS004",
     "recipeId": 4,
-    "recipeName": "Kenya AA Peaberry",
+    "recipeName": "케냐 AA 피베리",
     "spoutId": 5,
     "startTime": "2026-03-31T08:40:00Z",
     "endTime": "2026-03-31T08:42:20Z",
@@ -50,7 +50,7 @@
   {
     "id": "BS005",
     "recipeId": 10,
-    "recipeName": "Yemen Mocha Haraz",
+    "recipeName": "예멘 모카 하라즈",
     "spoutId": 2,
     "startTime": "2026-03-31T08:25:00Z",
     "endTime": "2026-03-31T08:27:40Z",
@@ -62,7 +62,7 @@
   {
     "id": "BS006",
     "recipeId": 1,
-    "recipeName": "Ethiopia Yirgacheffe",
+    "recipeName": "에티오피아 예가체프",
     "spoutId": 1,
     "startTime": "2026-03-31T08:10:00Z",
     "endTime": "2026-03-31T08:13:15Z",
@@ -74,31 +74,31 @@
   {
     "id": "BS007",
     "recipeId": 3,
-    "recipeName": "Guatemala Antigua",
+    "recipeName": "과테말라 안티구아",
     "spoutId": 4,
     "startTime": "2026-03-31T07:55:00Z",
     "endTime": null,
     "duration": null,
     "waterUsed": 180,
-    "avgTemp": 91.0,
+    "avgTemp": 91,
     "status": "aborted"
   },
   {
     "id": "BS008",
     "recipeId": 6,
-    "recipeName": "Panama Geisha",
+    "recipeName": "파나마 게이샤",
     "spoutId": 5,
     "startTime": "2026-03-30T17:30:00Z",
     "endTime": "2026-03-30T17:33:10Z",
     "duration": 190,
     "waterUsed": 240,
-    "avgTemp": 94.0,
+    "avgTemp": 94,
     "status": "completed"
   },
   {
     "id": "BS009",
     "recipeId": 2,
-    "recipeName": "Colombia Supremo",
+    "recipeName": "콜롬비아 수프리모",
     "spoutId": 1,
     "startTime": "2026-03-30T16:45:00Z",
     "endTime": "2026-03-30T16:48:30Z",
@@ -110,7 +110,7 @@
   {
     "id": "BS010",
     "recipeId": 8,
-    "recipeName": "Costa Rica Tarrazú",
+    "recipeName": "코스타리카 따라주",
     "spoutId": 3,
     "startTime": "2026-03-30T15:20:00Z",
     "endTime": "2026-03-30T15:23:40Z",
@@ -122,7 +122,7 @@
   {
     "id": "BS011",
     "recipeId": 1,
-    "recipeName": "Ethiopia Yirgacheffe",
+    "recipeName": "에티오피아 예가체프",
     "spoutId": 2,
     "startTime": "2026-03-30T14:00:00Z",
     "endTime": "2026-03-30T14:03:15Z",
@@ -134,7 +134,7 @@
   {
     "id": "BS012",
     "recipeId": 5,
-    "recipeName": "Brazil Santos",
+    "recipeName": "브라질 산토스",
     "spoutId": 5,
     "startTime": "2026-03-30T11:10:00Z",
     "endTime": "2026-03-30T11:13:15Z",

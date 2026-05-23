@@ -1,7 +1,7 @@
 <!-- 정보 (S8.1) — designs/02-info.html 정합 (v1.1: 4 패널 2×2 + 실적 → S8.3 분리). Topbar는 layout.ejs. -->
 
 <div class="sub-h">
-  <div class="sub-h-l">정보<em>S8.1 · 일반 (관리자 인증 후)</em></div>
+  <div class="sub-h-l">정보<em>장비 · 보일러 · 사용량</em></div>
   <div class="sub-h-r">
     <span>인증 <span class="ok">완료</span></span>
     <span>로그인 <b>Admin</b></span>
@@ -25,7 +25,9 @@
     <div class="panel-foot"><span>관리자 메뉴에서 변경 가능</span><a href="/setup">변경 →</a></div>
   </div>
 
-  <!-- Panel 2: 보일러 정보 -->
+  <!-- Panel 2: 보일러 정보 — 회의 피드백 v1.3:
+       - 워터펌프 사양 / 솔 밸브 종류 제거 (불필요)
+       - 온도 최대 제거 (탑바에 상시 노출) -->
   <div class="panel">
     <div class="panel-h">
       <span class="panel-title"><span class="ico">🔥</span>보일러 정보</span>
@@ -34,47 +36,26 @@
     <div class="pr"><span class="pr-k">일련 번호</span><span class="pr-v mono" id="info-b-serial">R5KRM2600001<span class="ro">read-only</span></span></div>
     <div class="pr"><span class="pr-k">모델 번호</span><span class="pr-v" id="info-b-model">iRHEA-Light-M5</span></div>
     <div class="pr"><span class="pr-k">펌웨어</span><span class="pr-v" id="info-b-fw">1.0 <em>(2026.03.01)</em></span></div>
-    <div class="pr"><span class="pr-k">워터펌프</span><span class="pr-v" id="info-b-pump">SC3711PW <em>(12V)</em></span></div>
-    <div class="pr"><span class="pr-k">솔 밸브</span><span class="pr-v" id="info-b-valve">출수측 2 Way / 입수측 2 Way</span></div>
-    <div class="pr"><span class="pr-k">온도 최대</span><span class="pr-v" id="info-b-temp">95 °C</span></div>
+    <div class="panel-foot"><span>보일러 온도는 상단 바에서 실시간 확인</span></div>
   </div>
 
-  <!-- Panel 3: 물붓기 범위 -->
-  <div class="panel">
+  <!-- 물붓기 범위 Panel 제거 — 회의 피드백 v1.3: 설정 페이지에 있음 (중복) -->
+
+  <!-- Panel 3: 펌프 사용 정보 (장비 정보 — 추출 실적은 /history 로 분리됨) -->
+  <div class="panel" style="grid-column: 1 / -1;">
     <div class="panel-h">
-      <span class="panel-title"><span class="ico">💧</span>물붓기 범위</span>
+      <span class="panel-title"><span class="ico">⚙</span>펌프 / 솔밸브 사용 정보</span>
       <span class="panel-id">8.1.3</span>
     </div>
-    <table class="rt">
-      <thead><tr><th>범위</th><th style="text-align:right;">반지름</th></tr></thead>
-      <tbody id="info-pour-rows"></tbody>
-    </table>
-    <div class="panel-foot"><span>image13 verbatim — "cup" 소문자 표기</span><a href="/settings/general">설정 →</a></div>
-  </div>
-
-  <!-- Panel 4: 사용 실적 (metric quick link) -->
-  <div class="panel metric">
-    <div class="metric-h">
-      <span class="panel-title"><span class="ico">📊</span>사용 실적 (요약)</span>
-      <span class="panel-id">8.1.4 → S8.3</span>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 12px;">
+      <div style="font-weight: 600; color: var(--ink-3); font-size: 10.5px; letter-spacing: 0.4px; padding-bottom: 4px; border-bottom: 1px solid var(--hair);">펌프 동작</div>
+      <div style="font-weight: 600; color: var(--ink-3); font-size: 10.5px; letter-spacing: 0.4px; padding-bottom: 4px; border-bottom: 1px solid var(--hair);">솔밸브 동작</div>
+      <div id="info-pump-usage"></div>
+      <div id="info-valve-usage"></div>
     </div>
-    <div class="metric-grid">
-      <div class="metric-cell">
-        <span class="metric-num">1,247</span>
-        <span class="metric-lbl">총 추출</span>
-      </div>
-      <div class="metric-cell">
-        <span class="metric-num brand">38</span>
-        <span class="metric-lbl">오늘 (KST)</span>
-      </div>
-      <div class="metric-cell">
-        <span class="metric-num" style="font-size:18px; letter-spacing:-0.5px;">레시피 3</span>
-        <span class="metric-lbl">이번 주 1위 · 8회</span>
-      </div>
-    </div>
-    <div class="metric-foot">
-      <span class="timestamp">마지막 갱신 · 14:31 · 자정 자동 reset</span>
-      <a class="btn-detail" href="/info/security">상세 보기 →</a>
+    <div class="panel-foot">
+      <span>추출구별 누적 동작 횟수</span>
+      <a href="/history" style="color: var(--brand); font-weight: 600; text-decoration: none;">추출 실적 →</a>
     </div>
   </div>
 
@@ -82,22 +63,24 @@
 
 <style>
   /* info — designs/02-info.html 정합 */
-  .sub-h { height: 44px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
-  .sub-h-l { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .sub-h { height: 48px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
+  .sub-h-l { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .sub-h-l em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
   .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
-  .sub-h-r b { color: var(--ink-2); font-weight: 600; }
-  .sub-h-r .ok { color: var(--brand); font-weight: 600; }
+  .sub-h-r b { color: var(--ink-2); font-weight: 700; }
+  .sub-h-r .ok { color: var(--brand); font-weight: 700; }
 
-  .info-body { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
+  /* 패널 4개 → 3개로 축소 (회의 v1.3): 장비 정보 / 보일러 정보 / 펌프·솔밸브 사용 (전폭) */
+  .info-body { flex: 1; padding: 18px 24px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; gap: 14px; min-height: 0; }
   .panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; background: var(--bg); }
 
   .panel-h { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--hair); margin: 0; }
-  .panel-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .panel-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .panel-title .ico { margin-right: 6px; font-weight: 400; }
   .panel-id { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
-  .pr { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: baseline; padding: 5px 0; border-top: 1px solid var(--hair); font-size: 12.5px; }
+  /* 위계: 라벨(회색 11.5) / 값(검정 13) */
+  .pr { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--hair); font-size: 13px; }
   .pr:first-of-type { border-top: none; padding-top: 2px; }
   .pr-k { color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
   .pr-v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
@@ -145,15 +128,26 @@
     if (b.modelNumber) document.getElementById('info-b-model').textContent = b.modelNumber;
     if (b.firmwareVersion && b.firmwareDate) document.getElementById('info-b-fw').innerHTML =
       b.firmwareVersion + ' <em>(' + b.firmwareDate + ')</em>';
-    if (b.waterPump) document.getElementById('info-b-pump').textContent = b.waterPump;
-    if (b.valve) document.getElementById('info-b-valve').textContent = b.valve;
-    if (b.tempMax) document.getElementById('info-b-temp').textContent = b.tempMax + ' °C';
+    // 회의 v1.3: waterPump / valve / tempMax 표시 제거 (불필요 / 탑바)
   });
-  fetch('/api/pour-range').then(r => r.json()).then(function (rows) {
-    var html = rows.map(function (r) {
-      return '<tr><td>' + r.cup + ' cup</td><td>' + r.radius + ' mm</td></tr>';
+  // 펌프 / 솔밸브 사용량 — usage-stats 에서
+  fetch('/api/usage-stats').then(r => r.json()).then(function (us) {
+    var labels = ['1번', '2번', '3번', '4번', '5번'];
+    var keys = ['1st', '2nd', '3rd', '4th', '5th'];
+    var pump = us.pumpUsage || {};
+    var ext = us.extractCount || {};
+    document.getElementById('info-pump-usage').innerHTML = keys.map(function (k, i) {
+      return '<div style="display:flex;justify-content:space-between;padding:3px 0;">' +
+        '<span style="color:var(--ink-3);">' + labels[i] + '</span>' +
+        '<span style="font-weight:600;font-variant-numeric:tabular-nums;">' + (pump[k] || 0).toLocaleString() + ' 회</span>' +
+      '</div>';
     }).join('');
-    document.getElementById('info-pour-rows').innerHTML = html;
+    document.getElementById('info-valve-usage').innerHTML = keys.map(function (k, i) {
+      return '<div style="display:flex;justify-content:space-between;padding:3px 0;">' +
+        '<span style="color:var(--ink-3);">' + labels[i] + '</span>' +
+        '<span style="font-weight:600;font-variant-numeric:tabular-nums;">' + (ext[k] || 0).toLocaleString() + ' 회</span>' +
+      '</div>';
+    }).join('');
   });
 })();
 </script>
