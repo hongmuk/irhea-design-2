@@ -17,14 +17,14 @@
           <path d="M30,18 C35,18 35,26 30,26" fill="none" stroke="var(--ir-orange)" stroke-width="2"/>
           <path d="M8,15 L32,15" stroke="var(--ir-orange)" stroke-width="1.5"/>
         </svg>
-        <div class="ov-title">BREWING <span class="accent">COMPLETE</span></div>
+        <div class="ov-title">추출 <span class="accent">완료</span></div>
       </div>
       <div class="ov-time">
         <span class="ov-time-big">03:42</span>
-        <span class="ov-time-unit">SEC</span>
-        <span class="ov-delta">▲ 3s</span>
+        <span class="ov-time-unit">소요</span>
+        <span class="ov-delta">▲ 3초</span>
       </div>
-      <div class="ov-time-target">TARGET: 03:45 · RECIPE 03</div>
+      <div class="ov-time-target">목표 03:45 · Ethiopia Yirgacheffe</div>
     </div>
 
     <div class="ov-right">
@@ -35,17 +35,17 @@
         </svg>
         <div class="ov-donut-num">
           <span class="pct">100</span>
-          <span class="lbl">PERCENT</span>
+          <span class="lbl">%</span>
         </div>
       </div>
       <div class="ov-meta">
-        <div class="ov-meta-row">YIELD: <b>312.4g</b></div>
-        <div class="ov-meta-row">AVG TEMP: <b>93.2°C</b></div>
+        <div class="ov-meta-row">추출량 <b>312g</b> <span class="ov-meta-sub">(추정)</span></div>
+        <div class="ov-meta-row">평균 온도 <b>93.2°C</b></div>
       </div>
     </div>
 
     <div class="ov-progress-bar-gold"></div>
-    <div class="ov-close-hint">5초 후 자동 닫힘 · 호출 화면(S6.2)으로 복귀</div>
+    <div class="ov-close-hint">5초 후 자동으로 메인 화면 복귀</div>
   </div>
 
   <footer class="ir-action-bar-gold">
@@ -81,9 +81,10 @@
 
   .ov-time { display: flex; align-items: baseline; gap: 12px; }
   .ov-time-big { font-size: 72px; font-weight: 300; font-family: var(--ir-font-mono); color: #FFF; letter-spacing: -0.02em; }
-  .ov-time-unit { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 0.2em; text-transform: uppercase; }
-  .ov-time-target { font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 600; font-family: var(--ir-font-mono); }
+  .ov-time-unit { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; }
+  .ov-time-target { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
   .ov-delta { font-size: 12px; padding: 4px 12px; background: rgba(197,160,89,0.2); color: var(--ir-orange); font-weight: 800; border-radius: 2px; }
+  .ov-meta-sub { color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 500; margin-left: 4px; }
 
   .ov-right { width: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; position: relative; }
   .ov-donut { width: 170px; height: 170px; position: relative; }

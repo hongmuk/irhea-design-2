@@ -2,16 +2,15 @@
 
 <div class="setup-shell">
   <div class="heading-bar">
-    <div class="heading-kicker">FIRST-TIME SETUP · 4 / 4</div>
-    <div class="heading-title">최초 장비 정보 설정<em> · 장비 최초 1회</em></div>
-    <div class="heading-sub">아래 정보를 확인하시고 필요 시 수정 후 저장하세요. 저장 후 메인 화면으로 자동 이동합니다.</div>
+    <div class="heading-kicker">최초 설정</div>
+    <div class="heading-title">장비 정보 입력<em> · 최초 1회</em></div>
+    <div class="heading-sub">아래 정보를 확인하고 필요 시 수정 후 저장하세요. 저장 후 자동으로 다음 단계로 이동합니다.</div>
   </div>
 
   <div class="card-wrap">
     <div class="card">
       <div class="card-h">
         <span class="card-title">장비 정보</span>
-        <span class="card-id">S1.6 · IMAGE17 VERBATIM</span>
       </div>
 
       <div class="rows">
@@ -50,8 +49,8 @@
   </div>
 
   <div class="setup-ab">
-    <div class="ab-l">★ <b>image17 표기 보존</b> · 일련번호 소문자 <b>r</b> · 머신 + 태블릿 동시 저장</div>
-    <button class="save-btn" id="btn-setup-save">저장 → 메인 화면</button>
+    <div class="ab-l">저장 후 자동으로 <b>장치 연결</b> 단계로 이동합니다.</div>
+    <button class="save-btn" id="btn-setup-save">저장하고 다음</button>
   </div>
 </div>
 
@@ -73,8 +72,9 @@
   .rows { display: flex; flex-direction: column; gap: 4px; }
   .row { display: grid; grid-template-columns: 200px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--hair); }
   .row:first-of-type { border-top: none; }
-  .row-k { font-size: 12px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
-  .row-v { font-size: 15px; font-weight: 600; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
+  /* 위계: 라벨(작은 회색) ↔ 값(굵은 검정 모노) — 차이로 가독성 */
+  .row-k { font-size: 12.5px; color: var(--ink-3); font-weight: 600; letter-spacing: -0.1px; }
+  .row-v { font-size: 15px; font-weight: 700; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
   .row-v.kr { font-family: var(--font-main); letter-spacing: -0.2px; }
   .row.edit .row-v { color: var(--brand); border: none; border-bottom: 1.5px dashed var(--brand); padding: 0 0 2px; background: transparent; outline: none; width: 100%; font-family: var(--font-mono); }
   .row.edit select.row-v { -webkit-appearance: none; appearance: none; cursor: pointer; }

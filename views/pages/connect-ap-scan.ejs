@@ -3,7 +3,7 @@
 <div class="aps-sub-h">
   <div class="aps-sub-h-l">
     <button class="aps-back" onclick="history.back()">← 메인</button>
-    <div class="aps-sub-title">기기 등록<em>S1.3 · AP 스캔</em></div>
+    <div class="aps-sub-title">기기 등록<em>WiFi AP 스캔</em></div>
   </div>
   <div class="aps-stepper">
     <span class="aps-step active">1</span>
@@ -157,7 +157,7 @@
     window.IRModal?.confirm({
       title: '알림',
       body: ssid + '<br>WiFi 비밀번호 입력 단계로 진행',
-      onOk: function () { window.IRToast?.show('S1.4 WiFi PW 단계 (mock)'); }
+      onOk: function () { window.IRToast?.show('WiFi 비밀번호 입력 단계로 이동합니다'); }
     });
   });
 })();
