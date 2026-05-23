@@ -1,14 +1,15 @@
 <!-- 설정 (S3.1) — designs/02-settings.html 정합. Topbar는 layout.ejs에서 렌더. -->
 
+<!-- 회의 피드백 v1.2: 탭 순서 변경 (엔지니어링 맨 뒤) + 명칭 정리 + i18n -->
 <div class="settings-tabs">
-  <a href="/settings/general" class="stab active">설정</a>
-  <a href="/settings/backup" class="stab">백업 / 복구</a>
-  <a href="/settings/engineering" class="stab">관리자 메뉴</a>
-  <a href="/settings/firmware" class="stab">펌웨어 업그레이드</a>
+  <a href="/settings/general"     class="stab active"      data-i18n="tab.general">장비 설정</a>
+  <a href="/settings/backup"      class="stab"             data-i18n="tab.backup">백업 / 복구</a>
+  <a href="/settings/firmware"    class="stab"             data-i18n="tab.firmware">펌웨어 업그레이드</a>
+  <a href="/settings/engineering" class="stab stab-admin"  data-i18n="tab.engineering">🔒 엔지니어링 메뉴</a>
   <span class="stab-spacer"></span>
   <div class="stab-actions">
-    <button class="stab-btn primary" id="btn-save-settings">저장</button>
-    <button class="stab-btn ghost" onclick="history.back()">복귀</button>
+    <button class="stab-btn primary" id="btn-save-settings" data-i18n="btn.save">저장</button>
+    <button class="stab-btn ghost" onclick="history.back()" data-i18n="btn.back">복귀</button>
   </div>
 </div>
 
@@ -33,10 +34,10 @@
       </span>
     </div>
     <div class="cr"><span class="cr-k">기본 드립퍼</span><button class="cr-v cr-pick" id="sg-dripper">Kalita</button></div>
-    <div class="card-foot"><span>image12 정합</span></div>
+    <div class="card-foot"><span>일반 환경설정</span></div>
   </div>
 
-  <!-- Card 2: 보일러 -->
+  <!-- Card 2: 보일러 — 회의 피드백 v1.2: 웜업 상태 제거 (장비 켜진 시간과 동일) -->
   <div class="card">
     <div class="card-head">
       <span class="card-title">보일러</span>
@@ -44,8 +45,7 @@
     </div>
     <div class="cr"><span class="cr-k">설정 온도</span><span class="cr-v" id="sg-boiler-set">95<span class="unit">°C</span></span></div>
     <div class="cr"><span class="cr-k">현재 온도</span><span class="cr-v muted" id="sg-boiler-cur">95.2<span class="unit">°C</span></span></div>
-    <div class="cr"><span class="cr-k">웜업 상태</span><span class="cr-v muted">정상 · 7m 12s</span></div>
-    <div class="card-foot"><span>보일러 단일 항목</span></div>
+    <div class="card-foot"><span>범위 · 80~95°C (boiler max)</span></div>
   </div>
 
   <!-- Card 3: 물붓기 범위 -->
@@ -55,54 +55,41 @@
       <span class="card-id">3.1.5</span>
     </div>
     <div id="sg-pour-rows"></div>
-    <div class="card-foot"><span>반지름 / mm</span></div>
+    <div class="card-foot"><span>범위 · 25~55 mm (반지름)</span></div>
   </div>
 
-  <!-- Card 4: 펌프 교정 -->
-  <div class="card">
-    <div class="card-head">
-      <span class="card-title">펌프 교정</span>
-      <span class="card-id">3.1.6</span>
-    </div>
-    <table class="ct">
-      <thead><tr><th>기존 유속</th><th>교정 유속</th></tr></thead>
-      <tbody id="sg-pump-rows"></tbody>
-    </table>
-    <div class="card-foot"><span>관리자 메뉴 이관 검토 中</span><a href="/settings/engineering">→</a></div>
-  </div>
-
-  <!-- Card 5: 워터 / 린스 -->
+  <!-- Card 4: 워터 / 린스 — 회의 피드백 v1.2: 항목/값 가독성 개선 (제목 볼딕 + 단위 명시) -->
   <div class="card">
     <div class="card-head">
       <span class="card-title">워터 / 린스</span>
-      <span class="card-id">3.1.7</span>
+      <span class="card-id">3.1.6</span>
     </div>
-    <table class="ct">
-      <thead><tr><th>항목</th><th>워터</th><th style="text-align:right;">린스</th></tr></thead>
+    <table class="ct wr-t">
+      <thead><tr><th>항목</th><th>워터</th><th>린스</th></tr></thead>
       <tbody id="sg-wr-rows">
-        <tr><td>속도</td><td class="wr-water" data-k="speed">— ml/s</td><td class="wr-rinse" data-k="speed">— ml/s</td></tr>
-        <tr><td>온도</td><td class="wr-water" data-k="temp">—°</td><td class="wr-rinse" data-k="temp">—°</td></tr>
-        <tr><td>온수량</td><td class="wr-water" data-k="amount">— ml</td><td class="wr-rinse" data-k="amount">— ml</td></tr>
+        <tr><th class="wr-row-h">유속<em>ml/s</em></th><td class="wr-water" data-k="speed">—</td><td class="wr-rinse" data-k="speed">—</td></tr>
+        <tr><th class="wr-row-h">온도<em>°C</em></th><td class="wr-water" data-k="temp">—</td><td class="wr-rinse" data-k="temp">—</td></tr>
+        <tr><th class="wr-row-h">온수량<em>ml</em></th><td class="wr-water" data-k="amount">—</td><td class="wr-rinse" data-k="amount">—</td></tr>
       </tbody>
     </table>
-    <div class="card-foot"><span>2 컬럼 비교</span></div>
+    <div class="card-foot"><span>유속 3~5 / 온도는 보일러 기준</span></div>
   </div>
 
-  <!-- Card 6: 즐겨찾기 정책 (v1.1 accent) -->
-  <div class="card accent">
+  <!-- Card 5: 레시피 기본값 — 회의 피드백 v1.2: 빠진 항목 추가 (가이드 디폴트) -->
+  <div class="card">
     <div class="card-head">
-      <span class="card-title">★ 즐겨찾기 정책</span>
-      <span class="card-badge">v1.1</span>
+      <span class="card-title">레시피 기본값</span>
+      <span class="card-id">3.1.7</span>
     </div>
-    <div class="cr"><span class="cr-k">추출구별 슬롯</span>
-      <span class="cr-v">2 <em>(v1.0: 5)</em></span></div>
-    <div class="cr"><span class="cr-k">슬롯 A</span>
-      <div class="fav-slots"><span class="fav-chip">★ 1초 = 추출</span></div></div>
-    <div class="cr"><span class="cr-k">슬롯 B</span>
-      <div class="fav-slots"><span class="fav-chip b">☆ 탭 전환</span></div></div>
-    <div class="cr"><span class="cr-k">매뉴얼 큐</span><span class="cr-v muted">별개 개념</span></div>
-    <div class="card-foot"><span>★ 활성 1 + ☆ 보조 1</span><a href="/favorites">즐겨찾기 매핑 →</a></div>
+    <div class="cr"><span class="cr-k">원두량</span><span class="cr-v" id="sg-def-weight">20<span class="unit">g</span></span></div>
+    <div class="cr"><span class="cr-k">추출 비율</span><span class="cr-v" id="sg-def-ratio">1:16</span></div>
+    <div class="cr"><span class="cr-k">물 온도</span><span class="cr-v" id="sg-def-temp">93<span class="unit">°C</span></span></div>
+    <div class="cr"><span class="cr-k">기본 분쇄도</span><span class="cr-v" id="sg-def-grind">18</span></div>
+    <div class="card-foot"><span>레시피 추가 시 prefill 값</span></div>
   </div>
+
+  <!-- 즐겨찾기 정책 카드 제거 (회의 피드백 v1.2: 의미 불명) -->
+  <!-- 펌프 교정 카드 제거 (회의 피드백 v1.2: 엔지니어링 메뉴로 이관) -->
 
 </div>
 
@@ -119,24 +106,26 @@
   .cards { flex: 1; padding: 20px 24px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
   .card { background: var(--bg); border: 1px solid var(--hair); padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; position: relative; }
   .card.accent { border: 1px solid var(--brand); background: linear-gradient(180deg, #FFFAFA 0%, var(--bg) 30%); }
-  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .card-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  /* 카드 위계: 제목(굵은 검정) / 라벨(작은 회색) / 값(굵은 검정 모노) */
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--hair); }
+  .card-title { font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .card.accent .card-title { color: var(--brand); }
   .card-badge { font-size: 9px; font-weight: 600; color: var(--brand); letter-spacing: 1px; text-transform: uppercase; }
   .card-id { font-size: 10px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
-  .cr { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--hair); }
-  .cr:first-of-type { border-top: none; padding-top: 2px; }
-  .cr-k { font-size: 12px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
-  .cr-v { font-size: 13px; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+  .cr { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--hair); }
+  .cr:first-of-type { border-top: none; padding-top: 4px; }
+  .cr-k { font-size: 11.5px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
+  .cr-v { font-size: 13px; color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
   .cr-v.muted { color: var(--ink-2); font-weight: 500; }
-  .cr-v em { font-style: normal; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
-  .cr-v .unit { font-size: 11px; color: var(--ink-3); font-weight: 500; margin-left: 2px; }
+  .cr-v em { font-style: normal; color: var(--ink-3); font-weight: 400; margin-left: 4px; font-size: 11px; }
+  .cr-v .unit { font-size: 10.5px; color: var(--ink-3); font-weight: 500; margin-left: 2px; }
 
-  .seg { display: inline-flex; border: 1px solid var(--hair-2); height: 22px; align-items: stretch; user-select: none; }
-  .seg-i { padding: 0 8px; font-size: 11px; font-weight: 500; color: var(--ink-3); display: inline-flex; align-items: center; border-right: 1px solid var(--hair-2); cursor: pointer; }
+  /* 세그먼트 토글 — 터치 영역 (높이 28+) */
+  .seg { display: inline-flex; border: 1px solid var(--hair-2); height: 28px; align-items: stretch; user-select: none; }
+  .seg-i { padding: 0 10px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); display: inline-flex; align-items: center; border-right: 1px solid var(--hair-2); cursor: pointer; min-width: 44px; justify-content: center; }
   .seg-i:last-child { border-right: none; }
-  .seg-i.on { background: var(--ink); color: #fff; font-weight: 600; }
+  .seg-i.on { background: var(--ink); color: #fff; font-weight: 700; }
 
   .ct { font-size: 11px; font-variant-numeric: tabular-nums; width: 100%; border-collapse: collapse; }
   .ct th { text-align: left; font-weight: 500; color: var(--ink-3); padding: 4px 0; border-bottom: 1px solid var(--hair); font-size: 10px; letter-spacing: 0.3px; text-transform: uppercase; }
@@ -145,6 +134,22 @@
   .ct tr:last-child td { border-bottom: none; }
   .ct .delta-up { color: var(--brand); font-size: 9px; margin-left: 4px; font-weight: 600; }
   .ct .delta-down { color: var(--ink-2); font-size: 9px; margin-left: 4px; font-weight: 600; }
+
+  /* 워터/린스 테이블 가독성 (회의 피드백 v1.2: 항목명 볼딕 + 단위 첨부) */
+  .wr-t th { padding: 5px 0; text-align: center; }
+  .wr-t th:first-child { text-align: left; }
+  .wr-t .wr-row-h {
+    text-transform: none; letter-spacing: -0.2px;
+    color: var(--ink); font-weight: 700; font-size: 11.5px;
+    padding-right: 8px; width: 70px;
+  }
+  .wr-t .wr-row-h em {
+    color: var(--ink-3); font-weight: 500; font-style: normal; font-size: 10px; margin-left: 4px;
+  }
+  .wr-t td {
+    text-align: center !important;
+    font-weight: 600; color: var(--ink-2); font-size: 12px;
+  }
 
   .card-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 10px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
   .card-foot a { color: var(--brand); font-weight: 600; text-decoration: none; }
@@ -240,26 +245,15 @@
     document.getElementById('sg-pour-rows').innerHTML = html;
   });
 
-  // Pump calibration
-  fetch('/api/pump-calibration').then(r => r.json()).then(function (rows) {
-    var html = rows.map(function (r) {
-      var delta = (r.calibrated - r.base).toFixed(1);
-      var sign = delta >= 0 ? '+' : '';
-      var cls = delta >= 0 ? 'delta-up' : 'delta-down';
-      var deltaTxt = delta >= 0 ? sign + delta : '−' + Math.abs(delta).toFixed(1);
-      return '<tr><td>' + r.base.toFixed(1) + ' g/s</td>' +
-             '<td>' + r.calibrated.toFixed(1) + ' g/s<span class="' + cls + '">' + deltaTxt + '</span></td></tr>';
-    }).join('');
-    document.getElementById('sg-pump-rows').innerHTML = html;
-  });
+  // 펌프 교정 fetch 제거 — 회의 피드백 v1.2: 엔지니어링 메뉴로 이관
 
-  // Water / Rinse
+  // Water / Rinse — 회의 피드백 v1.2: 가독성 정리 (제목 별도, 값만 단위 없이)
   fetch('/api/water-rinse').then(r => r.json()).then(function (wr) {
     ['speed','temp','amount'].forEach(function (k) {
       var w = document.querySelector('.wr-water[data-k=' + k + ']');
       var r = document.querySelector('.wr-rinse[data-k=' + k + ']');
-      if (wr.water && wr.water[k] != null && w) w.textContent = wr.water[k] + (k === 'speed' ? ' ml/s' : k === 'temp' ? '°' : ' ml');
-      if (wr.rinse && wr.rinse[k] != null && r) r.textContent = wr.rinse[k] + (k === 'speed' ? ' ml/s' : k === 'temp' ? '°' : ' ml');
+      if (wr.water && wr.water[k] != null && w) w.textContent = wr.water[k];
+      if (wr.rinse && wr.rinse[k] != null && r) r.textContent = wr.rinse[k];
     });
   });
 

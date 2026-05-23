@@ -1,0 +1,83 @@
+<!-- 펌프 교정 — 엔지니어링 메뉴 (회의 피드백 v1.2: 설정에서 이관) -->
+<div class="ir-shell">
+  <div class="ir-tabs">
+    <a class="ir-tab" href="/settings/general">설정</a>
+    <a class="ir-tab" href="/settings/backup">백업 / 복구</a>
+    <a class="ir-tab is-active" href="/settings/engineering">관리자 메뉴</a>
+    <a class="ir-tab" href="/settings/firmware">펌웨어 업그레이드</a>
+  </div>
+
+  <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
+    <aside class="ir-side-menu">
+      <a class="ir-tab" href="/settings/engineering/factory-reset">공장초기화</a>
+      <a class="ir-tab" href="/settings/engineering/connection">장비 연결 설정</a>
+      <a class="ir-tab is-active" href="/settings/engineering/pump-calibration">펌프 교정</a>
+    </aside>
+
+    <section class="ir-grow" style="padding:24px 28px;flex-direction:column;gap:18px;display:flex;">
+      <div>
+        <span class="ir-page-sub">Engineering · pump</span>
+        <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">펌프 <em>교정.</em></h1>
+        <p style="margin-top:8px;font-size:12px;color:var(--ir-fg-muted);">실제 추출량과 목표값의 편차를 보정. 사용자가 직접 변경하지 않는 항목 (출고 시 1회 또는 엔지니어 점검 시).</p>
+      </div>
+
+      <div class="pump-card">
+        <table class="pump-t">
+          <thead>
+            <tr><th>추출구</th><th>기존 유속</th><th>교정 유속</th><th>편차</th></tr>
+          </thead>
+          <tbody id="pump-rows"></tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;">
+        <button class="ir-btn ir-btn-pill" id="pump-test">테스트 추출</button>
+        <button class="ir-btn ir-btn-pill" id="pump-recalc">재교정 시작</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+  .pump-card { border: 1px solid var(--ir-line); padding: 0; }
+  .pump-t { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .pump-t th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 700; color: var(--ir-fg-muted); letter-spacing: 0.4px; text-transform: uppercase; border-bottom: 1px solid var(--ir-line); }
+  .pump-t th:last-child { text-align: right; }
+  .pump-t td { padding: 11px 16px; font-size: 13px; color: var(--ir-fg); border-bottom: 1px solid var(--ir-line); font-weight: 600; }
+  .pump-t td:last-child { text-align: right; }
+  .pump-t tr:last-child td { border-bottom: none; }
+  .pump-t .delta-up { color: #DC2626; font-weight: 700; }
+  .pump-t .delta-down { color: #15803D; font-weight: 700; }
+  .pump-t .delta-zero { color: var(--ir-fg-muted); font-weight: 500; }
+</style>
+
+<script>
+(function () {
+  fetch('/api/pump-calibration').then(r => r.json()).then(function (rows) {
+    var html = rows.map(function (r, i) {
+      var delta = (r.calibrated - r.base);
+      var sign = delta > 0 ? '+' : '';
+      var deltaTxt = Math.abs(delta) < 0.05 ? '0' : (sign + delta.toFixed(2));
+      var cls = Math.abs(delta) < 0.05 ? 'delta-zero' : (delta > 0 ? 'delta-up' : 'delta-down');
+      return '<tr>' +
+        '<td>' + (i + 1) + '번</td>' +
+        '<td>' + r.base.toFixed(2) + ' g/s</td>' +
+        '<td>' + r.calibrated.toFixed(2) + ' g/s</td>' +
+        '<td class="' + cls + '">' + deltaTxt + '</td>' +
+      '</tr>';
+    }).join('');
+    document.getElementById('pump-rows').innerHTML = html;
+  });
+
+  document.getElementById('pump-test').onclick = function () {
+    window.IRToast?.show('펌프 테스트는 추후 구현 (mock)');
+  };
+  document.getElementById('pump-recalc').onclick = function () {
+    window.IRModal?.confirm({
+      title: '펌프 재교정',
+      body: '재교정을 시작합니다.<br>각 추출구의 펌프가 일정 시간 동작합니다.',
+      onOk: function () { window.IRToast?.show('재교정 시작 (mock)'); }
+    });
+  };
+})();
+</script>

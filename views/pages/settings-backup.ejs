@@ -1,39 +1,96 @@
 <%- include('../partials/settings-shell', { activeTab: 'backup' }) %>
 
+  <!-- 회의 피드백 v1.2: 라디오 동그라미 → 체크박스, USB 인식 메시지 추가, 한글화 -->
   <section class="ir-grow ir-center" style="min-height:420px;">
-    <div class="ir-card" style="max-width:520px;width:100%;padding:28px 32px;">
+    <div class="ir-card" style="max-width:560px;width:100%;padding:28px 32px;">
 
-      <!-- Direction toggle: Machine ↔ USB -->
+      <!-- 방향 토글 -->
       <div style="display:flex;justify-content:center;margin-bottom:14px;">
         <div class="ir-toggle">
-          <span class="ir-toggle-opt is-active" data-dir="backup">Machine → USB</span>
-          <span class="ir-toggle-opt" data-dir="restore">USB → Machine</span>
+          <span class="ir-toggle-opt is-active" data-dir="backup">머신 → USB (백업)</span>
+          <span class="ir-toggle-opt" data-dir="restore">USB → 머신 (복구)</span>
         </div>
       </div>
 
-      <div style="text-align:center;font-family:var(--ir-font-display);font-style:italic;font-size:22px;margin-bottom:24px;color:var(--ir-fg);">USB <em style="color:var(--ir-orange-deep);">백업/복구.</em></div>
+      <div style="text-align:center;font-family:var(--ir-font-display);font-style:italic;font-size:22px;margin-bottom:18px;color:var(--ir-fg);">USB <em style="color:var(--ir-orange-deep);">백업/복구.</em></div>
 
-      <div id="bk-list" style="display:flex;flex-direction:column;gap:14px;font-size:16px;font-weight:600;">
+      <!-- USB 인식 상태 -->
+      <div class="bk-usb-status" id="bk-usb-status" data-state="ok">
+        <span class="bk-usb-icon">⌬</span>
+        <span class="bk-usb-text">USB 인식됨 · <b>NTRH_BACKUP</b> (15.2 GB 여유)</span>
+        <button class="bk-usb-toggle" id="bk-usb-toggle" title="개발 토글">상태</button>
+      </div>
+
+      <div style="font-size:11px;font-weight:700;color:var(--ir-fg-muted);letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px;">백업할 항목 선택 (다중 가능)</div>
+
+      <div id="bk-list" style="display:flex;flex-direction:column;gap:8px;font-size:14px;font-weight:600;">
         <% var __items = [
-          { id: 'recipe', label: '1. 레시피 데이터',     sel: false },
-          { id: 'user',   label: '2. 사용자 데이터',     sel: true },
-          { id: 'device', label: '3. 장비 설정 데이터',  sel: false }
+          { id: 'recipe', label: '레시피 데이터',     sel: false, desc: '레시피 12개 + 스테이지 정보' },
+          { id: 'user',   label: '사용자 데이터',     sel: true,  desc: '추출 이력 · 사용 통계' },
+          { id: 'device', label: '장비 설정 데이터',  sel: false, desc: '환경설정 · 보일러 · 펌프 교정' }
         ]; %>
         <% __items.forEach(function (c) { %>
-          <label class="bk-row" data-cat="<%= c.id %>" style="display:flex;align-items:center;gap:18px;cursor:pointer;">
-            <span style="flex:1;"><%= c.label %></span>
-            <span class="bk-dot" data-on="<%= c.sel %>" style="width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ir-line-strong);background:<%= c.sel ? 'var(--ir-status-ok)' : 'transparent' %>;"></span>
+          <label class="bk-row" data-cat="<%= c.id %>">
+            <span class="bk-check" data-on="<%= c.sel %>"><span class="bk-check-mk">✓</span></span>
+            <span class="bk-row-body">
+              <span class="bk-row-label"><%= c.label %></span>
+              <span class="bk-row-desc"><%= c.desc %></span>
+            </span>
           </label>
         <% }) %>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:22px;gap:12px;">
         <button class="ir-btn ir-btn-primary" id="bk-run">실행</button>
         <div class="ir-progress-ring" id="bk-progress" style="display:none;">20%</div>
         <button class="ir-btn" id="bk-cancel">취소</button>
       </div>
     </div>
   </section>
+
+  <style>
+    /* USB 인식 상태 패널 (회의 피드백: USB 안 꽂혔으면 안내) */
+    .bk-usb-status {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; margin-bottom: 18px;
+      border: 1px solid var(--ir-line);
+      background: var(--ir-bg-2);
+      font-size: 12px; font-weight: 600; color: var(--ir-fg);
+    }
+    .bk-usb-status[data-state="ok"] { border-color: var(--ir-status-ok); background: rgba(34,197,94,0.06); }
+    .bk-usb-status[data-state="missing"] { border-color: #DC2626; background: rgba(220,38,38,0.06); color: #991B1B; }
+    .bk-usb-icon { font-size: 18px; color: var(--ir-orange-deep); }
+    .bk-usb-status[data-state="ok"] .bk-usb-icon { color: var(--ir-status-ok); }
+    .bk-usb-status[data-state="missing"] .bk-usb-icon { color: #DC2626; }
+    .bk-usb-text { flex: 1; }
+    .bk-usb-text b { font-weight: 700; }
+    .bk-usb-toggle {
+      font-size: 10px; padding: 3px 8px; border: 1px dashed var(--ir-line);
+      background: transparent; cursor: pointer; color: var(--ir-fg-muted);
+      letter-spacing: 0.3px;
+    }
+
+    /* 체크박스 (회의 피드백: 원 라디오 → 체크박스) */
+    .bk-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border: 1px solid var(--ir-line); cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .bk-row:hover { border-color: var(--ir-fg-muted); }
+    .bk-row:has(.bk-check[data-on="true"]) { border-color: var(--ir-orange); background: rgba(197,160,89,0.04); }
+    .bk-check {
+      width: 18px; height: 18px;
+      border: 2px solid var(--ir-line-strong);
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .bk-check[data-on="true"] { background: var(--ir-orange); border-color: var(--ir-orange); }
+    .bk-check-mk { color: #fff; font-weight: 800; font-size: 12px; line-height: 1; opacity: 0; }
+    .bk-check[data-on="true"] .bk-check-mk { opacity: 1; }
+    .bk-row-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .bk-row-label { font-size: 14px; font-weight: 700; color: var(--ir-fg); }
+    .bk-row-desc { font-size: 11px; font-weight: 500; color: var(--ir-fg-muted); }
+  </style>
 
 <%- include('../partials/settings-shell-close') %>
 
@@ -48,13 +105,28 @@
     });
   });
 
+  // 체크박스 토글
   document.querySelectorAll('.bk-row').forEach(function (row) {
-    row.addEventListener('click', function () {
-      var dot = row.querySelector('.bk-dot');
-      var on = dot.dataset.on === 'true';
-      dot.dataset.on = (!on).toString();
-      dot.style.background = !on ? 'var(--ir-status-ok)' : 'transparent';
+    row.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      var check = row.querySelector('.bk-check');
+      var on = check.dataset.on === 'true';
+      check.dataset.on = (!on).toString();
     });
+  });
+
+  // USB 인식 상태 (개발 토글)
+  var usbConnected = true;
+  var statusEl = document.getElementById('bk-usb-status');
+  document.getElementById('bk-usb-toggle').addEventListener('click', function (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    usbConnected = !usbConnected;
+    statusEl.dataset.state = usbConnected ? 'ok' : 'missing';
+    statusEl.querySelector('.bk-usb-icon').textContent = usbConnected ? '⌬' : '⚠';
+    statusEl.querySelector('.bk-usb-text').innerHTML = usbConnected
+      ? 'USB 인식됨 · <b>NTRH_BACKUP</b> (15.2 GB 여유)'
+      : 'USB가 연결되지 않았습니다. <b>USB를 꽂아주세요.</b>';
   });
 
   document.getElementById('bk-cancel').addEventListener('click', function () {
@@ -62,12 +134,20 @@
   });
 
   document.getElementById('bk-run').addEventListener('click', function () {
+    // 회의 피드백: USB 안 꽂혔으면 안내
+    if (!usbConnected) {
+      window.IRModal.info({
+        body: 'USB가 연결되지 않았습니다.<br>USB를 머신에 꽂은 후 다시 시도해 주세요.',
+        bodyClass: 'is-error'
+      });
+      return;
+    }
     var items = [];
     document.querySelectorAll('.bk-row').forEach(function (row) {
-      if (row.querySelector('.bk-dot').dataset.on === 'true') items.push(row.dataset.cat);
+      if (row.querySelector('.bk-check').dataset.on === 'true') items.push(row.dataset.cat);
     });
     if (items.length === 0) {
-      window.IRModal.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
+      window.IRModal.info({ body: '백업할 항목을 1개 이상 선택해 주세요.', bodyClass: 'is-error' });
       return;
     }
     var ring = document.getElementById('bk-progress');

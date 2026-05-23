@@ -1,11 +1,16 @@
 <%- include('../partials/settings-shell', { activeTab: 'firmware' }) %>
 
+  <!-- 회의 피드백 v1.2:
+       • 설치 방식 (자동/수동)을 먼저 → 자동일 때만 정책 노출
+       • 보드별 진행 표시 (WHP, MCP, 백 프론트, …) — 설치 프로그램 스타일
+       • 업그레이드 소스 (USB / AWS) 명시
+  -->
   <section class="ir-grow ir-center" style="min-height:420px;">
-    <div class="ir-card" style="max-width:560px;width:100%;padding:24px 28px;">
+    <div class="ir-card" style="max-width:620px;width:100%;padding:24px 28px;">
 
       <div style="text-align:center;font-size:18px;font-weight:800;margin-bottom:18px;">펌웨어 업그레이드</div>
 
-      <!-- Version row -->
+      <!-- 버전 -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;font-size:14px;text-align:center;margin-bottom:18px;">
         <div>
           <div style="color:var(--ir-fg-muted);font-size:12px;letter-spacing:0.05em;">현재 버전</div>
@@ -17,44 +22,91 @@
         </div>
       </div>
 
-      <!-- Progress -->
-      <div style="display:flex;justify-content:center;margin:14px 0;">
-        <div class="ir-progress-ring" id="fw-progress">0%</div>
+      <!-- 보드별 진행 — 회의 피드백 v1.3: WHP / MCP / 5천원 / 백 프론트 (4종) -->
+      <div class="fw-boards" id="fw-boards" style="display:none;">
+        <div class="fw-board" data-board="WHP">
+          <span class="fw-board-name">WHP <em>(워터 히터 펌프)</em></span>
+          <span class="fw-board-bar"><span class="fw-board-fill"></span></span>
+          <span class="fw-board-status">대기</span>
+        </div>
+        <div class="fw-board" data-board="MCP">
+          <span class="fw-board-name">MCP <em>(메인 컴 · 클라우드)</em></span>
+          <span class="fw-board-bar"><span class="fw-board-fill"></span></span>
+          <span class="fw-board-status">대기</span>
+        </div>
+        <div class="fw-board" data-board="5000">
+          <span class="fw-board-name">5천원 <em>(서브 보드)</em></span>
+          <span class="fw-board-bar"><span class="fw-board-fill"></span></span>
+          <span class="fw-board-status">대기</span>
+        </div>
+        <div class="fw-board" data-board="FRONT">
+          <span class="fw-board-name">백 프론트 <em>(LED + 버튼 보드)</em></span>
+          <span class="fw-board-bar"><span class="fw-board-fill"></span></span>
+          <span class="fw-board-status">대기</span>
+        </div>
       </div>
 
       <!-- Actions -->
-      <div style="display:flex;justify-content:center;gap:14px;margin-bottom:24px;">
+      <div style="display:flex;justify-content:center;gap:14px;margin:18px 0 24px;">
         <button class="ir-btn" id="fw-check">버전 체크</button>
         <button class="ir-btn ir-btn-primary" id="fw-upgrade" disabled style="opacity:0.55;">업그레이드</button>
       </div>
 
       <hr style="border:none;border-top:1px solid var(--ir-line-soft);margin:18px 0;"/>
 
-      <!-- Policy -->
-      <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">업데이트 확인 정책</div>
-      <div style="display:flex;gap:8px;margin-bottom:18px;">
-        <span class="ir-toggle-opt is-active" data-policy="always" style="border:1.5px solid var(--ir-line-strong);">항상 체크</span>
-        <span class="ir-toggle-opt" data-policy="once" style="border:1.5px solid var(--ir-line-strong);">한번만</span>
-        <span class="ir-toggle-opt" data-policy="never" style="border:1.5px solid var(--ir-line-strong);">절대 안함</span>
-      </div>
-
-      <!-- Mode -->
+      <!-- 설치 방식 먼저 (자동/수동) -->
       <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">설치 방식</div>
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
         <span class="ir-toggle-opt is-active" data-mode="manual" style="border:1.5px solid var(--ir-line-strong);">수동</span>
         <span class="ir-toggle-opt" data-mode="auto" style="border:1.5px solid var(--ir-line-strong);">자동</span>
+      </div>
+
+      <!-- 업그레이드 소스 -->
+      <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">업그레이드 소스</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <span class="ir-toggle-opt is-active" data-src="usb" style="border:1.5px solid var(--ir-line-strong);">USB</span>
+        <span class="ir-toggle-opt" data-src="aws" style="border:1.5px solid var(--ir-line-strong);">AWS (클라우드)</span>
+      </div>
+
+      <!-- 정책 — 자동일 때만 표시 -->
+      <div id="fw-policy-wrap" style="display:none;">
+        <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">자동 체크 주기</div>
+        <div style="display:flex;gap:8px;">
+          <span class="ir-toggle-opt is-active" data-policy="boot"   style="border:1.5px solid var(--ir-line-strong);">전원 켤 때마다</span>
+          <span class="ir-toggle-opt"            data-policy="daily"  style="border:1.5px solid var(--ir-line-strong);">하루 1회</span>
+          <span class="ir-toggle-opt"            data-policy="weekly" style="border:1.5px solid var(--ir-line-strong);">주 1회</span>
+        </div>
       </div>
 
     </div>
   </section>
 
+  <style>
+    /* 보드별 진행 표시 (설치 프로그램 스타일) */
+    .fw-boards { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--ir-line); background: var(--ir-bg-2); margin-bottom: 6px; }
+    .fw-board { display: grid; grid-template-columns: 160px 1fr 70px; align-items: center; gap: 12px; font-size: 12px; }
+    .fw-board-name { font-weight: 700; color: var(--ir-fg); }
+    .fw-board-name em { color: var(--ir-fg-muted); font-weight: 500; font-style: normal; font-size: 10px; margin-left: 4px; }
+    .fw-board-bar { height: 10px; background: var(--ir-bg-3); border: 1px solid var(--ir-line); position: relative; overflow: hidden; }
+    .fw-board-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ir-orange); width: 0%; transition: width 0.2s; }
+    .fw-board[data-state="done"] .fw-board-fill { background: var(--ir-status-ok, #15803D); }
+    .fw-board-status { font-size: 11px; font-weight: 700; color: var(--ir-fg-muted); text-align: right; font-variant-numeric: tabular-nums; }
+    .fw-board[data-state="active"] .fw-board-status { color: var(--ir-orange-deep); }
+    .fw-board[data-state="done"] .fw-board-status { color: var(--ir-status-ok, #15803D); }
+  </style>
+
 <%- include('../partials/settings-shell-close') %>
 
 <script>
 (function () {
-  var policy = 'always';
+  var policy = 'boot';
   var mode = 'manual';
+  var src = 'usb';
 
+  // 회의 피드백: 설치 방식 = 자동일 때만 정책 노출
+  function updatePolicyVisibility() {
+    document.getElementById('fw-policy-wrap').style.display = mode === 'auto' ? 'block' : 'none';
+  }
   document.querySelectorAll('[data-policy]').forEach(function (el) {
     el.addEventListener('click', function () {
       document.querySelectorAll('[data-policy]').forEach(function (x) { x.classList.remove('is-active'); });
@@ -67,10 +119,22 @@
       document.querySelectorAll('[data-mode]').forEach(function (x) { x.classList.remove('is-active'); });
       el.classList.add('is-active');
       mode = el.dataset.mode;
+      updatePolicyVisibility();
+    });
+  });
+  document.querySelectorAll('[data-src]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('[data-src]').forEach(function (x) { x.classList.remove('is-active'); });
+      el.classList.add('is-active');
+      src = el.dataset.src;
     });
   });
 
   document.getElementById('fw-check').addEventListener('click', function () {
+    // 회의 피드백: USB 모드면 USB 확인 / AWS 모드면 AWS 확인
+    if (src === 'usb') {
+      // mock: assume USB present
+    }
     var btn = document.getElementById('fw-upgrade');
     btn.disabled = true;
     btn.style.opacity = '0.55';
@@ -86,23 +150,46 @@
       });
   });
 
+  // 보드별 진행 시뮬레이션 (회의 피드백: 단순 % 대신 각 보드 따로)
+  function runBoardUpgrade(boardEl, durationMs) {
+    return new Promise(function (resolve) {
+      boardEl.dataset.state = 'active';
+      var fill = boardEl.querySelector('.fw-board-fill');
+      var status = boardEl.querySelector('.fw-board-status');
+      var start = Date.now();
+      var iv = setInterval(function () {
+        var p = Math.min(100, (Date.now() - start) / durationMs * 100);
+        fill.style.width = p.toFixed(0) + '%';
+        status.textContent = p.toFixed(0) + '%';
+        if (p >= 100) {
+          clearInterval(iv);
+          boardEl.dataset.state = 'done';
+          status.textContent = '✓ 완료';
+          resolve();
+        }
+      }, 60);
+    });
+  }
+
   document.getElementById('fw-upgrade').addEventListener('click', function () {
     window.IRModal.confirm({
-      body: '펌웨어를 업그레이드 합니다.',
+      title: '펌웨어 업그레이드',
+      body: '펌웨어를 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.',
+      ok: '진행',
       onOk: function () {
-        var ring = document.getElementById('fw-progress');
-        var p = 0;
-        var iv = setInterval(function () {
-          p += 5;
-          ring.textContent = Math.min(p, 100) + '%';
-          if (p >= 100) {
-            clearInterval(iv);
-            fetch('/api/firmware/upgrade', { method: 'POST' })
-              .then(function () {
-                window.IRModal.info({ body: '펌웨어 업그레이드 완료', bodyClass: 'is-info' });
-              });
-          }
-        }, 80);
+        var boardsWrap = document.getElementById('fw-boards');
+        boardsWrap.style.display = 'flex';
+        var boards = boardsWrap.querySelectorAll('.fw-board');
+        // 보드 순차 업그레이드 — 회의 v1.3: 4 보드 (WHP / MCP / 5천원 / 프론트)
+        runBoardUpgrade(boards[0], 1800)
+          .then(function () { return runBoardUpgrade(boards[1], 1400); })
+          .then(function () { return runBoardUpgrade(boards[2], 1100); })
+          .then(function () { return runBoardUpgrade(boards[3], 900); })
+          // 회의 피드백 v1.2: 통신 실패 시 IRError 자동
+          .then(function () { return (window.IRFetch || fetch)('/api/firmware/upgrade', { method: 'POST' }); })
+          .then(function () {
+            window.IRModal.info({ body: '펌웨어 업그레이드 완료', bodyClass: 'is-info' });
+          }).catch(function () {});
       }
     });
   });

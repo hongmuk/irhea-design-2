@@ -91,13 +91,14 @@
             username: document.getElementById('cl-user').value
           }
         };
-        fetch('/api/connection', {
+        // 회의 피드백 v1.2: 통신 끊김/응답 없음 시 에러 모달 자동
+        (window.IRFetch || fetch)('/api/connection', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).then(function () {
           window.IRModal.info({ body: '저장 완료', bodyClass: 'is-info' });
-        });
+        }).catch(function () { /* IRFetch가 알아서 모달 띄움 */ });
       }
     });
   });
