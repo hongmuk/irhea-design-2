@@ -5,7 +5,7 @@
   <a href="/settings/general"     class="stab active"      data-i18n="tab.general">장비 설정</a>
   <a href="/settings/backup"      class="stab"             data-i18n="tab.backup">백업 / 복구</a>
   <a href="/settings/firmware"    class="stab"             data-i18n="tab.firmware">펌웨어 업그레이드</a>
-  <a href="/settings/engineering" class="stab stab-admin"  data-i18n="tab.engineering">🔒 엔지니어링 메뉴</a>
+  <a href="/settings/engineering" class="stab stab-admin"  data-i18n="tab.engineering">🔒 관리자 메뉴</a>
   <span class="stab-spacer"></span>
   <div class="stab-actions">
     <button class="stab-btn primary" id="btn-save-settings" data-i18n="btn.save">저장</button>
@@ -43,9 +43,9 @@
       <span class="card-title">보일러</span>
       <span class="card-id">3.1.4</span>
     </div>
-    <div class="cr"><span class="cr-k">설정 온도</span><span class="cr-v" id="sg-boiler-set">95<span class="unit">°C</span></span></div>
+    <div class="cr"><span class="cr-k">설정 온도</span><button class="cr-v cr-pick" id="sg-boiler-set" data-pick="boiler-temp" data-min="80" data-max="95" data-unit="°C" data-label="보일러 설정 온도">95<span class="unit">°C</span></button></div>
     <div class="cr"><span class="cr-k">현재 온도</span><span class="cr-v muted" id="sg-boiler-cur">95.2<span class="unit">°C</span></span></div>
-    <div class="card-foot"><span>범위 · 80~95°C (boiler max)</span></div>
+    <div class="card-foot"><span>범위 · 80~95°C · 클릭하여 변경</span></div>
   </div>
 
   <!-- Card 3: 물붓기 범위 -->
@@ -81,11 +81,11 @@
       <span class="card-title">레시피 기본값</span>
       <span class="card-id">3.1.7</span>
     </div>
-    <div class="cr"><span class="cr-k">원두량</span><span class="cr-v" id="sg-def-weight">20<span class="unit">g</span></span></div>
-    <div class="cr"><span class="cr-k">추출 비율</span><span class="cr-v" id="sg-def-ratio">1:16</span></div>
-    <div class="cr"><span class="cr-k">물 온도</span><span class="cr-v" id="sg-def-temp">93<span class="unit">°C</span></span></div>
-    <div class="cr"><span class="cr-k">기본 분쇄도</span><span class="cr-v" id="sg-def-grind">18</span></div>
-    <div class="card-foot"><span>레시피 추가 시 prefill 값</span></div>
+    <div class="cr"><span class="cr-k">원두량</span><button class="cr-v cr-pick" id="sg-def-weight" data-pick="def-weight" data-min="10" data-max="40" data-unit="g" data-label="기본 원두량">20<span class="unit">g</span></button></div>
+    <div class="cr"><span class="cr-k">추출 비율</span><button class="cr-v cr-pick" id="sg-def-ratio" data-pick="def-ratio" data-label="기본 추출 비율" data-options="1:10,1:12,1:14,1:15,1:16,1:17,1:18,1:20">1:16</button></div>
+    <div class="cr"><span class="cr-k">물 온도</span><button class="cr-v cr-pick" id="sg-def-temp" data-pick="def-temp" data-min="80" data-max="95" data-unit="°C" data-label="기본 물 온도">93<span class="unit">°C</span></button></div>
+    <div class="cr"><span class="cr-k">기본 분쇄도</span><button class="cr-v cr-pick" id="sg-def-grind" data-pick="def-grind" data-min="1" data-max="40" data-label="기본 분쇄도">18</button></div>
+    <div class="card-foot"><span>레시피 추가 시 prefill · 클릭하여 변경</span></div>
   </div>
 
   <!-- 즐겨찾기 정책 카드 제거 (회의 피드백 v1.2: 의미 불명) -->
@@ -163,9 +163,38 @@
   .cr-pick::after { content: ' ▾'; color: var(--ink-3); font-size: 9px; }
 
   .dripper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 360px; }
-  .drp-i { padding: 12px 14px; border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink-2); text-align: left; }
+  .drp-i { padding: 12px 14px; border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink-2); text-align: center; }
   .drp-i:hover { border-color: var(--ink); color: var(--ink); }
   .drp-i.is-on { border: 2px solid var(--ink); color: var(--ink); background: #FAFAFA; padding: 11px 13px; }
+
+  /* 시안 매칭 picker — 다른 alert 모달과 같은 톤. v1.1 매칭 (회의 §15) */
+  .picker-range-hint {
+    font-size: 11.5px; color: var(--ink-3); font-weight: 500;
+    text-align: center; letter-spacing: -0.1px;
+    margin-bottom: 4px;
+  }
+  .picker-input-row {
+    display: inline-flex; align-items: center; gap: 8px;
+    align-self: center;
+  }
+  .picker-input {
+    /* 다른 폼 input 보다 약간 큼 (20px) — picker 의 단일 값 강조 */
+    font-size: 20px; font-weight: 700;
+    text-align: center; padding: 8px 12px;
+    border: 1px solid var(--hair-2); background: var(--bg);
+    width: 110px;
+    font-family: var(--font-mono);
+    color: var(--ink); letter-spacing: -0.5px;
+  }
+  .picker-input:focus { outline: none; border-color: var(--ink); }
+  .picker-unit {
+    font-size: 14px; color: var(--ink-3); font-weight: 600;
+  }
+  .picker-err {
+    font-size: 11.5px; color: #DC2626; font-weight: 700;
+    min-height: 14px; text-align: center; letter-spacing: -0.1px;
+  }
+  .picker-err:empty { min-height: 0; }
 </style>
 
 <script>
@@ -257,10 +286,109 @@
     });
   });
 
-  // Boiler
+  // Boiler — 표시 + state hydrate
   fetch('/api/boiler-info').then(r => r.json()).then(function (b) {
-    if (b.tempSet != null) document.getElementById('sg-boiler-set').innerHTML = b.tempSet + '<span class="unit">°C</span>';
+    if (b.tempSet != null) {
+      window.IRState.setSetting('boilerTemp', b.tempSet);
+      document.getElementById('sg-boiler-set').innerHTML = b.tempSet + '<span class="unit">°C</span>';
+    }
     if (b.tempMax != null) document.getElementById('sg-boiler-cur').innerHTML = b.tempMax + '<span class="unit">°C</span>';
+  });
+
+  // ─── 회의 v1.1 / 5/24 §10.5: 설정값 직접 편집 picker ──────────────
+  // 클릭 → 입력 모달 (min/max validation 메시지 포함)
+  function openValuePicker(btn) {
+    var key  = btn.dataset.pick;
+    var label = btn.dataset.label || key;
+    var unit = btn.dataset.unit || '';
+    var min  = btn.dataset.min  != null ? parseFloat(btn.dataset.min)  : null;
+    var max  = btn.dataset.max  != null ? parseFloat(btn.dataset.max)  : null;
+    var opts = btn.dataset.options ? btn.dataset.options.split(',') : null;
+
+    var current = (btn.textContent || '').replace(/[^0-9.:]/g, '');
+    var modal   = document.getElementById('ir-modal');
+    var overlay = document.getElementById('ir-modal-overlay');
+    var title   = document.getElementById('ir-modal-title');
+    var body    = document.getElementById('ir-modal-body');
+    var actions = document.getElementById('ir-modal-actions');
+
+    title.textContent = label;
+    // 시안 매칭: 다른 모달과 일관된 톤 — 알림형 default 색·가운데 정렬
+    // (picker 도 본질은 알림+선택. is-info 의 좌측 정렬·검은색은 큰 폼 모달용)
+    body.className = 'ir-modal-body';
+    body.style.padding = '14px 18px 8px';
+    body.style.gap = '8px';
+
+    if (opts) {
+      // 옵션 그리드 — 드립퍼 picker 와 동일 컴포넌트 (.drp-i) 재사용
+      var rangeOpts = '<div class="picker-range-hint">선택지: ' + opts.length + '개</div>';
+      body.innerHTML = rangeOpts +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:320px;">' +
+        opts.map(function (o) {
+          var on = o === current.trim() ? ' is-on' : '';
+          return '<button class="drp-i' + on + '" data-v="' + o + '">' + o + '</button>';
+        }).join('') + '</div>';
+    } else {
+      // 숫자 input + 범위 안내. 다른 모달 본문 폰트(14px)와 일관.
+      // input 은 본문 폰트 1.4배(20px)로 — 너무 크지 않게.
+      var rangeText = (min != null && max != null) ? '범위 ' + min + ' ~ ' + max + (unit ? ' ' + unit : '') : '';
+      body.innerHTML =
+        (rangeText ? '<div class="picker-range-hint">' + rangeText + '</div>' : '') +
+        '<div class="picker-input-row">' +
+          '<input type="number" id="val-input" value="' + current + '"' +
+            (min != null ? ' min="' + min + '"' : '') +
+            (max != null ? ' max="' + max + '"' : '') +
+            ' class="picker-input">' +
+          (unit ? '<span class="picker-unit">' + unit + '</span>' : '') +
+        '</div>' +
+        '<span id="val-err" class="picker-err"></span>';
+    }
+
+    actions.innerHTML = '';
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'ir-modal-btn';
+    btnCancel.textContent = '취소';
+    btnCancel.onclick = function () {
+      overlay.classList.remove('is-open');
+      body.style.cssText = '';
+    };
+
+    if (opts) {
+      body.querySelectorAll('.drp-i').forEach(function (b) {
+        b.addEventListener('click', function () {
+          btn.innerHTML = b.dataset.v;
+          window.IRState.setSetting(key, b.dataset.v);
+          overlay.classList.remove('is-open');
+          body.style.cssText = '';
+          window.IRToast?.show(label + ' = ' + b.dataset.v);
+        });
+      });
+      actions.appendChild(btnCancel);
+    } else {
+      var btnOk = document.createElement('button');
+      btnOk.className = 'ir-modal-btn is-primary';
+      btnOk.textContent = '저장';
+      btnOk.onclick = function () {
+        var v = parseFloat(document.getElementById('val-input').value);
+        var err = document.getElementById('val-err');
+        if (isNaN(v)) { err.textContent = '숫자를 입력해 주세요.'; return; }
+        if (max != null && v > max) { err.textContent = label + ' 최댓값은 ' + max + ' ' + unit + ' 입니다'; return; }
+        if (min != null && v < min) { err.textContent = label + ' 최솟값은 ' + min + ' ' + unit + ' 입니다'; return; }
+        btn.innerHTML = v + (unit ? '<span class="unit">' + unit + '</span>' : '');
+        window.IRState.setSetting(key, v);
+        overlay.classList.remove('is-open');
+        body.style.cssText = '';
+        window.IRToast?.show(label + ' = ' + v + ' ' + unit);
+      };
+      actions.appendChild(btnOk);
+      actions.appendChild(btnCancel);
+      setTimeout(function () { document.getElementById('val-input').select(); }, 50);
+    }
+    overlay.classList.add('is-open');
+  }
+  // 모든 cr-pick 버튼에 바인딩 (드립퍼 picker 는 기존 핸들러 우선 — id 'sg-dripper'는 이 위 위 ABOVE 핸들러)
+  document.querySelectorAll('.cr-pick[data-pick]').forEach(function (b) {
+    b.addEventListener('click', function () { openValuePicker(b); });
   });
 
   // Save

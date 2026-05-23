@@ -68,13 +68,13 @@
         <span class="ir-toggle-opt" data-src="aws" style="border:1.5px solid var(--ir-line-strong);">AWS (클라우드)</span>
       </div>
 
-      <!-- 정책 — 자동일 때만 표시 -->
+      <!-- 정책 — 자동일 때만 표시. 회의 §12.3 / 명세 v0.9: "항상 체크 / 한번만 / 절대 안함" -->
       <div id="fw-policy-wrap" style="display:none;">
-        <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">자동 체크 주기</div>
+        <div style="font-size:13px;font-weight:700;color:var(--ir-fg-muted);margin-bottom:8px;">자동 체크 정책</div>
         <div style="display:flex;gap:8px;">
-          <span class="ir-toggle-opt is-active" data-policy="boot"   style="border:1.5px solid var(--ir-line-strong);">전원 켤 때마다</span>
-          <span class="ir-toggle-opt"            data-policy="daily"  style="border:1.5px solid var(--ir-line-strong);">하루 1회</span>
-          <span class="ir-toggle-opt"            data-policy="weekly" style="border:1.5px solid var(--ir-line-strong);">주 1회</span>
+          <span class="ir-toggle-opt is-active" data-policy="always" style="border:1.5px solid var(--ir-line-strong);">항상 체크</span>
+          <span class="ir-toggle-opt"            data-policy="once"   style="border:1.5px solid var(--ir-line-strong);">한번만</span>
+          <span class="ir-toggle-opt"            data-policy="never"  style="border:1.5px solid var(--ir-line-strong);">절대 안함</span>
         </div>
       </div>
 
@@ -99,7 +99,7 @@
 
 <script>
 (function () {
-  var policy = 'boot';
+  var policy = 'always';
   var mode = 'manual';
   var src = 'usb';
 

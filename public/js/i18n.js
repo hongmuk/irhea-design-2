@@ -41,7 +41,8 @@
     'tab.general':     { ko: '장비 설정',         en: 'Device' },
     'tab.backup':      { ko: '백업 / 복구',       en: 'Backup' },
     'tab.firmware':    { ko: '펌웨어 업그레이드', en: 'Firmware' },
-    'tab.engineering': { ko: '🔒 엔지니어링 메뉴', en: '🔒 Engineering' },
+    // 회의 v1.1: "엔지니어링" → "관리자" 용어 통일
+    'tab.engineering': { ko: '🔒 관리자 메뉴', en: '🔒 Admin' },
 
     // 공통 버튼
     'btn.save':   { ko: '저장',   en: 'Save' },
