@@ -21,10 +21,11 @@
     <button class="hist-pbtn" data-p="today">오늘</button>
   </div>
 
-  <!-- Panel 1: KPI 4 카드 (회의 v1.1 S8.3.3) + 인사이트 -->
+  <!-- Panel 1: KPI 4 카드 (회의 v1.1 S8.3.3) -->
   <div class="panel metric">
-    <div class="metric-h">
+    <div class="panel-h">
       <span class="panel-title"><span class="ico">📊</span><span id="hist-summary-title">요약</span></span>
+      <span class="hist-insight" id="hist-insight">— 데이터 분석 중 —</span>
     </div>
     <div class="metric-grid">
       <div class="metric-cell">
@@ -48,11 +49,10 @@
         <span class="metric-comp" id="hist-month-comp">전월 대비 —</span>
       </div>
     </div>
-    <div class="hist-insight" id="hist-insight">— 데이터 분석 중 —</div>
   </div>
 
   <!-- Panel: 일별 막대 (회의 v1.1 S8.3 — 신규) — 최근 14일 -->
-  <div class="panel">
+  <div class="panel panel-daily">
     <div class="panel-h">
       <span class="panel-title"><span class="ico">📈</span>일별 추출 (최근 14일)</span>
       <span class="panel-hint">왼쪽=오래된, 오른쪽=오늘</span>
@@ -112,7 +112,7 @@
   .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
   .sub-h-r b { color: var(--ink-2); font-weight: 700; }
 
-  /* v1.1 보강: 그리드 5행 (검색바·KPI·일별차트·레시피별/요일시간·최근) */
+  /* v1.1 보강: 5행 그리드 — period / metric(전폭) / daily(전폭) / 레시피·요일시간(2col) / 최근(전폭) */
   .hist-body {
     flex: 1; padding: 14px 24px 18px;
     display: grid; grid-template-columns: 1fr 1fr;
@@ -120,11 +120,10 @@
     gap: 12px; min-height: 0;
     overflow-y: auto;
   }
-  /* 최근 추출 패널을 가로 전체로 + 일별 차트 패널도 전폭 */
+  /* 명시적 전폭 패널들 — 클래스 기반 (nth-of-type 충돌 회피) */
+  .hist-body > .panel.metric,
+  .hist-body > .panel-daily,
   .hist-body > .panel:last-child { grid-column: 1 / -1; }
-  .hist-body > .panel.metric { grid-column: 1 / -1; }
-  /* 일별 막대 — 전폭, KPI 다음 행 */
-  .hist-body > .panel:nth-of-type(2) { grid-column: 1 / -1; }
   /* 최근 추출 표 — viewport 짧을 때도 최대 5행만 노출 (스크롤) */
   .hist-rt-wrap { max-height: 200px; overflow-y: auto; }
   .hist-period { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
@@ -145,19 +144,25 @@
   .panel-title .ico { margin-right: 6px; font-weight: 400; }
   .panel-id { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
-  /* 메트릭: 숫자만 큼(위계), 라벨은 작게 회색 */
-  .panel.metric { padding: 0; background: linear-gradient(180deg, #FFFAF2 0%, var(--bg) 60%); border-color: #C28200; grid-column: 1 / -1; }
-  .metric-h { padding: 12px 16px; border-bottom: 1px solid var(--hair); display: flex; align-items: baseline; justify-content: space-between; }
-  .metric-h .panel-title { color: #C28200; font-size: 13px; }
-  /* v1.1 KPI 4개로 확장 — 1fr 4번 */
-  .metric-grid { padding: 14px 16px 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .metric-cell { display: flex; flex-direction: column; gap: 3px; padding: 4px 0; }
-  .metric-cell + .metric-cell { border-left: 1px solid var(--hair); padding-left: 14px; }
-  /* 위계 핵심: 숫자만 강조 (28px), 라벨은 보조, 비교는 더 작게 */
-  .metric-num { font-size: 26px; font-weight: 600; color: var(--ink); letter-spacing: -1px; line-height: 1; font-variant-numeric: tabular-nums; }
+  /* 메트릭 패널 — panel 기본 구조 따름 (panel 자체가 flex column, gap 8) */
+  .panel.metric {
+    background: linear-gradient(180deg, #FFFAF2 0%, var(--bg) 60%);
+    border-color: #C28200;
+    grid-column: 1 / -1;
+  }
+  .panel.metric .panel-h .panel-title { color: #C28200; }
+  /* v1.1 KPI 4개 — flex(grid)로 행 안에 4 cell + 명시적 자기 padding 없음 (panel padding 사용) */
+  .metric-grid {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px; align-items: start;
+    padding: 4px 0;
+  }
+  .metric-cell { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; min-width: 0; }
+  .metric-cell + .metric-cell { border-left: 1px solid rgba(0,0,0,0.06); padding-left: 14px; }
+  .metric-num { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: -0.8px; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .metric-num.brand { color: var(--brand); }
-  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: -0.1px; margin-top: 5px; }
-  .metric-comp { font-size: 10px; color: var(--ink-3); font-weight: 500; margin-top: 2px; }
+  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: -0.1px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .metric-comp { font-size: 10px; color: var(--ink-3); font-weight: 500; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .metric-comp.up { color: #15803D; font-weight: 700; }
   .metric-comp.down { color: var(--brand); font-weight: 700; }
 
@@ -225,11 +230,12 @@
   .hist-empty-msg { font-size: 13px; font-weight: 600; color: var(--ink-2); }
   .hist-empty-sub { font-size: 11px; color: var(--ink-3); }
 
-  /* 인사이트 메시지 — 좌측 골드 보더로 강조 (폰트는 본문 크기) */
+  /* 인사이트 — 요약 panel 헤더 우측 (한 줄, 골드 톤). 별도 panel 차지 안 함. */
   .hist-insight {
-    padding: 10px 16px; margin: 10px 14px 12px;
-    background: rgba(197,130,0,0.06); border-left: 3px solid #C28200;
-    font-size: 12.5px; color: var(--ink-2); font-weight: 500; line-height: 1.55;
+    flex: 1; text-align: right;
+    font-size: 10.5px; color: var(--ink-2); font-weight: 500; line-height: 1.4;
+    padding-left: 12px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .hist-insight b { color: var(--ink); font-weight: 700; }
   .hist-insight em { font-style: normal; color: #C28200; font-weight: 700; }
@@ -393,15 +399,20 @@
       }
     });
     var dailyMax = Math.max.apply(null, daily) || 1;
-    document.getElementById('hist-daily').innerHTML = daily.map(function (n, i) {
-      var h = (n / dailyMax * 56).toFixed(0);
-      var isToday = i === 13;
-      return '<div class="hist-daily-col' + (isToday ? ' today' : '') + '" title="' + dayLabels[i].lbl + ' · ' + n + '회">' +
-        '<span class="hist-daily-val">' + (n || '·') + '</span>' +
-        '<div class="hist-daily-bar" style="height:' + h + 'px;"></div>' +
-        '<span class="hist-daily-lbl">' + dayLabels[i].lbl + '</span>' +
-      '</div>';
-    }).join('');
+    var totalDaily = daily.reduce(function (a, b) { return a + b; }, 0);
+    if (totalDaily === 0) {
+      document.getElementById('hist-daily').innerHTML = '<div class="hist-empty" style="grid-column:1/-1;padding:14px;"><span class="hist-empty-ico">📅</span><span class="hist-empty-msg">최근 14일 추출 데이터가 없습니다</span><span class="hist-empty-sub">기간 필터를 "전체"로 변경하거나, mock 데이터의 startTime 을 최근 날짜로 갱신해 주세요.</span></div>';
+    } else {
+      document.getElementById('hist-daily').innerHTML = daily.map(function (n, i) {
+        var h = (n / dailyMax * 56).toFixed(0);
+        var isToday = i === 13;
+        return '<div class="hist-daily-col' + (isToday ? ' today' : '') + '" title="' + dayLabels[i].lbl + ' · ' + n + '회">' +
+          '<span class="hist-daily-val">' + (n || '·') + '</span>' +
+          '<div class="hist-daily-bar" style="height:' + h + 'px;"></div>' +
+          '<span class="hist-daily-lbl">' + dayLabels[i].lbl + '</span>' +
+        '</div>';
+      }).join('');
+    }
 
     // 인사이트
     document.getElementById('hist-insight').innerHTML = buildInsight(sessions);
