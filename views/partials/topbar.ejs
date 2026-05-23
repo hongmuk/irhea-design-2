@@ -67,14 +67,16 @@
         body: '장비를 종료하시겠습니까?',
         ok: '종료',
         onOk: function () {
-          // STEP1: progress (blocking 2.5s)
+          // STEP1: 종료 진행 (블로킹 2.5s)
           window.IRModal.info({
+            title: '장비 종료 진행 중',
             body: '<span class="ir-modal-ico">⏳</span>장비를 종료합니다.<br>기다려 주세요',
             buttons: []
           });
           setTimeout(function () {
-            // STEP2: complete (no buttons, waiting for physical power off)
+            // STEP2: 완료 (버튼 없음 — 물리 스위치 OFF 대기)
             window.IRModal.info({
+              title: '종료 완료',
               body: '장비 종료 완료<br>전원 스위치를 꺼<br>주세요.',
               buttons: []
             });

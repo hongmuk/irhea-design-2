@@ -1,15 +1,5 @@
-<!-- 공장 초기화 (S4.2) — designs/02-factory-reset.html 정합. Topbar는 layout.ejs. -->
-
-<div class="settings-tabs">
-  <a href="/settings/general" class="stab">설정</a>
-  <a href="/settings/backup" class="stab">백업 / 복구</a>
-  <a href="/settings/engineering" class="stab active">관리자 메뉴</a>
-  <a href="/settings/firmware" class="stab">펌웨어 업그레이드</a>
-  <span class="stab-spacer"></span>
-  <div class="stab-actions">
-    <button class="stab-btn ghost" onclick="history.back()">복귀</button>
-  </div>
-</div>
+<!-- 공장 초기화 (S4.2) — settings-shell partial 사용으로 다른 설정 페이지와 통일 -->
+<%- include('../partials/settings-shell', { activeTab: 'engineering' }) %>
 
 <div class="eng-body">
   <nav class="side">
@@ -97,14 +87,10 @@
   </div>
 </div>
 
-<style>
-  /* factory-reset — designs/02-factory-reset.html 정합 */
-  .stab-spacer { flex: 1; }
-  .stab-actions { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; }
-  .stab-btn { font-size: 12px; padding: 8px 18px; font-weight: 600; cursor: pointer; line-height: 1; font-family: inherit; border: none; }
-  .stab-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
-  .stab-btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
+<%- include('../partials/settings-shell-close') %>
 
+<style>
+  /* factory-reset — settings-shell partial 사용 (탭/액션 통일) */
   .eng-body { flex: 1; display: grid; grid-template-columns: 200px 1fr; min-height: 0; }
   .side { display: flex; flex-direction: column; padding: 16px 12px; gap: 4px; border-right: 1px solid var(--hair); background: #FCFCFC; }
   .side-h { font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.8px; padding: 6px 12px; text-transform: uppercase; }

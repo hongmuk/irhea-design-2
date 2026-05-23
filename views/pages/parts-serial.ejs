@@ -1,11 +1,5 @@
-<!-- 부품 시리얼 (S4.5 · v1.1 신규) — 와이어프레임 v6.0 4.5.1 부품 표 verbatim -->
-<div class="ir-shell">
-  <div class="ir-tabs">
-    <a class="ir-tab" href="/settings/general">설정</a>
-    <a class="ir-tab" href="/settings/backup">백업 / 복구</a>
-    <a class="ir-tab is-active" href="/settings/engineering" data-i18n="tab.engineering">🔒 관리자 메뉴</a>
-    <a class="ir-tab" href="/settings/firmware">펌웨어 업그레이드</a>
-  </div>
+<!-- 부품 시리얼 (S4.5 · v1.1 신규) — settings-shell partial 사용 통일 -->
+<%- include('../partials/settings-shell', { activeTab: 'engineering' }) %>
 
   <div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
     <aside class="ir-side-menu">
@@ -36,7 +30,8 @@
       <p style="font-size:11px;color:var(--ir-fg-muted);font-style:italic;margin-top:auto;">⚠ 시리얼 변경은 복구 불가능합니다. 출고/교체 시에만 변경하세요.</p>
     </section>
   </div>
-</div>
+
+<%- include('../partials/settings-shell-close') %>
 
 <style>
   .parts-card { border: 1px solid var(--ir-line); padding: 0; }
