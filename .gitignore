@@ -10,4 +10,8 @@ public/assets/
 
 # Playwright QA artifacts (transient — keep out of source)
 qa-*.png
+qa-*.jpg
+v2-*.jpg
+m-*.jpg
+vision-*.jpg
 .playwright-mcp/
