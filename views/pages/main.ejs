@@ -1,4 +1,4 @@
-<!-- Main Dashboard — 5-spout stations. Topbar is rendered by layout.ejs.
+<!-- Main Dashboard — 5-spout stations + 매뉴얼 큐 (v1.1 S2.1.7).
      Aligned with designs/02-cinema-gold.html (시안 ② Light · S2.1 메인 모니터링). -->
 <div class="stations">
   <% for (let i = 1; i <= 5; i++) { %>
@@ -54,6 +54,27 @@
       </div>
     </div>
   <% } %>
+</div>
+
+<!-- v1.1 S2.1.7: 매뉴얼 큐 그리드 5×6 — 즐겨찾기와 분리. 추출구별 대기열.
+     클릭: 큐에 추가 (현재는 mock 데이터로 표시만) -->
+<div class="manual-queue" id="manual-queue">
+  <div class="mq-head">
+    <span class="mq-title">📋 매뉴얼 큐 <em>(다음 추출 대기열 · 최대 6잔/추출구)</em></span>
+    <button type="button" class="mq-clear" id="mq-clear-all">전체 비우기</button>
+  </div>
+  <div class="mq-grid">
+    <% for (let i = 1; i <= 5; i++) { %>
+      <div class="mq-col" data-spout="<%= i %>">
+        <div class="mq-col-label">추출구 <%= i %></div>
+        <div class="mq-cells">
+          <% for (let s = 0; s < 6; s++) { %>
+            <div class="mq-cell" data-slot="<%= s %>"><span class="mq-cell-recipe">—</span></div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  </div>
 </div>
 
 <style>
@@ -151,6 +172,34 @@
   }
   .st.is-complete-flash .st-num { color: var(--st-done, #15803D) !important; }
 
+  /* v1.1 S2.1.7: 매뉴얼 큐 그리드 5×6 — 즐겨찾기와 분리 (가로 행: 추출구 6잔까지 대기열) */
+  .manual-queue { flex-shrink: 0; border-top: 2px solid var(--hair); background: linear-gradient(180deg, #FAF8F2 0%, var(--bg) 100%); padding: 6px 14px 8px; }
+  .mq-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 4px; }
+  .mq-title { font-size: 10.5px; font-weight: 700; color: var(--ink-2); letter-spacing: 0.3px; text-transform: uppercase; }
+  .mq-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 6px; font-size: 9.5px; text-transform: none; letter-spacing: 0; }
+  .mq-clear { font-size: 9.5px; padding: 2px 8px; border: 1px dashed var(--hair-2); background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-weight: 500; }
+  .mq-clear:hover { color: var(--brand); border-color: var(--brand); }
+  .mq-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .mq-col { min-width: 0; display: grid; grid-template-columns: 38px 1fr; align-items: center; column-gap: 6px; }
+  .mq-col-label { font-size: 9px; font-weight: 700; color: var(--ink-3); text-align: center; letter-spacing: 0.3px; }
+  /* 6 셀을 가로로 배치 → 큐 head 가 왼쪽 (다음 추출), 우측으로 갈수록 더 나중 */
+  .mq-cells { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; }
+  .mq-cell {
+    height: 20px; padding: 0 4px;
+    border: 1px dashed rgba(0,0,0,0.1);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--ink-3);
+    cursor: pointer; transition: all 0.12s;
+    min-width: 0;
+  }
+  .mq-cell:hover { border-color: var(--brand); border-style: solid; background: #FAFAFA; }
+  .mq-cell.is-filled { border-style: solid; border-color: rgba(0,0,0,0.18); background: rgba(197,130,0,0.05); }
+  .mq-cell.is-filled .mq-cell-recipe { color: var(--ink); font-weight: 600; }
+  .mq-cell.is-head { border-color: var(--brand); background: rgba(230,0,18,0.08); }
+  .mq-cell.is-head .mq-cell-recipe { color: var(--brand); font-weight: 700; }
+  .mq-cell-recipe { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; text-align: center; }
+
   /* 즐겨찾기 슬롯 5개 — 컴팩트, 레시피명만, 클릭 가능 */
   .st-slots {
     display: flex; flex-direction: column; gap: 2px;
@@ -238,6 +287,35 @@
     if (ratio) ratio.textContent = recipe.ratio || '--';
     if (total) total.textContent = (recipe.waterWeight || '--') + 'g';
   }
+  // v1.1 S2.1.7: 매뉴얼 큐 렌더링 (mock + localStorage override)
+  function applyManualQueue(spouts, recipes) {
+    var raw = localStorage.getItem('ir.queueOverride');
+    var ov = {};
+    try { ov = raw ? JSON.parse(raw) : {}; } catch (e) {}
+    spouts.forEach(function (s) {
+      var col = document.querySelector('.mq-col[data-spout="' + s.id + '"]');
+      if (!col) return;
+      // override 가 있으면 그것, 없으면 mock 값
+      var queue = ov[s.id] != null ? ov[s.id] : (s.manualQueue || []);
+      var cells = col.querySelectorAll('.mq-cell');
+      cells.forEach(function (cell, idx) {
+        var rid = queue[idx];
+        var r = rid != null ? recipes.find(function (x) { return x.id === rid; }) : null;
+        var nameEl = cell.querySelector('.mq-cell-recipe');
+        cell.classList.remove('is-filled', 'is-head');
+        if (r) {
+          nameEl.textContent = r.name || ('레시피 ' + r.id);
+          nameEl.title = r.name;
+          cell.classList.add('is-filled');
+          if (idx === 0) cell.classList.add('is-head'); // 큐 헤드 = 다음 추출
+        } else {
+          nameEl.textContent = '—';
+          nameEl.title = '';
+        }
+      });
+    });
+  }
+
   function applyFavoriteSlots(card, spout, recipes, currentRecipeId) {
     const slots = card.querySelectorAll('.st-slot');
     const ids = spout.favoriteRecipeIds || [];
@@ -292,6 +370,13 @@
           const currentRecipe = recipes.find(r => r.id === s.currentRecipeId);
           applyRecipe(card, currentRecipe);
           applyFavoriteSlots(card, s, recipes, s.currentRecipeId);
+        });
+        // 매뉴얼 큐 — 카드 forEach 밖에서 한 번에
+        applyManualQueue(spouts, recipes);
+        spouts.forEach(function (s) {
+          // 완료 점멸 등 후속 로직 (원래 forEach 안에 있었음)
+          var card = document.querySelector('.spout-card[data-spout="' + s.id + '"]');
+          if (!card) return;
 
           // 완료 점멸 — 회의 피드백: 100% 도달 시 서빙 타이밍 알림
           const wasComplete = card.dataset.lastStatus === 'complete';
@@ -399,6 +484,54 @@
       ev.stopPropagation();
       pickRecipeForSpout(spoutId, null);
     }
+  });
+
+  // ─── v1.1 S2.1.7 매뉴얼 큐 클릭 인터랙션 ───────────────
+  // 셀 클릭 → recipe-picker 모달 → 큐에 추가/변경 (mock — localStorage override)
+  function setQueueOverride(spoutId, slot, recipeId) {
+    var key = 'ir.queueOverride';
+    var raw = localStorage.getItem(key);
+    var ov = {};
+    try { ov = raw ? JSON.parse(raw) : {}; } catch (e) {}
+    if (!ov[spoutId]) ov[spoutId] = [];
+    if (recipeId == null) ov[spoutId].splice(slot, 1);
+    else ov[spoutId][slot] = recipeId;
+    localStorage.setItem(key, JSON.stringify(ov));
+  }
+  document.getElementById('manual-queue').addEventListener('click', function (ev) {
+    var clearBtn = ev.target.closest('#mq-clear-all');
+    if (clearBtn) {
+      window.IRModal.confirm({
+        title: '큐 전체 비우기',
+        body: '모든 추출구의 매뉴얼 큐를 비웁니다.',
+        bodyClass: 'is-error',
+        ok: '비우기',
+        onOk: function () {
+          localStorage.removeItem('ir.queueOverride');
+          window.IRToast?.show('매뉴얼 큐 전체 비움');
+          // 카드 즉시 갱신 — 다음 폴링까지 빈 큐로 보이게 (mock만)
+          document.querySelectorAll('.mq-cell').forEach(function (c) {
+            c.classList.remove('is-filled', 'is-head');
+            c.querySelector('.mq-cell-recipe').textContent = '—';
+          });
+        }
+      });
+      return;
+    }
+    var cell = ev.target.closest('.mq-cell');
+    if (!cell) return;
+    var col = cell.closest('.mq-col');
+    var spoutId = parseInt(col.dataset.spout, 10);
+    var slotIdx = parseInt(cell.dataset.slot, 10);
+    if (!window.IRRecipePicker) return;
+    window.IRRecipePicker.open({
+      title: '추출구 ' + spoutId + ' 큐 ' + (slotIdx + 1) + '번 — 레시피 선택',
+      allowClear: true,
+      onPick: function (rid) {
+        setQueueOverride(spoutId, slotIdx, rid);
+        window.IRToast?.show('추출구 ' + spoutId + ' 큐 ' + (slotIdx + 1) + (rid != null ? ' 추가' : ' 비움'));
+      }
+    });
   });
 })();
 </script>
