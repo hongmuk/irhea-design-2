@@ -462,6 +462,16 @@
             '<label class="rfv-lab"><span>분쇄도</span><input id="rf-grind" type="number" min="1" max="40" step="1" value="' + (src.grindSize || 18) + '"></label>' +
             '<label class="rfv-lab"><span>물 온도 (°C) <em class="rfv-note">보일러 설정 기준</em></span><input id="rf-temp" type="number" min="80" max="95" step="1" value="' + (src.waterTemp || 93) + '"></label>' +
           '</div>' +
+          // 명세 v0.9 §3.2.1: 물붓기 범위 — 뜸들이기 cup + 추출 cup (1~4 cup, S3.1.5 디폴트 매핑)
+          '<div class="rfv-grid rfv-grid-3">' +
+            '<label class="rfv-lab"><span>뜸들이기 (cup)</span><select id="rf-bloom-cup">' +
+              [1,2,3,4].map(function (c) { return '<option value="' + c + '"' + (c === (src.bloomCup || 3) ? ' selected' : '') + '>' + c + ' cup</option>'; }).join('') +
+            '</select></label>' +
+            '<label class="rfv-lab"><span>추출 (cup)</span><select id="rf-pour-cup">' +
+              [1,2,3,4].map(function (c) { return '<option value="' + c + '"' + (c === (src.pourCup || 4) ? ' selected' : '') + '>' + c + ' cup</option>'; }).join('') +
+            '</select></label>' +
+            '<label class="rfv-lab"><span>추출 단위</span><select id="rf-unit"><option value="percent"' + ((src.unit || 'percent') === 'percent' ? ' selected' : '') + '>Percent (%)</option><option value="gram"' + (src.unit === 'gram' ? ' selected' : '') + '>Gram (g)</option></select></label>' +
+          '</div>' +
           '<label class="rfv-lab rfv-full"><span>설명 <em class="rfv-note">Description</em></span><textarea id="rf-notes" rows="2" maxlength="200">' + escAttr(src.notes) + '</textarea></label>' +
         '</div>' +
         // ─── 스테이지 편집 ─────────────────────
@@ -686,6 +696,10 @@
         waterTemp: parseInt(document.getElementById('rf-temp').value, 10) || 93,
         dripper: document.getElementById('rf-dripper').value,
         grindSize: parseInt(document.getElementById('rf-grind').value, 10) || 18,
+        // 명세 v0.9 §3.2.1: 물붓기 범위 (cup) + 추출 단위
+        bloomCup: parseInt(document.getElementById('rf-bloom-cup').value, 10) || 3,
+        pourCup: parseInt(document.getElementById('rf-pour-cup').value, 10) || 4,
+        unit: document.getElementById('rf-unit').value || 'percent',
         notes: document.getElementById('rf-notes').value || '',
         stages: stages
       };
