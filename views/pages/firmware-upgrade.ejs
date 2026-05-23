@@ -188,7 +188,7 @@
           // 회의 피드백 v1.2: 통신 실패 시 IRError 자동
           .then(function () { return (window.IRFetch || fetch)('/api/firmware/upgrade', { method: 'POST' }); })
           .then(function () {
-            window.IRModal.info({ body: '펌웨어 업그레이드 완료', bodyClass: 'is-info' });
+            window.IRModal.info({ body: '펌웨어 업그레이드 완료' });
           }).catch(function () {});
       }
     });

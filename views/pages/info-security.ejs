@@ -210,19 +210,23 @@
   });
 
   document.getElementById('sec-log-backup').addEventListener('click', function () {
-    window.IRModal.info({ body: '로그 백업 시작', bodyClass: 'is-info' });
+    window.IRModal.info({ body: '로그 백업 시작' });
   });
   document.getElementById('sec-reset-one').addEventListener('click', function () {
     window.IRModal.confirm({
+      title: '추출구 실적 초기화',
       body: '복구불가<br>진행하시겠습니까?',
       bodyClass: 'is-error',
+      ok: '초기화',
       onOk: function () { window.IRModal.info({ body: '초기화 완료' }); }
     });
   });
   document.getElementById('sec-reset-all').addEventListener('click', function () {
     window.IRModal.confirm({
+      title: '전체 실적 초기화',
       body: '복구불가<br>진행하시겠습니까?',
       bodyClass: 'is-error',
+      ok: '전체 초기화',
       onOk: function () { window.IRModal.info({ body: '전체 초기화 완료' }); }
     });
   });

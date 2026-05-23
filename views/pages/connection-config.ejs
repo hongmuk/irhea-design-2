@@ -80,7 +80,9 @@
   // Save → confirm before applying
   document.querySelector('[data-ir-save]').addEventListener('click', function () {
     window.IRModal.confirm({
+      title: '장치 연결 변경',
       body: '장치 연결 설정을 변경 합니다.',
+      ok: '변경',
       onOk: function () {
         var payload = {
           deviceIp: document.getElementById('dev-ip').value,
@@ -97,7 +99,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).then(function () {
-          window.IRModal.info({ body: '저장 완료', bodyClass: 'is-info' });
+          window.IRModal.info({ body: '저장 완료' });
         }).catch(function () { /* IRFetch가 알아서 모달 띄움 */ });
       }
     });

@@ -46,8 +46,9 @@
       // STEP1: progress modal (blocking, no buttons) → STEP2: complete modal.
       if (!window.IRModal) return;
       window.IRModal.confirm({
-        title: '알림',
+        title: '장비 종료',
         body: '장비를 종료하시겠습니까?',
+        ok: '종료',
         onOk: function () {
           // STEP1: progress (blocking 2.5s)
           window.IRModal.info({

@@ -166,7 +166,7 @@
           body: JSON.stringify({ items: items })
         }).then(function () {
           ring.style.display = 'none';
-          window.IRModal.info({ body: (dir === 'restore' ? '복구' : '백업') + ' 완료', bodyClass: 'is-info' });
+          window.IRModal.info({ body: (dir === 'restore' ? '복구' : '백업') + ' 완료' });
         });
       }
     }, 110);
