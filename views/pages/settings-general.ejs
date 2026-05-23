@@ -89,7 +89,40 @@
   </div>
 
   <!-- 즐겨찾기 정책 카드 제거 (회의 피드백 v1.2: 의미 불명) -->
-  <!-- 펌프 교정 카드 제거 (회의 피드백 v1.2: 엔지니어링 메뉴로 이관) -->
+  <!-- 펌프 교정 카드 제거 (회의 피드백 v1.2: 관리자 메뉴로 이관) -->
+
+  <!-- Card 6: 장비 제어 — 5/13 §3: 스피커 / LED Bar ON/OFF -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">장비 제어</span>
+      <span class="card-id">3.1.8</span>
+    </div>
+    <div class="cr"><span class="cr-k">태블릿 스피커</span>
+      <span class="seg" data-name="speaker-tablet">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="cr"><span class="cr-k">장비 스피커</span>
+      <span class="seg" data-name="speaker-device">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="cr"><span class="cr-k">LED Bar #1</span>
+      <span class="seg" data-name="led-1">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="cr"><span class="cr-k">LED Bar #2</span>
+      <span class="seg" data-name="led-2">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="card-foot"><span>5/13 §3: 태블릿·장비 스피커 / LED Bar 2개</span></div>
+  </div>
 
 </div>
 
@@ -201,16 +234,25 @@
 (function () {
   var DRIPPERS = ['Kalita Wave', 'Hario V60', 'Chemex', 'Kono', 'Origami', 'Melita', 'December'];
 
-  // Hydrate from localStorage
+  // Hydrate from localStorage — 5/13 §3 장비 제어 4개도 포함
   function hydrate() {
     var s = window.IRState.getSettings();
     // Unit seg
     var unitSeg = document.querySelector('.seg[data-name=unit]');
-    unitSeg.querySelectorAll('.seg-i').forEach(function (i) { i.classList.toggle('on', i.dataset.value === s.unit); });
+    if (unitSeg) unitSeg.querySelectorAll('.seg-i').forEach(function (i) { i.classList.toggle('on', i.dataset.value === s.unit); });
     // Alarm seg
     var aSeg = document.querySelector('.seg[data-name=alarm]');
-    aSeg.querySelectorAll('.seg-i').forEach(function (i) {
+    if (aSeg) aSeg.querySelectorAll('.seg-i').forEach(function (i) {
       i.classList.toggle('on', (i.dataset.value === 'on') === !!s.alarm);
+    });
+    // 5/13 §3 장비 제어 — 기본 ON
+    ['speaker-tablet', 'speaker-device', 'led-1', 'led-2'].forEach(function (k) {
+      var seg = document.querySelector('.seg[data-name="' + k + '"]');
+      if (!seg) return;
+      var on = s[k] !== false; // 기본 true
+      seg.querySelectorAll('.seg-i').forEach(function (i) {
+        i.classList.toggle('on', (i.dataset.value === 'on') === on);
+      });
     });
     // Dripper
     document.getElementById('sg-dripper').textContent = s.dripper || 'Kalita Wave';
@@ -218,15 +260,22 @@
   hydrate();
 
   // Segmented controls — persist on click
+  var SEG_HANDLERS = {
+    'unit':           function (v) { window.IRState.setSetting('unit', v); },
+    'alarm':          function (v) { window.IRState.setSetting('alarm', v === 'on'); },
+    'speaker-tablet': function (v) { window.IRState.setSetting('speaker-tablet', v === 'on'); },
+    'speaker-device': function (v) { window.IRState.setSetting('speaker-device', v === 'on'); },
+    'led-1':          function (v) { window.IRState.setSetting('led-1', v === 'on'); },
+    'led-2':          function (v) { window.IRState.setSetting('led-2', v === 'on'); }
+  };
   document.querySelectorAll('.seg').forEach(function (seg) {
     var name = seg.dataset.name;
     seg.querySelectorAll('.seg-i').forEach(function (i) {
       i.addEventListener('click', function () {
         seg.querySelectorAll('.seg-i').forEach(function (x) { x.classList.remove('on'); });
         i.classList.add('on');
-        var v = i.dataset.value;
-        if (name === 'unit') window.IRState.setSetting('unit', v);
-        if (name === 'alarm') window.IRState.setSetting('alarm', v === 'on');
+        var handler = SEG_HANDLERS[name];
+        if (handler) handler(i.dataset.value);
       });
     });
   });
