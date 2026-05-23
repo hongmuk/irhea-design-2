@@ -7,3 +7,7 @@ node_modules/
 
 # Large unused spout videos — superseded by public/video/ (per spec 02-cinema-gold.html)
 public/assets/
+
+# Playwright QA artifacts (transient — keep out of source)
+qa-*.png
+.playwright-mcp/
