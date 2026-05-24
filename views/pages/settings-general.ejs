@@ -142,7 +142,8 @@
   .seg { display: inline-flex; border: 1px solid var(--hair-2); height: 28px; align-items: stretch; user-select: none; }
   .seg-i { padding: 0 10px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); display: inline-flex; align-items: center; border-right: 1px solid var(--hair-2); cursor: pointer; min-width: 44px; justify-content: center; }
   .seg-i:last-child { border-right: none; }
-  .seg-i.on { background: var(--ink); color: #fff; font-weight: 700; }
+  /* 활성 토글 — 검은 ink 대신 Cinema Gold 로 (brewing/탭/즐겨찾기 헤더와 톤 통일) */
+  .seg-i.on { background: var(--gold); color: #fff; font-weight: 700; }
 
   .ct { font-size: 11px; font-variant-numeric: tabular-nums; width: 100%; border-collapse: collapse; }
   .ct th { text-align: left; font-weight: 500; color: var(--ink-3); padding: 4px 0; border-bottom: 1px solid var(--hair); font-size: clamp(11.5px, 1vw + 7px, 14px); letter-spacing: 0.3px; text-transform: uppercase; }

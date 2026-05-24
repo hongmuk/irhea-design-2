@@ -60,7 +60,7 @@
   <label class="ab-check"><input type="checkbox" id="rcp-multi-input" hidden>다중 선택</label>
   <button class="ab-btn" id="rcp-add">추가</button>
   <button class="ab-btn" id="rcp-edit">편집</button>
-  <button class="ab-btn" id="rcp-delete">삭제</button>
+  <button class="ab-btn is-danger" id="rcp-delete">삭제</button>
   <span class="ab-divider"></span>
   <button class="ab-btn cloud" id="rcp-cloud-dl"><span class="ico">⬇</span>클라우드 받기</button>
   <button class="ab-btn cloud" id="rcp-cloud-up"><span class="ico">⬆</span>클라우드 올리기</button>
@@ -150,7 +150,13 @@
   .ab-btn:hover { border-color: var(--ink); color: var(--ink); }
   .ab-btn.primary { background: var(--brand); color: #FFF; border-color: var(--brand); }
   .ab-btn.primary:hover { background: #C8000F; border-color: #C8000F; color: #FFF; }
-  .ab-btn.cloud { background: #FFFAFA; border-color: var(--brand); color: var(--brand); }
+  /* 클라우드 — ink outline 으로 톤 다운, 아이콘만 골드로 (위험 액션과 시각적 구별) */
+  .ab-btn.cloud { background: var(--bg); border-color: var(--hair-2); color: var(--ink-2); }
+  .ab-btn.cloud:hover { border-color: var(--gold); color: var(--ink); }
+  .ab-btn.cloud .ico { color: var(--gold); }
+  /* 삭제만 빨강 — 위험·되돌릴 수 없음 액션의 시그널 일관성 */
+  .ab-btn.is-danger { background: #FFFAFA; border-color: var(--brand); color: var(--brand); }
+  .ab-btn.is-danger:hover { background: var(--brand); color: #FFF; }
   .ab-btn .ico { font-size: 11px; margin-right: 6px; }
   .ab-btn.ghost { color: var(--ink-3); background: transparent; }
 </style>
