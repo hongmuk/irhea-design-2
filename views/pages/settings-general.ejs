@@ -119,7 +119,8 @@
 <style>
   /* settings-general — 카드 그리드만 (탭/액션은 settings-shell partial 사용) */
   .cards { flex: 1; padding: 16px 24px 14px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(0, 1fr); gap: 12px; min-height: 0; overflow-y: auto; }
-  @media (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  /* breakpoint 1100→1023: 1024 베이스라인에서 3-col 유지 (6 카드 fit). */
+  @media (max-width: 1023px) { .cards { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 700px)  { .cards { grid-template-columns: 1fr; } }
   .card { background: var(--bg); border: 1px solid var(--hair); padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; overflow: hidden; }
   .card.accent { border: 1px solid var(--brand); background: linear-gradient(180deg, #FFFAFA 0%, var(--bg) 30%); }
