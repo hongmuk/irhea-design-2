@@ -17,22 +17,5 @@
   <%- include('partials/modal') %>
   <%- include('partials/toast') %>
 
-  <!-- Shared fitscreen script for 1024x768 target (10" tablet — meeting v1.3) -->
-  <script>
-    (function() {
-      const W = 1024, H = 768;
-      function fit() {
-        const sw = window.innerWidth / W;
-        const sh = window.innerHeight / H;
-        const s = Math.min(sw, sh);
-        // Only scale down if viewport is smaller, or scale to fit
-        document.body.style.transform = 'scale(' + s + ')';
-        document.body.style.transformOrigin = 'center center';
-      }
-      window.addEventListener('resize', fit);
-      fit();
-    })();
-  </script>
-
 </body>
 </html>

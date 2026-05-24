@@ -29,11 +29,23 @@
   /* Sizing */
   --radius-sm: 4px;
   --radius: 8px;
-  
+
   /* Fonts */
   --font-main: 'Pretendard Variable', -apple-system, sans-serif;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Phase 1 반응형 — 폰트 스케일 토큰 (Phase 2 에서 페이지별 px 값 교체 예정).
+     큰 화면에서는 clamp() 로 자연 확대. */
+  --fs-xs:    clamp(10px,  0.65vw + 8px,  12px);   /* 메타 라벨 */
+  --fs-sm:    clamp(11px,  0.75vw + 9px,  13px);   /* 라벨/태그 */
+  --fs-base:  clamp(13px,  0.9vw + 10px,  16px);   /* 본문 */
+  --fs-lg:    clamp(15px,  1.1vw + 12px,  19px);   /* 카드 제목 */
+  --fs-xl:    clamp(18px,  1.6vw + 14px,  24px);   /* 페이지 제목 */
+  --fs-2xl:   clamp(22px,  2.2vw + 16px,  32px);   /* 강조 제목 */
+
+  /* 터치 타겟 최소값 (WCAG 2.5.5 권장 44px) */
+  --tap-min:  44px;
 
   /* Legacy --ir-* aliases — pages authored before the Cinema Gold rename
      still reference these tokens. Keeping them mapped avoids a sweep of
@@ -77,27 +89,28 @@
 /* ── Base ── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background: #1A1A1A; /* Outer backdrop */
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  height: 100vh;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .viewport {
-  /* 회의 v1.3: 1280×800 → 1024×768 (10인치 태블릿 실타깃)
-     이전 값은 자동 80% 축소로 "안 보인다" 컴플레인의 원인이었음 */
-  width: 1024px;
-  height: 768px;
+  /* Phase 1 반응형 — fixed 1024×768 → full-screen flex.
+     디바이스 크기 따라 자연스럽게 채움. 10인치~14인치 태블릿/노트북 모두 지원. */
+  width: 100%;
+  height: 100vh;
   background: var(--bg);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
   position: relative;
+  /* 너무 넓은 화면(데스크탑 24"+)에선 1600px 까지만 — 너무 늘어지는 것 방지 */
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* ── Topbar ─────────────────────────────────── */
@@ -135,14 +148,14 @@ body {
 #top-cloud.is-offline .tb-cloud-ico { filter: grayscale(1); opacity: 0.45; }
 
 .btn-shutdown {
-  width: 32px;
-  height: 32px;
+  width: var(--tap-min);
+  height: var(--tap-min);
   border: 1px solid var(--hair-2);
   background: transparent;
   color: var(--ink-2);
   display: grid;
   place-items: center;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
 
