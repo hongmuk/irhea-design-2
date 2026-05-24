@@ -83,7 +83,7 @@
   /* 반응형 — 좁은 화면에서 5칸 → 3칸 → 2칸 (theme-irhea.css 의 같은 룰을 cascade 후순위로 override 하지 못하므로 페이지 inline 에도 정의). */
   @media (max-width: 1023px) { .stations { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 767px)  { .stations { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .st { padding: 14px 12px 14px; display: flex; flex-direction: column; align-items: stretch; gap: 10px; border-right: 1px solid var(--hair); position: relative; min-height: 0; min-width: 0; overflow: hidden; }
+  .st { padding: 10px 10px 8px; display: flex; flex-direction: column; align-items: stretch; gap: 4px; border-right: 1px solid var(--hair); position: relative; min-height: 0; min-width: 0; overflow: hidden; }
   .st:last-child { border-right: none; }
   .st.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
   /* 5/13 §1.2: 추출구별 파스텔톤 배경 차별화 — 순차 배색 (난잡하지 않게 매우 옅게) */
@@ -109,7 +109,7 @@
   .st-count { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; }
   .st-count b { color: var(--ink-2); font-weight: 700; }
   .st-vis { display: flex; justify-content: center; align-items: center; padding: 4px 0; }
-  .st-circle { width: 130px; height: 130px; position: relative; border-radius: 50%; overflow: hidden; background: #1a1a1a; }
+  .st-circle { width: 115px; height: 115px; position: relative; border-radius: 50%; overflow: hidden; background: #1a1a1a; }
   /* 상태별 배경 색조 — 비디오 대신 단색 + radial gradient */
   .st-circle::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.0) 100%); }
   .st.active .st-circle { background: linear-gradient(135deg, #2a1a18 0%, #1a1a1a 100%); }
@@ -215,7 +215,7 @@
   }
   .st-slot {
     display: flex; align-items: center; gap: 5px;
-    padding: 2px 5px; font-size: 11px;
+    padding: 1px 5px; font-size: 10.5px;
     border: none;
     border-bottom: 1px dashed rgba(0,0,0,0.04);
     background: transparent;
