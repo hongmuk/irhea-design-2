@@ -587,9 +587,33 @@ body {
   padding: 14px 0;
   align-self: stretch;
 }
-/* 좁은 화면(≤900) — 사이드 메뉴 hide. 본문 폭 확보 (parts 테이블 등 fit). */
+/* 좁은 화면(≤900) — 사이드 메뉴를 가로 탭으로 변환 (hide 대신).
+   사이드 hide 시 사용자가 sub 페이지로 클릭 이동 불가 — 가로 탭 유지로 내비 보존. */
 @media (max-width: 900px) {
-  .ir-side-menu { display: none; }
+  .ir-side-menu {
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--hair);
+    padding: 0;
+    overflow-x: auto;
+    flex-shrink: 0;
+    align-self: auto;
+  }
+  .ir-side-menu .ir-tab {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    border-left: none;
+  }
+  .ir-side-menu .ir-tab.is-active {
+    border-left: none;
+    border-bottom: 2px solid var(--brand);
+  }
+  /* 부모 .ir-row 도 column 으로 stack (사이드 위 + 본문 아래) */
+  .ir-row:has(.ir-side-menu) {
+    flex-direction: column;
+  }
 }
 .ir-side-menu .ir-tab {
   padding: 12px 18px;
