@@ -14,4 +14,6 @@ qa-*.jpg
 v2-*.jpg
 m-*.jpg
 vision-*.jpg
+res-*.jpg
+rsp-*.jpg
 .playwright-mcp/
