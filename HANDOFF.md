@@ -497,5 +497,47 @@ prototype 팀의 dev 환경은 **현재 Express(폐기 예정)** + mock JSON. C+
 
 ---
 
-**문서 버전:** 1.0  
-**최종 수정:** 2026-05-19
+## 7. UI 디자인 정책 (v1.4 — 2026-05-24 반응형 전환)
+
+**변경 사항:** 이전 회의 v1.3 에서 정한 `1024×768 fixed + fit-scale` 패턴을
+**진짜 반응형(media query 기반)** 으로 전환. 다양한 태블릿/노트북 디바이스
+지원. C++ 백엔드 영향 0 (UI 만의 변경, API/IPC 명세 그대로).
+
+### 7.1 Viewport 정책
+
+```
+이전: .viewport { width: 1024px; height: 768px }
+      + body { transform: scale(min(w/1024, h/768)) }
+신규: .viewport { width: 100%; height: 100vh; max-width: 1600px }
+      + media query 기반 grid columns 재배치
+```
+
+- **min**: 800×600 — 작은 노트북에서도 fit (stations 2-col)
+- **baseline**: 1024×768 — 10" 4:3 키오스크 태블릿
+- **typical**: 1280×800 (안드로이드 10.1) ~ 1920×1200 (FHD 10")
+- **max**: 1600px wide (그 이상은 양옆 흰 여백 — 너무 늘어짐 방지)
+
+### 7.2 Breakpoint
+
+| 화면 폭 | stations | 매뉴얼 큐 | favorites grid | settings cards | KPI |
+|---|---|---|---|---|---|
+| ≥ 1100px | 5-col | 5-col | 5×6 | 3×2 | 4-col |
+| 900~1099 | 5-col | 5-col | 3×6 | 2×3 | 4-col |
+| 768~899  | 3-col | 3-col | 3×6 | 2×3 | 4-col |
+| < 768    | 2-col | 2-col | 1×30 | 1×6 | 2×2 |
+
+### 7.3 폰트/터치 토큰
+
+- `--fs-xs ~ --fs-2xl`: `clamp()` 기반, 베이스라인 ≥11px 보장
+- `--tap-min: 44px`: 모든 인터랙티브 버튼 최소 크기 (WCAG 2.5.5)
+- 작은 폰트 (8.5~10.5px) 84곳 → `clamp(11px, ...)` 일괄 보정 완료
+
+### 7.4 C++ 팀 영향
+
+**없음.** UI 만의 변경으로 `/api/*` 엔드포인트, IPC cmd, `.dat` 파일 포맷
+모두 동일. 백엔드 구현 시 본 문서 §1~§6 그대로 사용.
+
+---
+
+**문서 버전:** 1.4 (반응형 전환)
+**최종 수정:** 2026-05-24
