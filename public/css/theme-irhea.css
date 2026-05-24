@@ -587,6 +587,10 @@ body {
   padding: 14px 0;
   align-self: stretch;
 }
+/* 좁은 화면(≤900) — 사이드 메뉴 hide. 본문 폭 확보 (parts 테이블 등 fit). */
+@media (max-width: 900px) {
+  .ir-side-menu { display: none; }
+}
 .ir-side-menu .ir-tab {
   padding: 12px 18px;
   font-size: 13px;

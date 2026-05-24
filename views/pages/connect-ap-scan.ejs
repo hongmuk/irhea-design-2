@@ -95,6 +95,11 @@
   .aps-step-bar { width: 22px; height: 1px; background: var(--hair-2); }
 
   .aps-body { flex: 1; display: grid; grid-template-columns: 1fr 280px; gap: 14px; padding: 18px 24px; min-height: 0; }
+  /* 좁은 화면(≤900) — 안내 사이드 hide, 본문(머신 리스트) 풀폭 */
+  @media (max-width: 900px) {
+    .aps-body { grid-template-columns: 1fr; }
+    .aps-info-panel { display: none; }
+  }
   .aps-col { display: flex; flex-direction: column; min-height: 0; gap: 10px; }
 
   .aps-col-h { display: flex; align-items: baseline; justify-content: space-between; }
