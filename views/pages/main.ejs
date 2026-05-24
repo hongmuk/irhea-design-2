@@ -215,7 +215,7 @@
   }
   .st-slot {
     display: flex; align-items: center; gap: 5px;
-    padding: 3px 5px; font-size: 11.5px;
+    padding: 2px 5px; font-size: 11px;
     border: none;
     border-bottom: 1px dashed rgba(0,0,0,0.04);
     background: transparent;
@@ -242,6 +242,21 @@
   }
   .st-slot.is-filled .st-slot-recipe { color: var(--ink); font-weight: 600; }
   .st-slot.is-active .st-slot-recipe { color: var(--brand); font-weight: 700; }
+
+  /* ── 진짜 반응형 — 작은 화면(<1024)에서 station 카드 컨텐츠 단순화 ──
+     1024 베이스라인은 5+1 + 즐겨찾기 5칸 + 매뉴얼 큐 모두 표시.
+     좁은 화면에선 ring + recipe 메타만 보이고, 즐겨찾기 슬롯 + 매뉴얼 큐 hide
+     (사용자가 어떤 station 이 동작 중인지 모니터링하는 것이 1순위 정보). */
+  @media (max-width: 1023px) {
+    .st-slots { display: none; }
+    .manual-queue { display: none; }
+    .st-recipe { display: none; }
+    .st-circle { width: 100px; height: 100px; }
+  }
+  @media (max-width: 767px) {
+    .st-info { display: none; }
+    .st-circle { width: 80px; height: 80px; }
+  }
 </style>
 
 <script>

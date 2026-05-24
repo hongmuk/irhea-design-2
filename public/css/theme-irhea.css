@@ -147,6 +147,17 @@ body {
 #top-cloud.is-offline .tb-val { color: var(--ink-3); }
 #top-cloud.is-offline .tb-cloud-ico { filter: grayscale(1); opacity: 0.45; }
 
+/* 반응형 — 좁은 화면에서 topbar 메타 정보 일부 hide (텍스트 줄바꿈 방지) */
+@media (max-width: 1023px) {
+  .topbar { padding: 0 16px; }
+  .topbar-right { gap: 10px; }
+  .brand-sub, #top-totalbrew, #top-cloud + .tb-sep, #top-totalbrew + .tb-sep { display: none; }
+}
+@media (max-width: 767px) {
+  #top-cloud, .tb-sep { display: none; }
+  .tb-live { display: none; }
+}
+
 .btn-shutdown {
   width: var(--tap-min);
   height: var(--tap-min);
