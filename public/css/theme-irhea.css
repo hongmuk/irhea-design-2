@@ -183,8 +183,8 @@ body {
 .st.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
 
 .st-head { display: flex; align-items: flex-start; justify-content: space-between; }
-.st-num { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 40px; line-height: 0.8; color: var(--ink); opacity: 0.2; }
-.st.active .st-num { opacity: 1; color: var(--brand); }
+/* .st-num / .st.active .st-num — 옛 디자인 룰 제거.
+   현재는 main.ejs 의 `.st-num { color: var(--gold) }` 가 정식 룰 (Cinema Gold). */
 .st-head-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .st-state { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); }
 .st.active .st-state { color: var(--brand); }
