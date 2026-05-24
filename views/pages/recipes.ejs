@@ -91,6 +91,8 @@
   .rcp-sort-i.is-active { background: var(--ink); color: #fff; }
 
   .recipes-body { flex: 1; display: grid; grid-template-columns: 220px 1fr 280px; min-height: 0; }
+  @media (max-width: 1100px) { .recipes-body { grid-template-columns: 200px 1fr 240px; } }
+  @media (max-width: 900px)  { .recipes-body { grid-template-columns: 180px 1fr; } .recipes-body > :nth-child(3) { display: none; } }
   .rcp-col { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--hair); }
   .rcp-col:last-child { border-right: none; }
   .col-h { padding: 10px 14px; font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; }

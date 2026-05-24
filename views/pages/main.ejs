@@ -180,6 +180,8 @@
   .mq-clear { font-size: 11px; padding: 6px 12px; min-height: 28px; border: 1px dashed var(--hair-2); background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-weight: 500; }
   .mq-clear:hover { color: var(--brand); border-color: var(--brand); }
   .mq-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 1023px) { .mq-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 767px)  { .mq-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .mq-col { min-width: 0; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; column-gap: 4px; }
   .mq-col-label { font-size: clamp(11px, 0.9vw + 7px, 13px); font-weight: 700; color: var(--ink-3); text-align: center; letter-spacing: 0.3px; }
   /* 6 셀 가로 배치 — 폭/높이 컴팩트 */

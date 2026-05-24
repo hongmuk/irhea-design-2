@@ -157,6 +157,7 @@
     gap: 14px; align-items: start;
     padding: 4px 0;
   }
+  @media (max-width: 768px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
   .metric-cell { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; min-width: 0; }
   .metric-cell + .metric-cell { border-left: 1px solid rgba(0,0,0,0.06); padding-left: 14px; }
   .metric-num { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: -0.8px; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -208,6 +209,7 @@
 
   /* 시간대·요일 좌우 분할 (24bar → 6 그룹) */
   .hist-dist { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding-top: 6px; min-height: 0; flex: 1; }
+  @media (max-width: 900px) { .hist-dist { grid-template-columns: 1fr; } }
   .hist-dist-col { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
   .hist-dist-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; color: var(--ink-3); letter-spacing: 0.3px; text-transform: uppercase; }
   /* 6 그룹화 (4시간 단위): 새벽/오전/낮/오후/저녁/심야 */

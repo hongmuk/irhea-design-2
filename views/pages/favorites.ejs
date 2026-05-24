@@ -71,6 +71,7 @@
   .sh-btn.primary:hover { background: #C8000F; border-color: #C8000F; }
 
   .fav-body { flex: 1; display: grid; grid-template-columns: 260px 1fr; min-height: 0; }
+  @media (max-width: 900px) { .fav-body { grid-template-columns: 200px 1fr; } }
   .fav-col { display: flex; flex-direction: column; min-height: 0; }
   .fav-left { border-right: 1px solid var(--hair); }
   .col-h { padding: 10px 16px; font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; }
@@ -99,6 +100,8 @@
   .rl-count .moon { color: var(--ink-2); }
 
   .ports { padding: 16px 16px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; flex: 1; min-height: 0; }
+  @media (max-width: 1100px) { .ports { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px)  { .ports { grid-template-columns: repeat(2, 1fr); } }
   .port { display: flex; flex-direction: column; border: 1px solid var(--hair); background: var(--bg); overflow: hidden; min-height: 0; }
   .port-h { padding: 8px 12px; background: var(--ink); color: #FFF; font-size: 12.5px; font-weight: 700; letter-spacing: -0.1px; text-align: center; }
   .port-body { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow-y: auto; }
