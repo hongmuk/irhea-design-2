@@ -125,7 +125,10 @@
 </div>
 
 <script>
-(function () {
+/* DOMContentLoaded 가드 — modal partial(layout.ejs 의 page include 뒤) 이
+   파싱되기 전에 IIFE 가 실행되면 getElementById('ir-modal-title') 가 null.
+   파싱 완료 후 실행하도록 wrap. */
+function __irhea_security_init() {
   // ─── 엔지니어 모드 패스워드 게이트 (회의 피드백 v1.2) ──────────
   // sessionStorage['ir-admin-ok'] 체크. 없으면 로그인 모달.
   function requireAdminAuth() {
@@ -358,5 +361,11 @@
       onOk: function () { window.IRModal.info({ body: '전체 초기화 완료' }); }
     });
   });
-})();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', __irhea_security_init);
+} else {
+  __irhea_security_init();
+}
 </script>

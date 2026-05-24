@@ -135,7 +135,8 @@
   /* 터치 타겟은 min-height 36 유지 (회의: "한국 사람 손가락"), 폰트는 합리적으로 */
   .hist-pbtn { padding: 8px 16px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--hair-2); background: var(--bg); color: var(--ink-3); cursor: pointer; letter-spacing: -0.1px; min-height: 36px; }
   .hist-pbtn:hover { color: var(--ink); }
-  .hist-pbtn.is-active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  /* 활성 — 검정 ink 대신 Cinema Gold (settings 토글과 톤 통일). 폰트 12.5px 굵게 → 대비 충분. */
+  .hist-pbtn.is-active { background: var(--gold); color: #fff; border-color: var(--gold); }
 
   /* 패널: 공백으로 분리 (padding 키움, 폰트는 그대로) */
   .panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 0; background: var(--bg); }
@@ -192,7 +193,9 @@
   .hist-bar-name { color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hist-bar-row.is-active .hist-bar-name { color: var(--brand); font-weight: 700; }
   .hist-bar-track { height: 14px; background: rgba(0,0,0,0.06); position: relative; }
-  .hist-bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--brand); transition: width 0.3s; }
+  /* 막대 기본 — 골드 (Cinema Gold 일관). 선택된 행만 brand red 강조(.is-active). */
+  .hist-bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--gold); transition: width 0.3s; }
+  .hist-bar-row.is-active .hist-bar-fill { background: var(--brand); }
   .hist-bar-val { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 700; font-size: 11.5px; }
   .panel-hint { color: var(--ink-3); font-weight: 500; font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left: 6px; font-style: italic; }
 
@@ -206,7 +209,7 @@
     min-height: 28px;
   }
   .hist-sort-i:last-child { border-right: none; }
-  .hist-sort-i.is-active { background: var(--ink); color: #fff; }
+  .hist-sort-i.is-active { background: var(--gold); color: #fff; }
 
   /* 시간대·요일 좌우 분할 (24bar → 6 그룹) */
   .hist-dist { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding-top: 6px; min-height: 0; flex: 1; }
@@ -217,9 +220,10 @@
   .hist-hour { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-items: end; min-height: 100px; }
   .hist-hour-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
   .hist-hour-val { font-size: 11px; color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .hist-hour-bar { width: 100%; background: var(--brand); min-height: 2px; transition: filter 0.15s; }
-  .hist-hour-bar:hover { filter: brightness(1.2); }
-  .hist-hour-col[data-peak="true"] .hist-hour-bar { background: #C28200; }
+  /* 시간대별 막대 — 골드 기본, peak 만 brand red 강조 (오늘 차트의 강조 패턴과 일관) */
+  .hist-hour-bar { width: 100%; background: var(--gold); min-height: 2px; transition: filter 0.15s; }
+  .hist-hour-bar:hover { filter: brightness(1.1); }
+  .hist-hour-col[data-peak="true"] .hist-hour-bar { background: var(--brand); }
   .hist-hour-lbl { font-size: 11px; color: var(--ink-3); font-weight: 700; padding-top: 6px; border-top: 1px solid var(--hair); width: 100%; text-align: center; }
   .hist-hour-col[data-peak="true"] .hist-hour-lbl { color: #C28200; }
 
@@ -246,7 +250,9 @@
   /* 요일별 차트 */
   .hist-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; padding-top: 8px; min-height: 90px; }
   .hist-dow-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .hist-dow-bar { width: 100%; background: var(--brand); min-height: 2px; }
+  /* 요일별 막대 — 골드 기본, peak/select 만 brand red */
+  .hist-dow-bar { width: 100%; background: var(--gold); min-height: 2px; }
+  .hist-dow-col[data-peak="true"] .hist-dow-bar { background: var(--brand); }
   .hist-dow-val { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
   .hist-dow-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; padding-top: 5px; border-top: 1px solid var(--hair); width: 100%; text-align: center; }
   .hist-dow-col.weekend .hist-dow-lbl { color: var(--brand); }
