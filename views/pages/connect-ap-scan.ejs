@@ -90,7 +90,8 @@
   .aps-sub-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
   .aps-stepper { display: inline-flex; align-items: center; gap: 6px; }
   .aps-step { width: 22px; height: 22px; border: 1px solid var(--hair-2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; }
-  .aps-step.active { background: var(--brand); color: #FFF; border-color: var(--brand); }
+  /* 단계 인디케이터 활성 — Cinema Gold (다른 페이지 active 와 톤 일관) */
+  .aps-step.active { background: var(--gold); color: #FFF; border-color: var(--gold); }
   .aps-step-bar { width: 22px; height: 1px; background: var(--hair-2); }
 
   .aps-body { flex: 1; display: grid; grid-template-columns: 1fr 280px; gap: 14px; padding: 18px 24px; min-height: 0; }
@@ -115,7 +116,8 @@
   .ap-ssid { font-size: 14px; font-weight: 600; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
   .ap-meta { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); margin-top: 3px; display: inline-flex; gap: 10px; align-items: center; }
   .ap-badge { font-size: clamp(11px, 0.9vw + 7px, 13px); padding: 2px 6px; background: var(--ink); color: #FFF; font-weight: 700; letter-spacing: 0.4px; }
-  .ap-badge.new { background: var(--brand); }
+  /* NEW badge — Cinema Gold (신규 항목 강조는 골드 톤 일관) */
+  .ap-badge.new { background: var(--gold); }
   .ap-signal { display: inline-flex; align-items: flex-end; gap: 2px; height: 18px; }
   .ap-signal .b { width: 4px; background: var(--ink); }
   .ap-signal .b:nth-child(1) { height: 5px; }

@@ -98,7 +98,7 @@
   .ov-meta-row b { color: #FFF; font-weight: 800; }
 
   .ov-progress-bar-gold { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,0.05); }
-  .ov-progress-bar-gold::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ir-orange); animation: ir-countdown 5s linear forwards; }
+  .ov-progress-bar-gold::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ir-orange); animation: ir-countdown 10s linear forwards; }
   .ov-close-hint { position: absolute; right: 28px; bottom: 12px; font-size: clamp(11.5px, 1vw + 7px, 14px); color: rgba(255,255,255,0.3); font-weight: 800; letter-spacing: 0.1em; }
 
   .ir-action-bar-gold { height: 72px; padding: 0 32px; border-top: 1px solid var(--ir-line); display: flex; align-items: center; gap: 10px; background: var(--ir-bg-2); position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; }
@@ -106,7 +106,8 @@
 
 <script>
 (function() {
-  var autoTimer = setTimeout(function () { window.location.href = '/main'; }, 5000);
+  /* 자동 메인 복귀 — 5s → 10s (데모 시 시연 시간 확보 + 사용자 인지 시간). */
+  var autoTimer = setTimeout(function () { window.location.href = '/main'; }, 10000);
   function cancelAuto() { clearTimeout(autoTimer); var hint = document.querySelector('.ov-close-hint'); if (hint) hint.style.display = 'none'; var bar = document.querySelector('.ov-progress-bar-gold'); if (bar) bar.style.display = 'none'; }
 
   document.getElementById('bc-cancel').onclick = function () { cancelAuto(); window.location.href = '/main'; };
