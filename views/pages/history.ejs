@@ -170,9 +170,10 @@
   /* 일별 막대 차트 (v1.1 S8.3) — 최근 14일. min-height 늘려 라벨 영역까지 보장 */
   .hist-daily { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; min-height: 108px; padding-top: 6px; }
   .hist-daily-col { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
-  .hist-daily-bar { width: 100%; background: var(--brand); min-height: 2px; transition: filter 0.15s; }
-  .hist-daily-bar:hover { filter: brightness(1.2); }
-  .hist-daily-col.today .hist-daily-bar { background: #C28200; }
+  .hist-daily-bar { width: 100%; background: var(--gold); min-height: 2px; transition: filter 0.15s; }
+  .hist-daily-bar:hover { filter: brightness(1.1); }
+  /* 오늘 강조 — 골드보다 진한 톤(brand)으로 차별화. 데이터 시각화의 빨강 남용 해소 (Cinema Gold 일관성). */
+  .hist-daily-col.today .hist-daily-bar { background: var(--brand); }
   .hist-daily-val { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
   .hist-daily-lbl { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); font-weight: 600; padding-top: 3px; border-top: 1px solid var(--hair); width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
   .hist-daily-col.today .hist-daily-lbl { color: #C28200; font-weight: 700; }

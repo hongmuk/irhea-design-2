@@ -103,7 +103,8 @@
   @media (max-width: 1100px) { .ports { grid-template-columns: repeat(3, 1fr); } }
   @media (max-width: 700px)  { .ports { grid-template-columns: repeat(2, 1fr); } }
   .port { display: flex; flex-direction: column; border: 1px solid var(--hair); background: var(--bg); overflow: hidden; min-height: 0; }
-  .port-h { padding: 8px 12px; background: var(--ink); color: #FFF; font-size: 12.5px; font-weight: 700; letter-spacing: -0.1px; text-align: center; }
+  /* 추출구 헤더 — inverted block 대신 카드 시스템과 통일: 화이트 + ink + 좌측 골드 hairline */
+  .port-h { padding: 10px 12px 10px 16px; background: var(--bg); color: var(--ink); font-size: 12.5px; font-weight: 700; letter-spacing: -0.1px; text-align: left; border-bottom: 1px solid var(--hair); border-left: 4px solid var(--gold); }
   .port-body { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow-y: auto; }
 
   /* 5 슬롯 컴팩트 (회의 피드백 v1.2: abc 라벨 제거, 별표 통일) */

@@ -90,12 +90,10 @@
   .st-4 { background: linear-gradient(180deg, #F8F4FA 0%, var(--bg) 100%); }
   .st-5 { background: linear-gradient(180deg, #FAFAF5 0%, var(--bg) 100%); }
   .st-head { display: flex; align-items: flex-start; justify-content: space-between; }
-  .st-num { font-weight: 700; font-size: 34px; line-height: 0.9; letter-spacing: -1px; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .st-1 .st-num { color: var(--st-brewing); }
-  .st-2 .st-num { color: var(--st-done); }
-  .st-3 .st-num { color: var(--st-rinse); }
-  .st-4 .st-num { color: var(--st-water); }
-  .st-5 .st-num { color: var(--st-idle); }
+  /* Station 번호 — Cinema Gold 일관성: 모든 active 번호 골드 Playfair italic, idle 만 회색.
+     상태 색은 우상단 dot+텍스트(st-state)에서 표현하므로 번호 색은 통일. */
+  .st-num { font-weight: 700; font-size: 34px; line-height: 0.9; letter-spacing: -1px; color: var(--gold); font-variant-numeric: tabular-nums; font-family: var(--font-display); font-style: italic; }
+  .st-5 .st-num { color: var(--st-idle); font-style: italic; }
   .st-head-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-top: 2px; }
   .st-state { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; color: var(--ink-3); display: inline-flex; align-items: center; gap: 5px; }
   .st-1 .st-state { color: var(--st-brewing); }
