@@ -87,7 +87,7 @@
 
       <!-- 사용 실적 정보 — 초기화 버튼은 HM 전용 (회의 피드백 v1.2: 사용자/총판 절대 못함) -->
       <div class="ir-card" style="padding:0;">
-        <div class="ir-card-header">사용 실적 정보 <em style="font-weight:500;font-size:10.5px;color:var(--ir-fg-muted);margin-left:6px;">(누적 카운트, 사용자 추출 실적은 /history)</em></div>
+        <div class="ir-card-header">사용 실적 정보 <em style="font-weight:500;font-size: clamp(11.5px, 1vw + 7px, 14px);color:var(--ir-fg-muted);margin-left:6px;">(누적 카운트, 사용자 추출 실적은 /history)</em></div>
         <div style="padding:14px 18px;font-size:13px;line-height:1.65;">
           <div style="margin-bottom:8px;font-weight:700;">1) 펌프 사용량 :</div>
           <div id="sec-pump" style="margin-bottom:14px;color:var(--ir-fg-muted);"></div>
@@ -246,7 +246,7 @@
                  '<span style="' + stColor + '">' + st + '</span>' +
                '</div>';
       }).join('');
-      var env = '<div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--ir-line);color:var(--ir-fg-muted);font-size:10.5px;">' +
+      var env = '<div style="margin-top:5px;padding-top:5px;border-top:1px dashed var(--ir-line);color:var(--ir-fg-muted);font-size: clamp(11.5px, 1vw + 7px, 14px);">' +
                   '보일러 ' + (e.surrounding.boilerTemp || '?') + '°C · 외기 ' + (e.surrounding.ambientTemp || '?') + '°C' +
                 '</div>';
       surround.innerHTML = rows + env;

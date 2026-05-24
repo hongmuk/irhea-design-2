@@ -67,7 +67,7 @@
   .card { width: 640px; background: var(--bg); border: 1px solid var(--hair-2); padding: 38px 44px 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04); }
   .card-h { padding-bottom: 18px; border-bottom: 1px solid var(--hair); margin-bottom: 18px; display: flex; align-items: baseline; justify-content: space-between; }
   .card-title { font-size: 16px; font-weight: 700; color: var(--ink); letter-spacing: -0.3px; }
-  .card-id { font-size: 10px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
+  .card-id { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
 
   .rows { display: flex; flex-direction: column; gap: 4px; }
   .row { display: grid; grid-template-columns: 200px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--hair); }
@@ -79,7 +79,7 @@
   .row.edit .row-v { color: var(--brand); border: none; border-bottom: 1.5px dashed var(--brand); padding: 0 0 2px; background: transparent; outline: none; width: 100%; font-family: var(--font-mono); }
   .row.edit select.row-v { -webkit-appearance: none; appearance: none; cursor: pointer; }
   .row.edit .row-v:focus { border-bottom-style: solid; }
-  .row-tag { font-size: 9px; padding: 3px 7px; font-weight: 700; letter-spacing: 0.4px; }
+  .row-tag { font-size: clamp(11px, 0.9vw + 7px, 13px); padding: 3px 7px; font-weight: 700; letter-spacing: 0.4px; }
   .row-tag.edit { background: var(--brand); color: #FFF; }
   .row-tag.ro { background: transparent; color: var(--ink-3); border: 1px solid var(--hair-2); }
 

@@ -186,7 +186,7 @@ body {
 .st-state { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); }
 .st.active .st-state { color: var(--brand); }
 .st-state .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.st-count { font-size: 10px; color: var(--ink-3); font-weight: 500; }
+.st-count { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; }
 .st-count b { color: var(--ink-2); font-weight: 700; }
 
 .st-vis { display: flex; justify-content: center; align-items: center; padding: 4px 0; }
@@ -202,7 +202,7 @@ body {
 .prog { position: absolute; inset: 0; transform: rotate(-90deg); }
 .prog-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #FFF; line-height: 1; }
 .prog-pct { font-size: 36px; font-weight: 700; font-family: var(--font-mono); }
-.prog-sub { font-size: 10px; font-weight: 700; opacity: 0.8; margin-top: 4px; letter-spacing: 0.05em; }
+.prog-sub { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; opacity: 0.8; margin-top: 4px; letter-spacing: 0.05em; }
 
 .st-info { display: flex; flex-direction: column; gap: 4px; }
 .st-info-row { display: flex; justify-content: space-between; align-items: baseline; }
@@ -216,10 +216,10 @@ body {
 
 .st-slots { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
 .st-slot { display: flex; flex-direction: column; gap: 2px; }
-.st-slot-top { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 600; }
+.st-slot-top { display: flex; align-items: center; justify-content: space-between; font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 600; }
 .st-slot-recipe { font-size: 12px; font-weight: 600; color: var(--ink-2); }
 .st-slot.active .st-slot-recipe { color: var(--brand); }
-.st-slot-desc { font-size: 9px; color: var(--ink-3); }
+.st-slot-desc { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); }
 
 /* ── Navigation — 6 항목 · 터치 영역 보장 (높이 50, 폰트 13) ── */
 .nav { height: 50px; display: flex; align-items: stretch; justify-content: center; border-top: 1px solid var(--hair); background: var(--bg); flex-shrink: 0; }

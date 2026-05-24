@@ -51,8 +51,8 @@
       <span class="panel-id">8.1.3</span>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 12px;">
-      <div style="font-weight: 600; color: var(--ink-3); font-size: 10.5px; letter-spacing: 0.4px; padding-bottom: 4px; border-bottom: 1px solid var(--hair);">펌프 동작</div>
-      <div style="font-weight: 600; color: var(--ink-3); font-size: 10.5px; letter-spacing: 0.4px; padding-bottom: 4px; border-bottom: 1px solid var(--hair);">솔밸브 동작</div>
+      <div style="font-weight: 600; color: var(--ink-3); font-size: clamp(11.5px, 1vw + 7px, 14px); letter-spacing: 0.4px; padding-bottom: 4px; border-bottom: 1px solid var(--hair);">펌프 동작</div>
+      <div style="font-weight: 600; color: var(--ink-3); font-size: clamp(11.5px, 1vw + 7px, 14px); letter-spacing: 0.4px; padding-bottom: 4px; border-bottom: 1px solid var(--hair);">솔밸브 동작</div>
       <div id="info-pump-usage"></div>
       <div id="info-valve-usage"></div>
     </div>
@@ -80,7 +80,7 @@
   .panel-h { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--hair); margin: 0; }
   .panel-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .panel-title .ico { margin-right: 6px; font-weight: 400; }
-  .panel-id { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
+  .panel-id { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
   /* 위계: 라벨(회색 11.5) / 값(검정 13) */
   .pr { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--hair); font-size: 13px; }
@@ -89,9 +89,9 @@
   .pr-v { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
   .pr-v.mono { font-family: var(--font-mono); font-size: 12px; }
   .pr-v em { color: var(--ink-3); font-weight: 500; font-style: normal; margin-left: 6px; }
-  .pr-v .ro { font-size: 9px; color: var(--ink-3); border: 1px solid var(--hair-2); padding: 1px 4px; margin-left: 6px; font-weight: 600; letter-spacing: 0.3px; }
+  .pr-v .ro { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); border: 1px solid var(--hair-2); padding: 1px 4px; margin-left: 6px; font-weight: 600; letter-spacing: 0.3px; }
 
-  .panel-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 10px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
+  .panel-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
   .panel-foot a { color: var(--brand); font-weight: 600; text-decoration: none; }
 
   /* metric card (warn-colored) */
@@ -105,12 +105,12 @@
   .metric-num.brand { color: var(--brand); }
   .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
   .metric-foot { padding: 8px 16px 12px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--hair); }
-  .metric-foot .timestamp { font-size: 10.5px; color: var(--ink-3); font-weight: 500; }
+  .metric-foot .timestamp { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; }
   .btn-detail { font-size: 12px; padding: 6px 14px; border: 1px solid var(--ink); color: var(--ink); font-weight: 600; cursor: pointer; transition: all 0.15s; text-decoration: none; }
   .btn-detail:hover { background: var(--ink); color: #fff; }
 
   .rt { width: 100%; font-size: 12px; font-variant-numeric: tabular-nums; }
-  .rt th { text-align: left; padding: 5px 0; font-size: 10px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; border-bottom: 1px solid var(--hair); }
+  .rt th { text-align: left; padding: 5px 0; font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; border-bottom: 1px solid var(--hair); }
   .rt td { padding: 5px 0; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--hair); }
   .rt td:last-child { text-align: right; font-weight: 600; }
   .rt tr:last-child td { border-bottom: none; }

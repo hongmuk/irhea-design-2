@@ -105,7 +105,7 @@
   .st-5 .st-state { color: var(--st-idle); }
   .st-state .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; animation: pulse-st 1.6s ease-in-out infinite; }
   @keyframes pulse-st { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
-  .st-count { font-size: 10.5px; color: var(--ink-3); font-weight: 500; }
+  .st-count { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; }
   .st-count b { color: var(--ink-2); font-weight: 700; }
   .st-vis { display: flex; justify-content: center; align-items: center; padding: 4px 0; }
   .st-circle { width: 130px; height: 130px; position: relative; border-radius: 50%; overflow: hidden; background: #1a1a1a; }
@@ -127,7 +127,7 @@
   .prog-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #FFF; line-height: 1; z-index: 3; }
   .prog-pct { font-size: 38px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -1.6px; text-shadow: 0 1px 10px rgba(0,0,0,0.7); }
   .prog-pct .u { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.7); margin-left: 1px; }
-  .prog-sub { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.92); margin-top: 5px; letter-spacing: 0.6px; text-shadow: 0 1px 8px rgba(0,0,0,0.8); }
+  .prog-sub { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; color: rgba(255,255,255,0.92); margin-top: 5px; letter-spacing: 0.6px; text-shadow: 0 1px 8px rgba(0,0,0,0.8); }
   .st-info { display: flex; flex-direction: column; gap: 4px; }
   .st-info-row { display: flex; justify-content: space-between; align-items: baseline; }
   /* 위계: 단계명(작은 회색) / 시간(굵은 검정 모노) — 차이로 가독성 */
@@ -151,7 +151,7 @@
   .st-recipe:hover .st-recipe-edit { opacity: 1; }
   .st-recipe-edit {
     position: absolute; top: 6px; right: 6px;
-    font-size: 9px; font-weight: 700; color: var(--brand);
+    font-size: clamp(11px, 0.9vw + 7px, 13px); font-weight: 700; color: var(--brand);
     letter-spacing: 0.3px; opacity: 0; transition: opacity 0.15s;
   }
   .st-recipe-name {
@@ -175,13 +175,13 @@
   /* v1.1 S2.1.7: 매뉴얼 큐 5×6 — stations 영역 침범 방지 컴팩트화 */
   .manual-queue { flex-shrink: 0; border-top: 2px solid var(--hair); background: linear-gradient(180deg, #FAF8F2 0%, var(--bg) 100%); padding: 4px 14px 6px; min-width: 0; overflow: hidden; }
   .mq-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 3px; }
-  .mq-title { font-size: 10px; font-weight: 700; color: var(--ink-2); letter-spacing: 0.3px; text-transform: uppercase; }
-  .mq-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 5px; font-size: 9px; text-transform: none; letter-spacing: 0; }
+  .mq-title { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; color: var(--ink-2); letter-spacing: 0.3px; text-transform: uppercase; }
+  .mq-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 5px; font-size: clamp(11px, 0.9vw + 7px, 13px); text-transform: none; letter-spacing: 0; }
   .mq-clear { font-size: 11px; padding: 6px 12px; min-height: 28px; border: 1px dashed var(--hair-2); background: transparent; color: var(--ink-3); cursor: pointer; font-family: inherit; font-weight: 500; }
   .mq-clear:hover { color: var(--brand); border-color: var(--brand); }
   .mq-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
   .mq-col { min-width: 0; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; column-gap: 4px; }
-  .mq-col-label { font-size: 9px; font-weight: 700; color: var(--ink-3); text-align: center; letter-spacing: 0.3px; }
+  .mq-col-label { font-size: clamp(11px, 0.9vw + 7px, 13px); font-weight: 700; color: var(--ink-3); text-align: center; letter-spacing: 0.3px; }
   /* 6 셀 가로 배치 — 폭/높이 컴팩트 */
   .mq-cells { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; min-width: 0; }
   .mq-cell {
@@ -189,7 +189,7 @@
     border: 1px dashed rgba(0,0,0,0.1);
     background: var(--bg);
     display: flex; align-items: center; justify-content: center;
-    font-size: 8.5px; color: var(--ink-3);
+    font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3);
     cursor: pointer; transition: all 0.12s;
     min-width: 0;
   }
@@ -207,7 +207,7 @@
     border-top: 1px solid rgba(0,0,0,0.05);
   }
   .st-slots-title {
-    font-size: 9.5px; font-weight: 700; color: var(--ink-3);
+    font-size: clamp(11px, 0.9vw + 7px, 13px); font-weight: 700; color: var(--ink-3);
     letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 2px;
   }
   .st-slot {
@@ -227,7 +227,7 @@
   .st-slot.is-filled:hover { background: rgba(194,130,0,0.06); }
   .st-slot.is-active:hover { background: rgba(230,0,18,0.05); }
   .st-slot-mark {
-    color: rgba(0,0,0,0.18); font-size: 10px; flex-shrink: 0;
+    color: rgba(0,0,0,0.18); font-size: clamp(11.5px, 1vw + 7px, 14px); flex-shrink: 0;
     transition: color 0.15s;
   }
   .st-slot.is-filled .st-slot-mark { color: #C28200; }

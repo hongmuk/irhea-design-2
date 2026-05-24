@@ -91,7 +91,7 @@
   .ov-donut svg { width: 100%; height: 100%; }
   .ov-donut-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .ov-donut-num .pct { font-size: 52px; font-weight: 400; color: #FFF; font-family: var(--ir-font-mono); }
-  .ov-donut-num .lbl { font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.3); letter-spacing: 0.25em; text-transform: uppercase; }
+  .ov-donut-num .lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 800; color: rgba(255,255,255,0.3); letter-spacing: 0.25em; text-transform: uppercase; }
   
   .ov-meta { display: flex; flex-direction: column; gap: 10px; align-items: center; }
   .ov-meta-row { font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 0.05em; }
@@ -99,7 +99,7 @@
 
   .ov-progress-bar-gold { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,0.05); }
   .ov-progress-bar-gold::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ir-orange); animation: ir-countdown 5s linear forwards; }
-  .ov-close-hint { position: absolute; right: 28px; bottom: 12px; font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 800; letter-spacing: 0.1em; }
+  .ov-close-hint { position: absolute; right: 28px; bottom: 12px; font-size: clamp(11.5px, 1vw + 7px, 14px); color: rgba(255,255,255,0.3); font-weight: 800; letter-spacing: 0.1em; }
 
   .ir-action-bar-gold { height: 72px; padding: 0 32px; border-top: 1px solid var(--ir-line); display: flex; align-items: center; gap: 10px; background: var(--ir-bg-2); position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; }
 </style>

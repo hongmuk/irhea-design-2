@@ -62,7 +62,7 @@
   .sub-h-l { display: inline-flex; align-items: baseline; gap: 14px; }
   .sub-h-title { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .sub-h-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
-  .sub-h-pill { font-size: 10.5px; padding: 3px 9px; border: 1px solid var(--brand); color: var(--brand); font-weight: 700; letter-spacing: 0.3px; background: var(--brand-dim); }
+  .sub-h-pill { font-size: clamp(11.5px, 1vw + 7px, 14px); padding: 3px 9px; border: 1px solid var(--brand); color: var(--brand); font-weight: 700; letter-spacing: 0.3px; background: var(--brand-dim); }
   .sub-h-r { display: inline-flex; gap: 8px; }
   .sh-btn { font-size: 12.5px; padding: 8px 18px; font-weight: 700; cursor: pointer; line-height: 1; transition: all 0.15s; font-family: inherit; border: none; min-height: 36px; }
   .sh-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
@@ -135,7 +135,7 @@
   }
   .slot.empty .slot-recipe { color: var(--ink-3); font-weight: 500; font-style: italic; }
   .slot-meta {
-    font-size: 10.5px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px;
+    font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px;
     font-variant-numeric: tabular-nums;
   }
   .slot.is-filled .slot-meta b { color: var(--ink); font-weight: 700; }

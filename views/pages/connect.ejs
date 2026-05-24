@@ -61,8 +61,8 @@
   .node-box { width: 64px; height: 80px; border: 1.5px solid var(--ink); display: flex; align-items: center; justify-content: center; font-size: 24px; background: var(--bg); position: relative; }
   .node-box.machine { width: 80px; }
   .node-box.machine::after { content: ''; position: absolute; top: -6px; right: -6px; width: 10px; height: 10px; background: var(--brand); border-radius: 50%; box-shadow: 0 0 8px var(--brand); animation: conn-pulse 1s ease-in-out infinite; }
-  .node-lbl { font-size: 10.5px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
-  .node-sub { font-size: 10.5px; color: var(--ink); font-weight: 600; font-family: var(--font-mono); letter-spacing: 0.5px; }
+  .node-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 600; letter-spacing: 0.4px; text-transform: uppercase; }
+  .node-sub { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink); font-weight: 600; font-family: var(--font-mono); letter-spacing: 0.5px; }
 
   .waves { display: flex; align-items: center; gap: 4px; padding: 0 8px; }
   .wave { width: 4px; height: 4px; background: var(--brand); border-radius: 50%; animation: conn-wave 1.4s ease-in-out infinite; }
@@ -72,14 +72,14 @@
   .wave:nth-child(5) { animation-delay: 0.72s; }
   @keyframes conn-wave { 0%,100% { transform: scale(0.6); opacity: 0.25; } 50% { transform: scale(1.3); opacity: 1; } }
   @keyframes conn-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-  .wifi-lbl { font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: 1.5px; }
+  .wifi-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; letter-spacing: 1.5px; }
 
   .target { width: 460px; border: 1px solid var(--hair); padding: 14px 18px; display: flex; align-items: center; gap: 16px; background: var(--bg); }
   .target-info { flex: 1; }
-  .target-lbl { font-size: 10px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .target-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
   .target-name { font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -0.3px; margin-top: 2px; }
-  .target-meta { font-size: 10.5px; color: var(--ink-3); font-weight: 500; font-family: var(--font-mono); margin-top: 4px; letter-spacing: 0.3px; }
-  .scan-dot { width: 38px; height: 38px; border: 1.5px dashed var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--brand); font-weight: 700; letter-spacing: 0.5px; animation: conn-rot 2.4s linear infinite; }
+  .target-meta { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; font-family: var(--font-mono); margin-top: 4px; letter-spacing: 0.3px; }
+  .scan-dot { width: 38px; height: 38px; border: 1.5px dashed var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--brand); font-weight: 700; letter-spacing: 0.5px; animation: conn-rot 2.4s linear infinite; }
   @keyframes conn-rot { from { transform: rotate(0); } to { transform: rotate(360deg); } }
 
   .connect-actions { display: flex; gap: 10px; }
@@ -95,7 +95,7 @@
   .footer-line .progress::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--brand); animation: conn-countdown 10s linear forwards; }
   @keyframes conn-countdown { from { width: 100%; } to { width: 0; } }
 
-  .dev-fab { position: absolute; left: 24px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--hair-2); background: var(--bg); color: var(--ink-3); font-size: 10px; font-weight: 700; line-height: 1.1; cursor: pointer; font-family: inherit; }
+  .dev-fab { position: absolute; left: 24px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--hair-2); background: var(--bg); color: var(--ink-3); font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; line-height: 1.1; cursor: pointer; font-family: inherit; }
   .dev-fab:hover { background: #FAFAFA; }
   .dev-fab.is-on { background: var(--brand); border-color: var(--brand); color: #fff; }
 </style>

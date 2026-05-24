@@ -97,7 +97,7 @@
     .fw-boards { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--ir-line); background: var(--ir-bg-2); margin-bottom: 6px; }
     .fw-board { display: grid; grid-template-columns: 160px 1fr 70px; align-items: center; gap: 12px; font-size: 12px; }
     .fw-board-name { font-weight: 700; color: var(--ir-fg); }
-    .fw-board-name em { color: var(--ir-fg-muted); font-weight: 500; font-style: normal; font-size: 10px; margin-left: 4px; }
+    .fw-board-name em { color: var(--ir-fg-muted); font-weight: 500; font-style: normal; font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left: 4px; }
     .fw-board-bar { height: 10px; background: var(--ir-bg-3); border: 1px solid var(--ir-line); position: relative; overflow: hidden; }
     .fw-board-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ir-orange); width: 0%; transition: width 0.2s; }
     .fw-board[data-state="done"] .fw-board-fill { background: var(--ir-status-ok, #15803D); }
@@ -116,7 +116,7 @@
     .fw-mod-mk { width: 16px; height: 16px; border: 2px solid var(--ir-line-strong); display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; flex-shrink: 0; }
     .fw-mod:has(input:checked) .fw-mod-mk { background: var(--ir-orange); border-color: var(--ir-orange); }
     .fw-mod:not(:has(input:checked)) .fw-mod-mk { color: transparent; }
-    .fw-mod em { color: var(--ir-fg-muted); font-style: normal; font-weight: 400; margin-left: 4px; font-size: 10.5px; }
+    .fw-mod em { color: var(--ir-fg-muted); font-style: normal; font-weight: 400; margin-left: 4px; font-size: clamp(11.5px, 1vw + 7px, 14px); }
   </style>
 
 <%- include('../partials/settings-shell-close') %>

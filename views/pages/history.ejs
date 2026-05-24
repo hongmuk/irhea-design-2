@@ -142,7 +142,7 @@
   .panel-h { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--hair); gap: 12px; }
   .panel-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .panel-title .ico { margin-right: 6px; font-weight: 400; }
-  .panel-id { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
+  .panel-id { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
   /* 메트릭 패널 — panel 기본 구조 따름 (panel 자체가 flex column, gap 8) */
   .panel.metric {
@@ -162,7 +162,7 @@
   .metric-num { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: -0.8px; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .metric-num.brand { color: var(--brand); }
   .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: -0.1px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .metric-comp { font-size: 10px; color: var(--ink-3); font-weight: 500; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .metric-comp { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .metric-comp.up { color: #15803D; font-weight: 700; }
   .metric-comp.down { color: var(--brand); font-weight: 700; }
 
@@ -172,8 +172,8 @@
   .hist-daily-bar { width: 100%; background: var(--brand); min-height: 2px; transition: filter 0.15s; }
   .hist-daily-bar:hover { filter: brightness(1.2); }
   .hist-daily-col.today .hist-daily-bar { background: #C28200; }
-  .hist-daily-val { font-size: 9.5px; color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .hist-daily-lbl { font-size: 9px; color: var(--ink-3); font-weight: 600; padding-top: 3px; border-top: 1px solid var(--hair); width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
+  .hist-daily-val { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hist-daily-lbl { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); font-weight: 600; padding-top: 3px; border-top: 1px solid var(--hair); width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
   .hist-daily-col.today .hist-daily-lbl { color: #C28200; font-weight: 700; }
 
   /* 레시피별 막대 — 클릭 가능. 터치 영역(min-h 36)만 보장, 폰트는 합리적 */
@@ -192,7 +192,7 @@
   .hist-bar-track { height: 14px; background: rgba(0,0,0,0.06); position: relative; }
   .hist-bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--brand); transition: width 0.3s; }
   .hist-bar-val { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 700; font-size: 11.5px; }
-  .panel-hint { color: var(--ink-3); font-weight: 500; font-size: 10px; margin-left: 6px; font-style: italic; }
+  .panel-hint { color: var(--ink-3); font-weight: 500; font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left: 6px; font-style: italic; }
 
   /* 정렬 토글 */
   .hist-sort { display: inline-flex; border: 1px solid var(--hair-2); }
@@ -209,7 +209,7 @@
   /* 시간대·요일 좌우 분할 (24bar → 6 그룹) */
   .hist-dist { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding-top: 6px; min-height: 0; flex: 1; }
   .hist-dist-col { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .hist-dist-lbl { font-size: 10px; font-weight: 700; color: var(--ink-3); letter-spacing: 0.3px; text-transform: uppercase; }
+  .hist-dist-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; color: var(--ink-3); letter-spacing: 0.3px; text-transform: uppercase; }
   /* 6 그룹화 (4시간 단위): 새벽/오전/낮/오후/저녁/심야 */
   .hist-hour { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-items: end; min-height: 100px; }
   .hist-hour-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
@@ -233,7 +233,7 @@
   /* 인사이트 — 요약 panel 헤더 우측 (한 줄, 골드 톤). 별도 panel 차지 안 함. */
   .hist-insight {
     flex: 1; text-align: right;
-    font-size: 10.5px; color: var(--ink-2); font-weight: 500; line-height: 1.4;
+    font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-2); font-weight: 500; line-height: 1.4;
     padding-left: 12px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
@@ -244,13 +244,13 @@
   .hist-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; padding-top: 8px; min-height: 90px; }
   .hist-dow-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .hist-dow-bar { width: 100%; background: var(--brand); min-height: 2px; }
-  .hist-dow-val { font-size: 10.5px; color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .hist-dow-lbl { font-size: 10.5px; color: var(--ink-3); font-weight: 700; padding-top: 5px; border-top: 1px solid var(--hair); width: 100%; text-align: center; }
+  .hist-dow-val { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hist-dow-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; padding-top: 5px; border-top: 1px solid var(--hair); width: 100%; text-align: center; }
   .hist-dow-col.weekend .hist-dow-lbl { color: var(--brand); }
 
   /* 최근 추출 표 — 표는 dense, 폰트 작게 OK */
   .hist-rt { width: 100%; font-size: 11.5px; font-variant-numeric: tabular-nums; }
-  .hist-rt th { text-align: left; padding: 6px 4px; font-size: 10px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.4px; border-bottom: 1px solid var(--hair); text-transform: uppercase; }
+  .hist-rt th { text-align: left; padding: 6px 4px; font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 700; letter-spacing: 0.4px; border-bottom: 1px solid var(--hair); text-transform: uppercase; }
   .hist-rt th:last-child { text-align: right; }
   .hist-rt td { padding: 6px 4px; font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--hair); }
   .hist-rt td:last-child { text-align: right; font-weight: 700; }
