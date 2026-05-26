@@ -33,6 +33,7 @@ const pages = [
   { page: 'firmware-upgrade',     title: '펌웨어 업그레이드', activeNav: 'firmware',      outPath: 'settings/firmware/index.html' },
   { page: 'info',                 title: '정보',              activeNav: 'info',          outPath: 'info/index.html' },
   { page: 'info-security',        title: '보안 정보',         activeNav: 'info',          outPath: 'info/security/index.html' },
+  { page: 'history',              title: '추출 실적',         activeNav: 'history',       outPath: 'history/index.html' },
 ];
 
 // ── Helpers ──────────────────────────────────────────────
@@ -55,8 +56,13 @@ function copyDirSync(src, dest) {
 }
 
 function rmrf(dir) {
+  // Windows + Explorer 가 dir 자체 열고 있으면 rmSync(dir) 에서 EPERM.
+  // 내부 children 만 삭제하는 패턴으로 우회 (dir 자체는 보존).
   if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true, force: true });
+    for (const entry of fs.readdirSync(dir)) {
+      const p = path.join(dir, entry);
+      try { fs.rmSync(p, { recursive: true, force: true }); } catch (e) {}
+    }
   }
 }
 
