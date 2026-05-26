@@ -27,8 +27,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@main
+      # actions/configure-pages 는 codeload CDN 장애로 다운 안 되어서 생략.
+      # base URL 설정용일 뿐 정적 사이트엔 필수 아님.
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
