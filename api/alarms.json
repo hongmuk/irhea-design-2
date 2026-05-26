@@ -1,0 +1,182 @@
+{
+  "active": [
+    {
+      "id": "A001",
+      "category": "MCP",
+      "severity": "critical",
+      "code": "MCP0001",
+      "codeName": "NOZZLE-ERR-01",
+      "message": "Extraction Timeout Error (Spout 4)",
+      "description": "Spout 4 extraction exceeded maximum allowed time",
+      "timestamp": "2026-03-31T08:45:00Z",
+      "acknowledged": false
+    },
+    {
+      "id": "A002",
+      "category": "WHP",
+      "severity": "warning",
+      "code": "WHP0003",
+      "codeName": "WHP-ERR-03",
+      "message": "Water Level Sensor Error",
+      "description": "Water level sensor reading abnormal - level below 30%",
+      "timestamp": "2026-03-31T07:20:00Z",
+      "acknowledged": false
+    },
+    {
+      "id": "A003",
+      "category": "WHP",
+      "severity": "warning",
+      "code": "WHP0001",
+      "codeName": "WHP-ERR-01",
+      "message": "Boiler Heating Error",
+      "description": "Boiler temperature deviation +2.5°C from target",
+      "timestamp": "2026-03-31T06:55:00Z",
+      "acknowledged": true
+    }
+  ],
+  "history": [
+    {
+      "id": "H001",
+      "category": "MCP",
+      "severity": "critical",
+      "code": "MCP0003",
+      "codeName": "NOZZLE-ERR-03",
+      "message": "Nozzle Communication Timeout",
+      "description": "Communication timeout with MCP nozzle controller board",
+      "timestamp": "2026-03-30T14:30:00Z",
+      "resolvedAt": "2026-03-30T14:35:00Z"
+    },
+    {
+      "id": "H002",
+      "category": "WHP",
+      "severity": "info",
+      "code": "WHP0005",
+      "codeName": "WHP-ERR-05",
+      "message": "Water Tank Refill Detected",
+      "description": "Water tank level restored to normal operating range",
+      "timestamp": "2026-03-30T10:00:00Z",
+      "resolvedAt": "2026-03-30T10:00:00Z"
+    },
+    {
+      "id": "H003",
+      "category": "MDP",
+      "severity": "warning",
+      "code": "MDP0001",
+      "codeName": "MDP-ERR-01",
+      "message": "Motor Driver Position Error",
+      "description": "Drain valve motor position feedback out of range for 5s",
+      "timestamp": "2026-03-29T16:20:00Z",
+      "resolvedAt": "2026-03-29T16:22:00Z"
+    },
+    {
+      "id": "H004",
+      "category": "MCP",
+      "severity": "warning",
+      "code": "MCP0005",
+      "codeName": "NOZZLE-ERR-05",
+      "message": "Spout 2 Calibration Drift",
+      "description": "Flow calibration gain value drift detected on Spout 2",
+      "timestamp": "2026-03-29T09:10:00Z",
+      "resolvedAt": "2026-03-29T09:45:00Z"
+    },
+    {
+      "id": "H005",
+      "category": "WHP",
+      "severity": "critical",
+      "code": "WHP0002",
+      "codeName": "WHP-ERR-02",
+      "message": "Boiler Over-Temperature Protection",
+      "description": "Boiler temperature exceeded safety limit, heater disabled",
+      "timestamp": "2026-03-28T11:05:00Z",
+      "resolvedAt": "2026-03-28T11:10:00Z"
+    },
+    {
+      "id": "H006",
+      "category": "MDP",
+      "severity": "info",
+      "code": "MDP0003",
+      "codeName": "MDP-ERR-03",
+      "message": "Motor Driver Communication Restored",
+      "description": "Scheduled rinse cycle completed, motor driver operating normally",
+      "timestamp": "2026-03-28T06:00:00Z",
+      "resolvedAt": "2026-03-28T06:05:00Z"
+    },
+    {
+      "id": "H007",
+      "category": "MCP",
+      "severity": "info",
+      "code": "MCP0010",
+      "codeName": "NOZZLE-INFO-01",
+      "message": "Firmware Update Completed",
+      "description": "MCP board firmware updated to v2.4.1 successfully",
+      "timestamp": "2026-03-27T22:00:00Z",
+      "resolvedAt": "2026-03-27T22:00:00Z"
+    },
+    {
+      "id": "H008",
+      "category": "WHP",
+      "severity": "warning",
+      "code": "WHP0007",
+      "codeName": "WHP-ERR-07",
+      "message": "Pump Pressure Abnormal",
+      "description": "Water pump output pressure below minimum threshold",
+      "timestamp": "2026-03-27T15:30:00Z",
+      "resolvedAt": "2026-03-27T15:45:00Z"
+    },
+    {
+      "id": "H009",
+      "category": "MDP",
+      "severity": "warning",
+      "code": "MDP0002",
+      "codeName": "MDP-ERR-02",
+      "message": "Motor Driver Overcurrent",
+      "description": "Motor driver current exceeded safe operating threshold",
+      "timestamp": "2026-03-26T13:10:00Z",
+      "resolvedAt": "2026-03-26T13:12:00Z"
+    },
+    {
+      "id": "H010",
+      "category": "WHP",
+      "severity": "critical",
+      "code": "WHP0014",
+      "codeName": "WHP-ERR-14",
+      "message": "Flow Sensor Failure",
+      "description": "Main water flow sensor not responding",
+      "timestamp": "2026-03-25T09:00:00Z",
+      "resolvedAt": "2026-03-25T09:20:00Z"
+    }
+  ],
+  "alarmCodeReference": {
+    "MCP": {
+      "MCP0001": "NOZZLE-ERR-01: Extraction Timeout Error",
+      "MCP0002": "NOZZLE-ERR-02: Nozzle Position Error",
+      "MCP0003": "NOZZLE-ERR-03: Nozzle Communication Timeout",
+      "MCP0004": "NOZZLE-ERR-04: Flow Rate Out of Range",
+      "MCP0005": "NOZZLE-ERR-05: Calibration Drift Detected",
+      "MCP0006": "NOZZLE-ERR-06: Spout Sensor Failure",
+      "MCP0007": "NOZZLE-ERR-07: Nozzle Blocked",
+      "MCP0008": "NOZZLE-ERR-08: Temperature Probe Error"
+    },
+    "MDP": {
+      "MDP0001": "MDP-ERR-01: Motor Driver Position Error",
+      "MDP0002": "MDP-ERR-02: Motor Driver Overcurrent",
+      "MDP0003": "MDP-ERR-03: Motor Driver Communication Error"
+    },
+    "WHP": {
+      "WHP0001": "WHP-ERR-01: Boiler Heating Error",
+      "WHP0002": "WHP-ERR-02: Boiler Over-Temperature",
+      "WHP0003": "WHP-ERR-03: Water Level Sensor Error",
+      "WHP0004": "WHP-ERR-04: Water Inlet Valve Error",
+      "WHP0005": "WHP-ERR-05: Water Tank Empty",
+      "WHP0006": "WHP-ERR-06: Drain Valve Error",
+      "WHP0007": "WHP-ERR-07: Pump Pressure Abnormal",
+      "WHP0008": "WHP-ERR-08: Pump Motor Error",
+      "WHP0009": "WHP-ERR-09: Flow Meter Error",
+      "WHP0010": "WHP-ERR-10: Temperature Sensor 1 Error",
+      "WHP0011": "WHP-ERR-11: Temperature Sensor 2 Error",
+      "WHP0012": "WHP-ERR-12: Pressure Sensor Error",
+      "WHP0013": "WHP-ERR-13: Heater Relay Error",
+      "WHP0014": "WHP-ERR-14: Flow Sensor Failure"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "totalBrews": 548,
+  "perRecipe": [
+    { "name": "레시피 1", "count": 14, "beanGrams": 140 },
+    { "name": "레시피 2", "count": 10, "beanGrams": 100 },
+    { "name": "레시피 3", "count": 35, "beanGrams": 350 },
+    { "name": "레시피 4", "count": 28, "beanGrams": 280 },
+    { "name": "레시피 5", "count": 30, "beanGrams": 300 }
+  ],
+  "pumpUsage": { "1st": 32, "2nd": 150, "3rd": 79, "4th": 31, "5th": 35 },
+  "extractCount": { "1st": 32, "2nd": 31, "3rd": 32, "4th": 33, "5th": 35 }
+}

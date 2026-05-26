@@ -1,0 +1,10 @@
+{
+  "serialNumber": "R5KrM2600001",
+  "modelNumber": "iRHEA-Light-M5",
+  "firmwareVersion": "1.0",
+  "firmwareDate": "2026-03-01",
+  "waterPump": "SC3711PW (12V)",
+  "valve": "출수측 2 Way 입수측 2 Way",
+  "tempMax": 95,
+  "tempSet": 95
+}

@@ -1,0 +1,27 @@
+{
+  "boiler": {
+    "targetTemp": 93.0,
+    "minTemp": 85.0,
+    "maxTemp": 98.0,
+    "currentTemp": 92.8,
+    "heaterOn": true
+  },
+  "drain": {
+    "autoMode": true,
+    "intervalMinutes": 120,
+    "durationSeconds": 10,
+    "lastDrain": "2026-03-31T06:00:00Z"
+  },
+  "rinse": {
+    "autoMode": true,
+    "intervalMinutes": 60,
+    "durationSeconds": 5,
+    "lastRinse": "2026-03-31T08:00:00Z"
+  },
+  "language": "ko",
+  "timezone": "Asia/Seoul",
+  "displayBrightness": 80,
+  "soundEnabled": true,
+  "defaultDripper": "Hario",
+  "waterLevelAlarmThreshold": 20
+}

@@ -1,0 +1,54 @@
+{
+  "spiralTypes": [
+    { "id": 0, "name": "None", "description": "No spiral (pause)" },
+    { "id": 1, "name": "Center", "description": "Center pour for bloom" },
+    { "id": 2, "name": "Inward Spiral", "description": "Outside to center spiral" },
+    { "id": 3, "name": "Outward Spiral", "description": "Center to outside spiral" },
+    { "id": 4, "name": "Full Spiral", "description": "Full circle spiral pattern" }
+  ],
+  "dripRanges": {
+    "minFlowRate": 1.5,
+    "maxFlowRate": 8.0,
+    "defaultFlowRate": 3.5,
+    "unit": "ml/s"
+  },
+  "nozzleSpeedRanges": {
+    "min": 10,
+    "max": 100,
+    "default": 50,
+    "unit": "rpm"
+  },
+  "pourRateRanges": {
+    "min": 1,
+    "max": 5,
+    "default": 2,
+    "description": "Pour rate level (1=slow, 5=fast)"
+  },
+  "pourRanges": {
+    "minWaterAmount": 10,
+    "maxWaterAmount": 500,
+    "minTime": 5,
+    "maxTime": 120,
+    "minStages": 2,
+    "maxStages": 10
+  },
+  "tempRanges": {
+    "min": 85,
+    "max": 98,
+    "default": 93,
+    "unit": "°C"
+  },
+  "grindSizeRange": {
+    "min": 1,
+    "max": 40,
+    "unit": "clicks"
+  },
+  "supportedDrippers": ["Hario", "Kalita", "Kono", "Kalita Wave", "Melita", "December", "Chemax", "Etc"],
+  "bloomDefaults": {
+    "waterVolumeRatio": 2.0,
+    "waitTime": 30,
+    "flowRate": 3.5,
+    "nozzleSpeed": 50,
+    "pourRate": 2
+  }
+}

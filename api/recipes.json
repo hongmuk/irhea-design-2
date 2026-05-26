@@ -1,0 +1,852 @@
+[
+  {
+    "id": 1,
+    "name": "에티오피아 예가체프",
+    "dripper": "Hario",
+    "grindSize": 18,
+    "coffeeWeight": 20,
+    "waterWeight": 320,
+    "waterTemp": 93,
+    "ratio": "1:16",
+    "extractionRatio": 16,
+    "notes": "꽃 향과 시트러스 노트. 가벼운 바디감과 산뜻한 산미.",
+    "favorite": true,
+    "bloom": {
+      "waterVolume": 40,
+      "waitTime": 30,
+      "flowRate": 3.5,
+      "nozzleSpeed": 50,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 30,
+        "waterAmount": 40,
+        "spiralType": 1,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 25,
+        "waterAmount": 100,
+        "spiralType": 2,
+        "flowRate": 4,
+        "nozzleSpeed": 60,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 25,
+        "waterAmount": 100,
+        "spiralType": 2,
+        "flowRate": 4,
+        "nozzleSpeed": 60,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 3",
+        "time": 20,
+        "waterAmount": 80,
+        "spiralType": 3,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      }
+    ],
+    "stageCount": 7,
+    "createdAt": "2025-11-15T09:00:00Z",
+    "updatedAt": "2025-12-20T14:30:00Z",
+    "beanName": "에티오피아 예가체프 G1 코체레 워시드"
+  },
+  {
+    "id": 2,
+    "name": "콜롬비아 수프리모",
+    "dripper": "Hario",
+    "grindSize": 20,
+    "coffeeWeight": 22,
+    "waterWeight": 352,
+    "waterTemp": 92,
+    "ratio": "1:16",
+    "extractionRatio": 16,
+    "notes": "고소함과 캐러멜 단맛. 미디엄 바디, 균형감 좋음.",
+    "favorite": true,
+    "bloom": {
+      "waterVolume": 44,
+      "waitTime": 35,
+      "flowRate": 3.5,
+      "nozzleSpeed": 50,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 35,
+        "waterAmount": 44,
+        "spiralType": 1,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 30,
+        "waterAmount": 120,
+        "spiralType": 2,
+        "flowRate": 4,
+        "nozzleSpeed": 65,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 30,
+        "waterAmount": 120,
+        "spiralType": 2,
+        "flowRate": 4,
+        "nozzleSpeed": 65,
+        "pourRate": 3
+      },
+      {
+        "type": "pour",
+        "label": "Pour 3",
+        "time": 20,
+        "waterAmount": 68,
+        "spiralType": 3,
+        "flowRate": 3,
+        "nozzleSpeed": 45,
+        "pourRate": 2
+      }
+    ],
+    "stageCount": 6,
+    "createdAt": "2025-10-05T11:00:00Z",
+    "updatedAt": "2025-12-18T10:00:00Z",
+    "beanName": "콜롬비아 수프리모 우일라 17/18"
+  },
+  {
+    "id": 3,
+    "name": "과테말라 안티구아",
+    "dripper": "Kalita Wave",
+    "grindSize": 22,
+    "coffeeWeight": 25,
+    "waterWeight": 400,
+    "waterTemp": 91,
+    "ratio": "1:16",
+    "extractionRatio": 16,
+    "notes": "초콜릿, 스모키. 풀바디에 낮은 산미.",
+    "favorite": false,
+    "bloom": {
+      "waterVolume": 50,
+      "waitTime": 40,
+      "flowRate": 3,
+      "nozzleSpeed": 45,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 40,
+        "waterAmount": 50,
+        "spiralType": 1,
+        "flowRate": 3,
+        "nozzleSpeed": 45,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 35,
+        "waterAmount": 150,
+        "spiralType": 2,
+        "flowRate": 4.3,
+        "nozzleSpeed": 70,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 35,
+        "waterAmount": 150,
+        "spiralType": 2,
+        "flowRate": 4.3,
+        "nozzleSpeed": 70,
+        "pourRate": 3
+      },
+      {
+        "type": "pour",
+        "label": "Final",
+        "time": 15,
+        "waterAmount": 50,
+        "spiralType": 3,
+        "flowRate": 3,
+        "nozzleSpeed": 40,
+        "pourRate": 2
+      }
+    ],
+    "stageCount": 6,
+    "createdAt": "2025-09-20T08:00:00Z",
+    "updatedAt": "2025-11-10T16:45:00Z",
+    "beanName": "과테말라 안티구아 SHB 산타카타리나"
+  },
+  {
+    "id": 4,
+    "name": "케냐 AA 피베리",
+    "dripper": "Hario",
+    "grindSize": 17,
+    "coffeeWeight": 18,
+    "waterWeight": 270,
+    "waterTemp": 94,
+    "ratio": "1:15",
+    "extractionRatio": 15,
+    "notes": "베리, 와인 같은 산미. 복합적이고 생동감 있음.",
+    "favorite": true,
+    "bloom": {
+      "waterVolume": 36,
+      "waitTime": 30,
+      "flowRate": 3.5,
+      "nozzleSpeed": 50,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 30,
+        "waterAmount": 36,
+        "spiralType": 1,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 20,
+        "waterAmount": 80,
+        "spiralType": 2,
+        "flowRate": 4,
+        "nozzleSpeed": 60,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 20,
+        "waterAmount": 80,
+        "spiralType": 2,
+        "flowRate": 4,
+        "nozzleSpeed": 60,
+        "pourRate": 3
+      },
+      {
+        "type": "pour",
+        "label": "Pour 3",
+        "time": 15,
+        "waterAmount": 74,
+        "spiralType": 3,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      }
+    ],
+    "stageCount": 6,
+    "createdAt": "2025-11-01T14:00:00Z",
+    "updatedAt": "2026-01-05T09:20:00Z",
+    "beanName": "케냐 AA 피베리 키리냐가 워시드"
+  },
+  {
+    "id": 5,
+    "name": "브라질 산토스",
+    "dripper": "Kalita",
+    "grindSize": 24,
+    "coffeeWeight": 24,
+    "waterWeight": 384,
+    "waterTemp": 90,
+    "ratio": "1:16",
+    "extractionRatio": 16,
+    "notes": "부드럽고 고소함, 낮은 산미. 달콤한 초콜릿 피니시.",
+    "favorite": false,
+    "bloom": {
+      "waterVolume": 48,
+      "waitTime": 35,
+      "flowRate": 3,
+      "nozzleSpeed": 45,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 35,
+        "waterAmount": 48,
+        "spiralType": 1,
+        "flowRate": 3,
+        "nozzleSpeed": 45,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 30,
+        "waterAmount": 168,
+        "spiralType": 2,
+        "flowRate": 5.6,
+        "nozzleSpeed": 75,
+        "pourRate": 4
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 30,
+        "waterAmount": 168,
+        "spiralType": 2,
+        "flowRate": 5.6,
+        "nozzleSpeed": 75,
+        "pourRate": 4
+      }
+    ],
+    "stageCount": 5,
+    "createdAt": "2025-08-15T10:00:00Z",
+    "updatedAt": "2025-10-30T11:00:00Z",
+    "beanName": "브라질 산토스 NY2 17/18 펄프드 내추럴"
+  },
+  {
+    "id": 6,
+    "name": "파나마 게이샤",
+    "dripper": "Kono",
+    "grindSize": 16,
+    "coffeeWeight": 15,
+    "waterWeight": 240,
+    "waterTemp": 94,
+    "ratio": "1:16",
+    "extractionRatio": 16,
+    "notes": "재스민, 베르가못, 열대 과일. 섬세하고 비범한 컵.",
+    "favorite": true,
+    "bloom": {
+      "waterVolume": 30,
+      "waitTime": 30,
+      "flowRate": 3,
+      "nozzleSpeed": 40,
+      "pourRate": 1
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 30,
+        "waterAmount": 30,
+        "spiralType": 1,
+        "flowRate": 3,
+        "nozzleSpeed": 40,
+        "pourRate": 1
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 20,
+        "waterAmount": 70,
+        "spiralType": 2,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 20,
+        "waterAmount": 70,
+        "spiralType": 2,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 3",
+        "time": 15,
+        "waterAmount": 70,
+        "spiralType": 3,
+        "flowRate": 3,
+        "nozzleSpeed": 40,
+        "pourRate": 1
+      }
+    ],
+    "stageCount": 7,
+    "createdAt": "2025-12-01T15:00:00Z",
+    "updatedAt": "2026-01-10T08:00:00Z",
+    "beanName": "파나마 보케테 게이샤 워시드 (스페셜티)"
+  },
+  {
+    "id": 7,
+    "name": "르완다 뉸궤 내추럴 라마간 마이크로랏 G1 (해발 1850m, 2025-08)",
+    "dripper": "December",
+    "grindSize": 19,
+    "coffeeWeight": 20,
+    "waterWeight": 300,
+    "waterTemp": 93,
+    "ratio": "1:15",
+    "extractionRatio": 15,
+    "notes": "사과, 꿀 같은 단맛. 깔끔하고 균형감 있음. 핸드픽 G1 등급의 마이크로랏 한정 입고.",
+    "favorite": false,
+    "bloom": {
+      "waterVolume": 40,
+      "waitTime": 30,
+      "flowRate": 3.5,
+      "nozzleSpeed": 50,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 30,
+        "waterAmount": 40,
+        "spiralType": 1,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 25,
+        "waterAmount": 130,
+        "spiralType": 2,
+        "flowRate": 5.2,
+        "nozzleSpeed": 70,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 25,
+        "waterAmount": 130,
+        "spiralType": 2,
+        "flowRate": 5.2,
+        "nozzleSpeed": 70,
+        "pourRate": 3
+      }
+    ],
+    "stageCount": 5,
+    "createdAt": "2025-11-20T12:00:00Z",
+    "updatedAt": "2026-01-08T17:30:00Z",
+    "beanName": "르완다 뉸궤 내추럴 라마간 마이크로랏 G1 SHG 해발 1850m 2025-08 로스팅 8월"
+  },
+  {
+    "id": 8,
+    "name": "코스타리카 따라주",
+    "dripper": "Chemax",
+    "grindSize": 26,
+    "coffeeWeight": 30,
+    "waterWeight": 480,
+    "waterTemp": 92,
+    "ratio": "1:16",
+    "extractionRatio": 16,
+    "notes": "산뜻한 시트러스, 흑설탕. 깔끔한 컵, 미디엄 바디.",
+    "favorite": false,
+    "bloom": {
+      "waterVolume": 60,
+      "waitTime": 40,
+      "flowRate": 3,
+      "nozzleSpeed": 45,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 40,
+        "waterAmount": 60,
+        "spiralType": 1,
+        "flowRate": 3,
+        "nozzleSpeed": 45,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 25,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 40,
+        "waterAmount": 200,
+        "spiralType": 2,
+        "flowRate": 5,
+        "nozzleSpeed": 70,
+        "pourRate": 4
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 35,
+        "waterAmount": 220,
+        "spiralType": 2,
+        "flowRate": 6.3,
+        "nozzleSpeed": 80,
+        "pourRate": 4
+      }
+    ],
+    "stageCount": 5,
+    "createdAt": "2025-10-10T09:00:00Z",
+    "updatedAt": "2025-12-05T14:00:00Z",
+    "beanName": "코스타리카 따라주 라파스 허니"
+  },
+  {
+    "id": 9,
+    "name": "인도네시아 만델링 토라자 길링바사",
+    "dripper": "Melita",
+    "grindSize": 23,
+    "coffeeWeight": 22,
+    "waterWeight": 330,
+    "waterTemp": 91,
+    "ratio": "1:15",
+    "extractionRatio": 15,
+    "notes": "흙내음, 허브, 풀바디. 낮은 산미, 진한 마우스필.",
+    "favorite": false,
+    "bloom": {
+      "waterVolume": 44,
+      "waitTime": 35,
+      "flowRate": 3,
+      "nozzleSpeed": 45,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 35,
+        "waterAmount": 44,
+        "spiralType": 1,
+        "flowRate": 3,
+        "nozzleSpeed": 45,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 30,
+        "waterAmount": 143,
+        "spiralType": 2,
+        "flowRate": 4.8,
+        "nozzleSpeed": 65,
+        "pourRate": 3
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 20,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 30,
+        "waterAmount": 143,
+        "spiralType": 2,
+        "flowRate": 4.8,
+        "nozzleSpeed": 65,
+        "pourRate": 3
+      }
+    ],
+    "stageCount": 5,
+    "createdAt": "2025-09-01T11:30:00Z",
+    "updatedAt": "2025-11-25T09:00:00Z",
+    "beanName": "인도네시아 술라웨시 토라자 만델링 G1 길링바사 워시드 (싱글 오리진)"
+  },
+  {
+    "id": 10,
+    "name": "예멘 모카 하라즈",
+    "dripper": "Hario",
+    "grindSize": 17,
+    "coffeeWeight": 16,
+    "waterWeight": 240,
+    "waterTemp": 94,
+    "ratio": "1:15",
+    "extractionRatio": 15,
+    "notes": "복합적인 와인, 건과일, 초콜릿. 강렬한 단맛.",
+    "favorite": true,
+    "bloom": {
+      "waterVolume": 32,
+      "waitTime": 30,
+      "flowRate": 3.5,
+      "nozzleSpeed": 50,
+      "pourRate": 2
+    },
+    "stages": [
+      {
+        "type": "bloom",
+        "label": "Bloom",
+        "time": 30,
+        "waterAmount": 32,
+        "spiralType": 1,
+        "flowRate": 3.5,
+        "nozzleSpeed": 50,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 15,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 1",
+        "time": 20,
+        "waterAmount": 70,
+        "spiralType": 2,
+        "flowRate": 3.5,
+        "nozzleSpeed": 55,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 2",
+        "time": 20,
+        "waterAmount": 70,
+        "spiralType": 2,
+        "flowRate": 3.5,
+        "nozzleSpeed": 55,
+        "pourRate": 2
+      },
+      {
+        "type": "pause",
+        "label": "Wait",
+        "time": 10,
+        "waterAmount": 0,
+        "spiralType": 0,
+        "flowRate": 0,
+        "nozzleSpeed": 0,
+        "pourRate": 0
+      },
+      {
+        "type": "pour",
+        "label": "Pour 3",
+        "time": 15,
+        "waterAmount": 68,
+        "spiralType": 3,
+        "flowRate": 3,
+        "nozzleSpeed": 45,
+        "pourRate": 2
+      }
+    ],
+    "stageCount": 7,
+    "createdAt": "2025-12-10T16:00:00Z",
+    "updatedAt": "2026-01-12T11:00:00Z",
+    "beanName": "예멘 모카 하라즈 마타리 내추럴"
+  }
+]

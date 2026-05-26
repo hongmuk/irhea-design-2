@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<!-- viewport-fit=cover: 노치/안전영역까지 화면 활용 (풀스크린 PWA 모드 대비) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>iRHEA-Light | 공장 초기화</title>
+
+<!-- ── PWA / 풀스크린 kiosk 메타 ─────────────────────────────────────────
+     태블릿 홈 화면에 추가하면 manifest 의 display: fullscreen 으로 실행.
+     iOS Safari (PWA standalone) + Android Chrome (fullscreen) 모두 커버. -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#C5A059">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="iRHEA">
+<link rel="apple-touch-icon" href="/img/app-icon.svg">
+<link rel="icon" type="image/svg+xml" href="/img/app-icon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/theme-irhea.css">
+<script src="/js/state.js"></script>
+<script src="/js/recipe-picker.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/error-handler.js"></script>
+<script src="/js/fullscreen.js" defer></script>
+<script src="/js/install.js" defer></script>
+
+  <script> window.BASE_PATH = ""; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+</head>
+<body class="ir-theme">
+  <div class="viewport">
+    <div class="topbar">
+  <div class="brand">
+    <img class="brand-logo" src="/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
+    <span class="brand-divider"></span>
+    <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
+  </div>
+  <div class="topbar-right">
+    <!-- 홈 아이콘은 사이드바로 이관 (회의 피드백: 다른 메뉴는 다 사이드바인데 홈만 위에 있으면 위화감) -->
+
+    <!-- 언어 토글 — 회의 피드백 v1.2: 실제 작동하도록 (i18n.js 연동) -->
+    <button class="tb-lang-wrap" id="tb-lang-btn" type="button" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:8px 12px; min-height:var(--tap-min); border-radius:var(--radius-sm); cursor:pointer; background:transparent; font-family:inherit;">
+      <span id="tb-lang-label" style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size: clamp(11.5px, 1vw + 7px, 14px); opacity:0.5;">▼</span>
+    </button>
+
+    <span class="tb-sep"></span>
+    <!-- v1.1 S2.1.2 — 메인 헤더 보강: 클라우드 접속 / 총 추출 / 타임존 -->
+    <span class="tb-stat" id="top-cloud" title="AWS 클라우드 접속 상태"><span class="tb-cloud-ico">📡</span><span class="tb-val">클라우드</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat" id="top-totalbrew" title="설치 후 누적 추출"><span class="tb-lbl">총 추출</span><span class="tb-val" id="top-totalbrew-val">—</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:2px; opacity:0.6;">회</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:3px; opacity:0.6;" id="top-tz">KST · UTC+9</span></span>
+    <span class="tb-sep"></span>
+    <!-- 5/13 §1: 연결 정상 = 초록, 오류 = 빨강 -->
+    <span class="tb-live tb-live-ok" id="top-live"><span class="tb-live-dot"></span>연결됨</span>
+    <!-- 풀스크린 토글 — fullscreen.js 가 PWA standalone/fullscreen 모드일 땐 hide.
+         페이지 로드 시 자동 풀스크린은 브라우저 보안상 불가, 사용자 1탭 필요. -->
+    <button class="btn-fullscreen" id="btn-fullscreen-top" aria-label="전체화면" title="전체화면" type="button" hidden>
+      <svg class="fs-ico-enter" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/>
+      </svg>
+      <svg class="fs-ico-exit" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <path d="M9 4v5H4"/><path d="M15 4v5h5"/><path d="M9 20v-5H4"/><path d="M15 20v-5h5"/>
+      </svg>
+    </button>
+    <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
+        <line x1="12" y1="2" x2="12" y2="12"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const el = document.getElementById('top-clock');
+      if (el) el.textContent = h + ':' + m;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // v1.1 S2.1.2 — 총 추출 합 (spouts.extractCount 누적)
+    function updateTotalBrew() {
+      fetch('/api/spouts').then(function (r) { return r.json(); }).then(function (sps) {
+        var total = (sps || []).reduce(function (s, sp) { return s + (sp.extractCount || 0); }, 0);
+        var el = document.getElementById('top-totalbrew-val');
+        if (el) el.textContent = total.toLocaleString();
+      }).catch(function () {});
+    }
+    setInterval(updateTotalBrew, 5000);
+    updateTotalBrew();
+
+    document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
+      // Shutdown flow per designs/02-shutdown-progress.html → 02-shutdown-complete.html.
+      // STEP1: progress modal (blocking, no buttons) → STEP2: complete modal.
+      if (!window.IRModal) return;
+      window.IRModal.confirm({
+        title: '장비 종료',
+        body: '장비를 종료하시겠습니까?',
+        ok: '종료',
+        onOk: function () {
+          // STEP1: 종료 진행 (블로킹 2.5s)
+          window.IRModal.info({
+            title: '장비 종료 진행 중',
+            body: '<span class="ir-modal-ico">⏳</span>장비를 종료합니다.<br>기다려 주세요',
+            buttons: []
+          });
+          setTimeout(function () {
+            // STEP2: 완료 (버튼 없음 — 물리 스위치 OFF 대기)
+            window.IRModal.info({
+              title: '종료 완료',
+              body: '장비 종료 완료<br>전원 스위치를 꺼<br>주세요.',
+              buttons: []
+            });
+          }, 2500);
+        }
+      });
+    });
+
+    // 언어 토글 — i18n.js 와 연동 (회의 피드백 v1.2)
+    function syncLangLabel() {
+      var label = document.getElementById('tb-lang-label');
+      if (label && window.IRI18n) label.textContent = window.IRI18n.lang.toUpperCase();
+    }
+    syncLangLabel();
+    document.getElementById('tb-lang-btn')?.addEventListener('click', function () {
+      if (!window.IRI18n) return;
+      var next = window.IRI18n.lang === 'ko' ? 'en' : 'ko';
+      window.IRI18n.set(next);
+      syncLangLabel();
+      window.IRToast?.show(next === 'ko' ? '한국어로 변경되었습니다.' : 'Changed to English.');
+    });
+  })();
+</script>
+
+    
+    <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <!-- 공장 초기화 (S4.2) — settings-shell partial 사용으로 다른 설정 페이지와 통일 -->
+
+
+
+
+
+<div class="ir-shell">
+  <!-- 회의 v1.1: 탭 순서 — 사용자용 먼저, 관리자 메뉴는 맨 뒤
+       (일반 / 백업 / 펌웨어 → 🔒 관리자 메뉴) — v1.1 용어 통일 -->
+
+  <div class="ir-tabs">
+    <a class="ir-tab "     href="/settings/general"     data-i18n="tab.general">장비 설정</a>
+    <a class="ir-tab "      href="/settings/backup"      data-i18n="tab.backup">백업 / 복구</a>
+    <a class="ir-tab "    href="/settings/firmware"    data-i18n="tab.firmware">펌웨어 업그레이드</a>
+    <a class="ir-tab is-admin is-active" href="/settings/engineering" data-i18n="tab.engineering">🔒 관리자 메뉴</a>
+
+    <div style="flex:1;"></div>
+
+    <div class="ir-action-row" style="align-self:flex-start;margin-top:0;">
+      
+      <a class="ir-btn" href="/main">복귀</a>
+    </div>
+  </div>
+
+  <div class="ir-divider"></div>
+
+  <div class="ir-content" style="padding-top:0;">
+
+
+<div class="ir-row" style="gap:24px;flex:1;align-items:flex-start;">
+  <aside class="ir-side-menu">
+    <a class="ir-tab is-active" href="/settings/engineering/factory-reset">공장초기화</a>
+    <a class="ir-tab" href="/settings/engineering/connection">장비 연결 설정</a>
+    <a class="ir-tab" href="/settings/engineering/pump-calibration">펌프 교정</a>
+    <a class="ir-tab" href="/settings/engineering/parts">부품 시리얼</a>
+  </aside>
+
+  <section class="ir-grow" style="padding:24px 28px;flex-direction:column;gap:16px;display:flex;">
+    <div>
+      <span class="ir-page-sub">Engineering · factory-reset</span>
+      <h1 class="ir-page-title" style="font-size:24px;margin:2px 0 0;">공장 <em>초기화.</em></h1>
+      <p style="margin-top:8px;font-size:12px;color:var(--ir-fg-muted);">카테고리 5개 중 선택. 복구 불가 — 신중히.</p>
+    </div>
+
+    <div class="danger-banner">
+      <span class="ico">!</span>
+      <div class="text">
+        <b>이 작업은 복구할 수 없습니다.</b> 선택한 데이터가 영구 삭제되며 실행 중 취소가 불가능합니다.
+        보안 데이터 초기화 시 관리자 비밀번호가 디폴트로 복원되어 재인증이 필요합니다.
+      </div>
+    </div>
+
+    <div class="radio-list">
+      <div class="ritem selected" data-id="logs">
+        <span class="num">01</span>
+        <div class="ritem-info">
+          <span class="ritem-name">로그 &amp; 오류 데이터</span>
+          <span class="ritem-desc">콘솔 부팅 로그 · 오류 발생 이력 · 디버그 트레이스. 일상 운영에 영향 없음.</span>
+        </div>
+        <span class="risk low">권장</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem" data-id="recipes">
+        <span class="num">02</span>
+        <div class="ritem-info">
+          <span class="ritem-name">레시피 데이터</span>
+          <span class="ritem-desc">12 레시피 · 즐겨찾기 매핑 (5×2 슬롯) · 사용자 정의 Stage 값 — 영구 삭제.</span>
+        </div>
+        <span class="risk high">위험</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem selected" data-id="users">
+        <span class="num">03</span>
+        <div class="ritem-info">
+          <span class="ritem-name">사용자 데이터</span>
+          <span class="ritem-desc">계정 3명 · 권한 분포 (운용2·디스트리뷰터2·개발자1) · 로그인 기록.</span>
+        </div>
+        <span class="risk mid">중간</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem" data-id="machine">
+        <span class="num">04</span>
+        <div class="ritem-info">
+          <span class="ritem-name">장비 설정 데이터</span>
+          <span class="ritem-desc">5+1 설정 카드 · 펌프 교정 5행 · 보일러 95° · 워터/린스 파라미터 — 재교정 필요.</span>
+        </div>
+        <span class="risk high">재교정</span>
+        <span class="radio-mark"></span>
+      </div>
+
+      <div class="ritem selected" data-id="security">
+        <span class="num">05</span>
+        <div class="ritem-info">
+          <span class="ritem-name">보안 데이터</span>
+          <span class="ritem-desc">Admin 비밀번호 디폴트 복원 · 잠금 카운터 reset · WiFi 등록 머신 유지.</span>
+        </div>
+        <span class="risk mid">PW 리셋</span>
+        <span class="radio-mark"></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="fr-action-bar">
+  <div class="ab-l">선택됨: <b id="fr-selected-count">3 / 5</b> · <span id="fr-selected-list">1, 3, 5</span></div>
+  <div class="ab-r">
+    <button class="fr-ab-btn" onclick="history.back()">취소</button>
+    <button class="fr-ab-btn primary" id="fr-run">실행 →</button>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+<style>
+  /* factory-reset — settings-shell partial + .ir-side-menu 통일 */
+  .danger-banner { padding: 14px 18px; border: 1px solid var(--brand); background: var(--brand-dim); display: flex; gap: 14px; align-items: flex-start; }
+  .danger-banner .ico { width: 36px; height: 36px; background: var(--brand); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+  .danger-banner .text { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+  .danger-banner b { color: var(--brand); font-weight: 700; }
+
+  .radio-list { display: flex; flex-direction: column; gap: 10px; }
+  .ritem { display: grid; grid-template-columns: 32px 1fr auto auto; gap: 14px; align-items: center; padding: 14px 18px; border: 1px solid var(--hair); cursor: pointer; transition: all 0.15s; }
+  .ritem:hover { border-color: var(--ink-3); }
+  .ritem.selected { border-color: var(--ink); background: #FAFAFA; }
+  .ritem .num { font-size: 13px; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; letter-spacing: 0.4px; text-align: center; }
+  .ritem.selected .num { color: var(--ink); }
+  .ritem-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .ritem-name { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .ritem-desc { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .risk { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; padding: 3px 8px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .risk.low { background: #1A8054; color: #fff; }
+  .risk.mid { background: #C28200; color: #fff; }
+  .risk.high { background: var(--brand); color: #fff; }
+  .radio-mark { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--hair-2); position: relative; flex-shrink: 0; }
+  .ritem.selected .radio-mark { border-color: var(--ink); }
+  .ritem.selected .radio-mark::after { content: ''; position: absolute; inset: 4px; background: var(--ink); border-radius: 50%; }
+
+  .fr-action-bar { height: 64px; padding: 0 28px; border-top: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #FCFCFC; }
+  .ab-l { font-size: 11.5px; color: var(--ink-3); font-weight: 500; }
+  .ab-l b { color: var(--ink); font-weight: 700; }
+  .ab-r { display: inline-flex; gap: 10px; align-items: center; }
+  .fr-ab-btn { padding: 10px 22px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .fr-ab-btn.primary { background: var(--brand); color: #FFF; border-color: var(--brand); }
+</style>
+
+<script>
+(function () {
+  function updateCount() {
+    var items = document.querySelectorAll('.ritem');
+    var selected = [];
+    items.forEach(function (el, idx) {
+      if (el.classList.contains('selected')) selected.push(idx + 1);
+    });
+    document.getElementById('fr-selected-count').textContent = selected.length + ' / 5';
+    document.getElementById('fr-selected-list').textContent = selected.length ? selected.join(', ') : '없음';
+  }
+  document.querySelectorAll('.ritem').forEach(function (item) {
+    item.addEventListener('click', function () { item.classList.toggle('selected'); updateCount(); });
+  });
+
+  document.getElementById('fr-run').addEventListener('click', function () {
+    var selected = Array.from(document.querySelectorAll('.ritem.selected')).map(function (el) { return el.dataset.id; });
+    if (selected.length === 0) {
+      window.IRModal?.info({ body: '항목을 선택하세요', bodyClass: 'is-error' });
+      return;
+    }
+    window.IRModal?.confirm({
+      title: '공장 초기화 실행',
+      bodyClass: 'is-error',
+      body: '복구불가<br>진행하시겠습니까?',
+      onOk: function () {
+        fetch('/api/factory-reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ categories: selected })
+        }).then(function () {
+          window.IRToast?.show('공장 초기화가 완료되었습니다.', { type: 'error' });
+        });
+      }
+    });
+  });
+})();
+</script>
+
+    </main>
+
+    <!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
+<nav class="nav">
+  <a class="nav-item " href="/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item " href="/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item " href="/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item " href="/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item " href="/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item " href="/settings/general" data-i18n="nav.settings">설정</a>
+</nav>
+
+  </div>
+
+  <!--
+  iRHEA-Light — 표준 알림 모달 컨테이너 + 8 사전정의 알림.
+  공통 트리거: window.IRModal.open(id) / window.IRModal.confirm({...})
+  표준 ID:
+    alert-password-error
+    alert-extract-press
+    alert-shutdown
+    alert-shutdown-done
+    confirm-firmware
+    confirm-connection-change
+    confirm-connection-fail
+    confirm-irreversible
+  ad-hoc 모달은 confirm({title, body, ok, cancel, onOk, onCancel}) 사용.
+-->
+
+<div class="ir-modal-overlay" id="ir-modal-overlay" data-modal-root>
+  <div class="ir-modal" id="ir-modal" role="dialog" aria-modal="true" aria-labelledby="ir-modal-title">
+    <div class="ir-modal-header" id="ir-modal-title">알림</div>
+    <div class="ir-modal-body" id="ir-modal-body">메시지</div>
+    <div class="ir-modal-actions" id="ir-modal-actions"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Standard preset alerts — wireframe v6.0 9.2 + FLOW.3 팝업 12종(4종 신규) 매핑
+  // 회의 §14: O/X → 직관 텍스트. v1.1 신규는 P-RECIPE-*, P-WIFI-*, P-SERIAL-*.
+  var PRESETS = {
+    // ─ v0.9 명세 원본 (image2/5/7/9/11/23/24/26/27) ─
+    'alert-password-error':     { title: '암호 오류',           body: '암호 오류<br><span style="font-size:11px;color:#666;">5회 실패 시 10분 잠금</span>', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-extract-press':      { title: '추출 진행',           body: '추출 진행<br>추출구의 버튼을 눌러주세요', buttons: [{ label: '닫기' }] },
+    'alert-shutdown':           { title: '알림',                body: '장비를 종료합니다.<br>기다려 주세요', buttons: [] },
+    'alert-shutdown-done':      { title: '알림',                body: '장비 종료 완료<br>전원 스위치를 꺼주세요.', buttons: [{ label: '확인', primary: true }] },
+    'confirm-firmware':         { title: '펌웨어 업그레이드',    body: '펌웨어를 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-change':{ title: '장치 연결 변경',       body: '장치 연결 설정을 변경 합니다.', buttons: [{ label: '변경', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-fail':  { title: '연결 실패',            body: '연결 실패<br>재시도하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '재검색', value: 'cancel' }] },
+    'confirm-irreversible':     { title: '복구불가',             body: '복구불가<br>진행하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+
+    // ─ v1.1 신규 (FLOW.3 12종 중 4종) ─
+    'alert-wifi-fail':          { title: 'WiFi 인증 실패',       body: '잘못된 비밀번호입니다.<br>PW를 다시 입력해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-serial-mismatch':    { title: '시리얼 불일치',         body: '시리얼 매칭 실패.<br>장비 시리얼 번호를 다시 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'confirm-recipe-validate-1':{ title: 'Stage 합계 불일치',     body: '스테이지 합계가 100%가 아닙니다.<br>자동 보정하시겠습니까?', buttons: [{ label: '자동 보정', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'alert-recipe-validate-2':  { title: '유속 한계 초과',        body: '유속이 펌프 한계를 초과합니다.<br>최대값으로 조정 후 저장합니다.', bodyClass: 'is-error', buttons: [{ label: '최대값 적용', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'confirm-recipe-conflict':  { title: '즐겨찾기 매핑 충돌',    body: '이미 즐겨찾기에 등록된 추출구가 있습니다.<br>어떻게 할까요?', buttons: [{ label: '덮어쓰기', primary: true, value: 'overwrite' }, { label: '기존 해제', value: 'release' }, { label: '취소', value: 'cancel' }] },
+    'confirm-recipe-runtime':   { title: '추출 결과 ±20% 초과',  body: '첫 추출 결과가 목표값 대비 ±20%를 벗어납니다.<br>레시피 보정을 권장합니다.', buttons: [{ label: '보정 (편집)', primary: true, value: 'edit' }, { label: '기록만', value: 'log' }, { label: '무시', value: 'cancel' }] },
+
+    // ─ 에러 다양화 (§14 통신끊김/응답없음/장비저장실패) ─
+    'alert-comms-lost':         { title: '통신 끊김',             body: '장비와의 통신이 끊겼습니다.<br>케이블·전원·WiFi를 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-device-timeout':     { title: '응답 없음',             body: '장비가 응답하지 않습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-save-failed':        { title: '장비 저장 실패',         body: '설정 저장에 실패했습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-usb-missing':        { title: 'USB 미인식',            body: 'USB가 연결되지 않았습니다.<br>USB를 꽂은 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-usb-no-space':       { title: 'USB 용량 부족',         body: 'USB 저장 공간이 부족합니다.<br>다른 USB를 사용해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] }
+  };
+
+  function el(id) { return document.getElementById(id); }
+
+  function renderActions(buttons, onClick) {
+    var actions = el('ir-modal-actions');
+    actions.innerHTML = '';
+    buttons.forEach(function (b) {
+      var btn = document.createElement('button');
+      btn.className = 'ir-modal-btn' + (b.primary ? ' is-primary' : '');
+      btn.textContent = b.label;
+      btn.dataset.value = b.value || b.label;
+      btn.addEventListener('click', function () { onClick(b.value || b.label); });
+      actions.appendChild(btn);
+    });
+  }
+
+  function openWith(opts) {
+    var overlay = el('ir-modal-overlay');
+    el('ir-modal-title').textContent = opts.title || '알림';
+    var body = el('ir-modal-body');
+    body.innerHTML = opts.body || '';
+    body.className = 'ir-modal-body' + (opts.bodyClass ? ' ' + opts.bodyClass : '');
+    renderActions(opts.buttons || [{ label: '확인', primary: true }], function (val) {
+      overlay.classList.remove('is-open');
+      if (typeof opts.onClose === 'function') opts.onClose(val);
+    });
+    overlay.classList.add('is-open');
+  }
+
+  window.IRModal = {
+    open: function (id, onClose) {
+      var p = PRESETS[id];
+      if (!p) {
+        console.warn('IRModal: unknown preset', id);
+        return;
+      }
+      openWith({
+        title: p.title || '알림',
+        body: p.body,
+        bodyClass: p.bodyClass,
+        buttons: p.buttons,
+        onClose: onClose
+      });
+    },
+    confirm: function (opts) {
+      // opts: { title, body, bodyClass, ok = '확인', cancel = '취소', onOk, onCancel }
+      var buttons = [
+        { label: opts.ok || '확인', primary: true, value: 'ok' },
+        { label: opts.cancel || '취소', value: 'cancel' }
+      ];
+      openWith({
+        title: opts.title || '알림',
+        body: opts.body || '',
+        bodyClass: opts.bodyClass,
+        buttons: buttons,
+        onClose: function (v) {
+          if (v === 'ok' && typeof opts.onOk === 'function') opts.onOk();
+          if (v === 'cancel' && typeof opts.onCancel === 'function') opts.onCancel();
+        }
+      });
+    },
+    info: function (opts) {
+      openWith({
+        title: opts.title || '알림',
+        body: opts.body || '',
+        bodyClass: opts.bodyClass,
+        buttons: opts.buttons || [{ label: '확인', primary: true }],
+        onClose: opts.onClose
+      });
+    },
+    close: function () {
+      var overlay = el('ir-modal-overlay');
+      if (overlay) overlay.classList.remove('is-open');
+    }
+  };
+
+  // Close on overlay click (only when click target is overlay itself)
+  document.addEventListener('click', function (ev) {
+    var overlay = el('ir-modal-overlay');
+    if (!overlay || !overlay.classList.contains('is-open')) return;
+    if (ev.target === overlay) {
+      // Don't auto-close if there are no buttons (forced wait modal)
+      var hasButtons = el('ir-modal-actions').children.length > 0;
+      if (hasButtons) overlay.classList.remove('is-open');
+    }
+  });
+})();
+</script>
+
+  <div class="ir-toast-container" id="ir-toast-container"></div>
+
+<style>
+  .ir-toast-container {
+    position: fixed;
+    left: 50%;
+    bottom: 96px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1100;
+  }
+  .ir-toast {
+    pointer-events: auto;
+    background: var(--ink, #111);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 160ms, transform 160ms;
+    max-width: 480px;
+    letter-spacing: 0.01em;
+  }
+  .ir-toast.is-show { opacity: 1; transform: translateY(0); }
+  .ir-toast.is-warn { background: var(--gold, #C5A059); color: #fff; }
+  .ir-toast.is-error { background: var(--brand, #E60012); color: #fff; }
+</style>
+
+<script>
+(function () {
+  function show(msg, opts) {
+    opts = opts || {};
+    var container = document.getElementById('ir-toast-container');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'ir-toast' + (opts.type ? ' is-' + opts.type : '');
+    t.textContent = msg;
+    container.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('is-show'); });
+    setTimeout(function () {
+      t.classList.remove('is-show');
+      setTimeout(function () { t.remove(); }, 220);
+    }, opts.duration || 2200);
+  }
+  window.IRToast = { show: show };
+})();
+</script>
+
+
+  <!-- PWA install banner — 브라우저 모드일 때만 표시 (install.js 가 토글) -->
+  <div id="pwa-install-banner" class="pib" role="status" aria-live="polite" hidden>
+    <span class="pib-msg">풀스크린 모드로 사용하려면 홈 화면에 추가하세요.</span>
+    <button class="pib-install" type="button" hidden>홈 화면에 추가</button>
+    <button class="pib-close" type="button" aria-label="닫기" title="닫기">✕</button>
+  </div>
+
+</body>
+</html>

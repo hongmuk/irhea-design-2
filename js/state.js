@@ -1,0 +1,173 @@
+/* iRhea client state helper — localStorage-backed mock state.
+   API 연동을 제외한 모든 사용자 변경(즐겨찾기·설정·레시피·추출 상태)은 이 헬퍼를 통해
+   localStorage에 영구화한다. /api/* 엔드포인트의 정적 mock 데이터를 첫 로드 시 시드로 사용. */
+(function () {
+  var KEY = 'irhea.state.v1';
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+  function save(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  var state = load();
+
+  function get(key, fallback) {
+    return state[key] !== undefined ? state[key] : fallback;
+  }
+  function set(key, val) {
+    state[key] = val;
+    save(state);
+  }
+  function patch(partial) {
+    Object.assign(state, partial);
+    save(state);
+  }
+  function clear() {
+    state = {};
+    save(state);
+  }
+
+  // Favorites: per spout, array [r0, r1, r2, r3, r4] — 최대 5 슬롯 (회의 피드백 v1.1)
+  var FAV_SLOTS = 5;
+  function getFavorites(spouts) {
+    var saved = get('favorites', null);
+    if (saved) {
+      // 기존 2-슬롯 데이터를 5-슬롯으로 마이그레이션
+      Object.keys(saved).forEach(function (k) {
+        var arr = saved[k] || [];
+        while (arr.length < FAV_SLOTS) arr.push(null);
+        saved[k] = arr.slice(0, FAV_SLOTS);
+      });
+      return saved;
+    }
+    var seed = {};
+    (spouts || []).forEach(function (s) {
+      var arr = (s.favoriteRecipeIds || []).slice(0, FAV_SLOTS);
+      while (arr.length < FAV_SLOTS) arr.push(null);
+      seed[s.id] = arr;
+    });
+    set('favorites', seed);
+    return seed;
+  }
+  function setFavorite(spoutId, slot /* 0..4 */, recipeId) {
+    var fav = get('favorites', {});
+    if (!fav[spoutId]) fav[spoutId] = [null, null, null, null, null];
+    fav[spoutId][slot] = recipeId;
+    set('favorites', fav);
+  }
+  // swapFavorites: 회의 피드백 v1.1 — A↔B 스왑 개념 폐기 (추출구 고정 매핑)
+  // 호환성 유지 위해 함수는 남기되, 단순 첫 두 슬롯 교환만 수행
+  function swapFavorites(spoutId) {
+    var fav = get('favorites', {});
+    if (!fav[spoutId]) return;
+    var a = fav[spoutId][0], b = fav[spoutId][1];
+    fav[spoutId][0] = b; fav[spoutId][1] = a;
+    set('favorites', fav);
+  }
+  function clearAllFavorites() {
+    set('favorites', {});
+  }
+
+  // Settings — generic key/value with defaults
+  function getSettings() {
+    return get('settings', {
+      unit: 'percent',
+      alarm: true,
+      dripper: 'Kalita',
+      theme: 'dark',
+      boilerTemp: 95
+    });
+  }
+  function setSetting(k, v) {
+    var s = getSettings();
+    s[k] = v;
+    set('settings', s);
+  }
+
+  // Recipes — overlay on top of API-served list
+  function getRecipeOverlay() { return get('recipeOverlay', { added: [], edited: {}, deleted: [] }); }
+  function setRecipeOverlay(o) { set('recipeOverlay', o); }
+  function applyOverlay(serverRecipes) {
+    var o = getRecipeOverlay();
+    var byId = {};
+    serverRecipes.forEach(function (r) { byId[r.id] = r; });
+    o.added.forEach(function (r) { byId[r.id] = r; });
+    Object.keys(o.edited).forEach(function (id) { byId[id] = Object.assign({}, byId[id], o.edited[id]); });
+    o.deleted.forEach(function (id) { delete byId[id]; });
+    return Object.values(byId).sort(function (a, b) { return a.id - b.id; });
+  }
+
+  // Spout currentRecipe overrides — 회의 v1.1 / 5/24 §2.2 매뉴얼 변경 영구화.
+  // mock spouts.json 의 currentRecipeId 를 localStorage 로 덮어쓴다. 폴링이 mock 으로
+  // 되돌리는 BUG #1 (메인 카드 변경이 1초 뒤 사라짐) 방지용. 실 환경에서는 API
+  // PUT /api/spouts/:id 가 mcp_app 에 쓰고 GET /api/spouts 가 반영되므로 이 layer 없음.
+  function getSpoutOverrides() { return get('spoutOverrides', {}); }
+  function setSpoutOverride(spoutId, recipeId) {
+    var ov = getSpoutOverrides();
+    ov[spoutId] = recipeId;
+    set('spoutOverrides', ov);
+  }
+  function applySpoutOverrides(spouts) {
+    var ov = getSpoutOverrides();
+    return spouts.map(function (s) {
+      if (ov[s.id] != null) return Object.assign({}, s, { currentRecipeId: ov[s.id] });
+      return s;
+    });
+  }
+
+  // Spout status overrides — /main 의 "서빙 완료" + "추출 시작" 모달용 (5/27).
+  // mock spouts.json 의 status 를 localStorage 로 덮어쓴다. idle 강제 시 진행도/시간 리셋.
+  function getSpoutStatusOverrides() { return get('spoutStatusOverrides', {}); }
+  function setSpoutStatus(spoutId, status) {
+    var ov = getSpoutStatusOverrides();
+    if (status == null) delete ov[spoutId];
+    else ov[spoutId] = status;
+    set('spoutStatusOverrides', ov);
+  }
+  function applySpoutStatusOverrides(spouts) {
+    var ov = getSpoutStatusOverrides();
+    return spouts.map(function (s) {
+      if (ov[s.id] != null) {
+        var patched = Object.assign({}, s, { status: ov[s.id] });
+        if (ov[s.id] === 'idle') {
+          patched.progressPct = 0;
+          patched.elapsedSec = 0;
+          patched.stageIdx = null;
+        }
+        return patched;
+      }
+      return s;
+    });
+  }
+
+  // Brewing — current run state
+  function getBrewing() { return get('brewing', null); }
+  function startBrewing(spoutId, recipeId) {
+    var run = { spoutId: spoutId, recipeId: recipeId, startedAt: Date.now(), totalSec: 480, progressPct: 0 };
+    set('brewing', run);
+    return run;
+  }
+  function updateBrewing(patch) {
+    var run = get('brewing', null);
+    if (!run) return null;
+    Object.assign(run, patch);
+    set('brewing', run);
+    return run;
+  }
+  function endBrewing() { set('brewing', null); }
+
+  window.IRState = {
+    get: get, set: set, patch: patch, clear: clear,
+    getFavorites: getFavorites, setFavorite: setFavorite, swapFavorites: swapFavorites, clearAllFavorites: clearAllFavorites,
+    getSettings: getSettings, setSetting: setSetting,
+    getRecipeOverlay: getRecipeOverlay, setRecipeOverlay: setRecipeOverlay, applyOverlay: applyOverlay,
+    getSpoutOverrides: getSpoutOverrides, setSpoutOverride: setSpoutOverride, applySpoutOverrides: applySpoutOverrides,
+    getSpoutStatusOverrides: getSpoutStatusOverrides, setSpoutStatus: setSpoutStatus, applySpoutStatusOverrides: applySpoutStatusOverrides,
+    getBrewing: getBrewing, startBrewing: startBrewing, updateBrewing: updateBrewing, endBrewing: endBrewing
+  };
+})();

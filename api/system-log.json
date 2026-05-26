@@ -1,0 +1,17 @@
+[
+  "[ OK ] Started IPv6 Packet Filtering Framework.",
+  "[ OK ] Started IPv4 Packet Filtering Framework.",
+  "[ 13.664604] using random self ethernet address",
+  "[ 13.667619] using random host ethernet address",
+  "[ 13.917758] usb0: HOST MAC 8c:77:2a:6a:f6:44",
+  "[ 13.924735] usb0: MAC c8:f7:19:34:26:15",
+  "[ 13.939236] dwc2 49000000.usb-otg: bound driver configfs-gadget",
+  "[ OK ] Started Enable USB Ethernet gadget.",
+  "[ OK ] Started Login Service.",
+  "[ OK ] Reached target Network (Pre).",
+  "[ OK ] Listening on Load/Save RF ...itch Status /dev/rfkill Watch.",
+  "[ OK ] Reached target Sound Card.",
+  "         Starting Network Service...",
+  "[ OK ] Started Network Service.",
+  "         Starting Network Name Resolution..."
+]

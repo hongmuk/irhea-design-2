@@ -1,0 +1,45 @@
+{
+  "model": "iRHEA-Light 5S",
+  "serialNumber": "IRL-2025-KR-00147",
+  "manufacturer": "Noble Tree Co., Ltd.",
+  "installDate": "2025-06-15",
+  "shopName": "Specialty Coffee Lab",
+  "shopAddress": "Seoul, Gangnam-gu, Teheran-ro 123",
+  "firmware": {
+    "mcp": { "board": "MCP-500", "version": "2.4.1", "buildDate": "2025-12-01" },
+    "mdp": { "board": "MDP-300", "version": "1.8.3", "buildDate": "2025-11-20" },
+    "whp": { "board": "WHP-200", "version": "3.1.0", "buildDate": "2025-12-15" }
+  },
+  "ipc": {
+    "protocol": "Unix Domain Socket",
+    "headerFormat": "Binary (12 bytes) + JSON Body",
+    "commands": {
+      "GET_STATUS": "0x1001",
+      "GET_RECIPE": "0x1002",
+      "SET_RECIPE": "0x1003",
+      "START_BREW": "0x1101",
+      "STOP_BREW": "0x1102",
+      "ACK_ALARM": "0x1201",
+      "GET_CALIBRATION": "0x1301",
+      "SET_CALIBRATION": "0x1302"
+    },
+    "events": {
+      "STATUS_UPDATE": "0x2001",
+      "BREW_STARTED": "0x2101",
+      "BREW_PROGRESS": "0x2102",
+      "BREW_COMPLETED": "0x2103",
+      "ALARM_RAISED": "0x2201",
+      "ALARM_CLEARED": "0x2202"
+    }
+  },
+  "network": {
+    "ip": "192.168.1.100",
+    "mac": "AA:BB:CC:DD:EE:01",
+    "ipcSocket": "/tmp/irhea-light.sock",
+    "protocol": "IPC (Unix Domain Socket)"
+  },
+  "spoutCount": 5,
+  "boilerCapacity": 8.0,
+  "maxWaterTemp": 98,
+  "supportedDrippers": ["Hario", "Kalita", "Kono", "Kalita Wave", "Melita", "December", "Chemax", "Etc"]
+}

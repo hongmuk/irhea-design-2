@@ -1,0 +1,36 @@
+{
+  "totalBrews": 5550,
+  "totalWaterUsed": 1820.5,
+  "totalCoffeeUsed": 115.2,
+  "machineUptime": 8640,
+  "daily": [
+    { "date": "2026-03-25", "brews": 42, "water": 13.8 },
+    { "date": "2026-03-26", "brews": 38, "water": 12.5 },
+    { "date": "2026-03-27", "brews": 55, "water": 18.1 },
+    { "date": "2026-03-28", "brews": 48, "water": 15.8 },
+    { "date": "2026-03-29", "brews": 51, "water": 16.8 },
+    { "date": "2026-03-30", "brews": 35, "water": 11.5 },
+    { "date": "2026-03-31", "brews": 18, "water": 5.9 }
+  ],
+  "weekly": [
+    { "week": "W09", "brews": 280, "water": 92.2 },
+    { "week": "W10", "brews": 310, "water": 102.1 },
+    { "week": "W11", "brews": 295, "water": 97.2 },
+    { "week": "W12", "brews": 322, "water": 106.1 },
+    { "week": "W13", "brews": 287, "water": 94.4 }
+  ],
+  "monthly": [
+    { "month": "2025-11", "brews": 1180, "water": 388.7 },
+    { "month": "2025-12", "brews": 1250, "water": 411.8 },
+    { "month": "2026-01", "brews": 1320, "water": 435.1 },
+    { "month": "2026-02", "brews": 1100, "water": 362.5 },
+    { "month": "2026-03", "brews": 700, "water": 230.4 }
+  ],
+  "topRecipes": [
+    { "recipeId": 1, "name": "Ethiopia Yirgacheffe", "count": 820 },
+    { "recipeId": 2, "name": "Colombia Supremo", "count": 715 },
+    { "recipeId": 6, "name": "Panama Geisha", "count": 580 },
+    { "recipeId": 4, "name": "Kenya AA Peaberry", "count": 445 },
+    { "recipeId": 10, "name": "Yemen Mocha Haraz", "count": 390 }
+  ]
+}
