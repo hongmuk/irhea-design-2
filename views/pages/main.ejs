@@ -46,11 +46,11 @@
            슬롯 클릭 → 해당 레시피로 즉시 적용 (메인 카드에 매핑) -->
       <div class="st-slots spout-faves">
         <div class="st-slots-title" data-i18n="unit.favorites">즐겨찾기</div>
-        <button type="button" class="st-slot" data-slot="0"><span class="st-slot-mark">★</span><span class="st-slot-recipe">—</span></button>
-        <button type="button" class="st-slot" data-slot="1"><span class="st-slot-mark">★</span><span class="st-slot-recipe">—</span></button>
-        <button type="button" class="st-slot" data-slot="2"><span class="st-slot-mark">★</span><span class="st-slot-recipe">—</span></button>
-        <button type="button" class="st-slot" data-slot="3"><span class="st-slot-mark">★</span><span class="st-slot-recipe">—</span></button>
-        <button type="button" class="st-slot" data-slot="4"><span class="st-slot-mark">★</span><span class="st-slot-recipe">—</span></button>
+        <button type="button" class="st-slot" data-slot="0"><span class="st-slot-recipe">—</span></button>
+        <button type="button" class="st-slot" data-slot="1"><span class="st-slot-recipe">—</span></button>
+        <button type="button" class="st-slot" data-slot="2"><span class="st-slot-recipe">—</span></button>
+        <button type="button" class="st-slot" data-slot="3"><span class="st-slot-recipe">—</span></button>
+        <button type="button" class="st-slot" data-slot="4"><span class="st-slot-recipe">—</span></button>
       </div>
     </div>
   <% } %>
@@ -229,12 +229,6 @@
   .st-slot:last-child { border-bottom: none; }
   .st-slot.is-filled:hover { background: rgba(194,130,0,0.06); }
   .st-slot.is-active:hover { background: rgba(230,0,18,0.05); }
-  .st-slot-mark {
-    color: rgba(0,0,0,0.18); font-size: clamp(11.5px, 1vw + 7px, 14px); flex-shrink: 0;
-    transition: color 0.15s;
-  }
-  .st-slot.is-filled .st-slot-mark { color: #C28200; }
-  .st-slot.is-active .st-slot-mark { color: var(--brand); }
   .st-slot-recipe {
     color: var(--ink-3); font-weight: 500;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
