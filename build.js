@@ -162,6 +162,10 @@ if (fs.existsSync(manifestSrc)) fs.copyFileSync(manifestSrc, path.join(DOCS, 'ma
 const swSrc = path.join(SRC, 'public', 'sw.js');
 if (fs.existsSync(swSrc)) fs.copyFileSync(swSrc, path.join(DOCS, 'sw.js'));
 
+// .nojekyll — GitHub Pages 가 Jekyll 처리 건너뛰도록. 없으면 SVG/JSON 등에서
+// Jekyll Liquid 파서가 실패 ("Page build failed") 하는 케이스 있음.
+fs.writeFileSync(path.join(DOCS, '.nojekyll'), '');
+
 // Copy mock data as API JSON files
 console.log('Copying mock data as API endpoints...');
 const apiDir = path.join(DOCS, 'api');
