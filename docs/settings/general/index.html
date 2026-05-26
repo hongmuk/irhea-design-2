@@ -14,6 +14,8 @@
 <link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
 <script src="/irhea-design-2/js/state.js"></script>
 <script src="/irhea-design-2/js/recipe-picker.js"></script>
+<script src="/irhea-design-2/js/i18n.js"></script>
+<script src="/irhea-design-2/js/error-handler.js"></script>
 
   <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
@@ -27,20 +29,26 @@
     <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
   <div class="topbar-right">
-    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
-    
-    <!-- Demo-style Language Switcher -->
-    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
-      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
-      <span style="font-size:10px; opacity:0.5;">▼</span>
-    </div>
+    <!-- 홈 아이콘은 사이드바로 이관 (회의 피드백: 다른 메뉴는 다 사이드바인데 홈만 위에 있으면 위화감) -->
 
+    <!-- 언어 토글 — 회의 피드백 v1.2: 실제 작동하도록 (i18n.js 연동) -->
+    <button class="tb-lang-wrap" id="tb-lang-btn" type="button" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:8px 12px; min-height:var(--tap-min); border-radius:var(--radius-sm); cursor:pointer; background:transparent; font-family:inherit;">
+      <span id="tb-lang-label" style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size: clamp(11.5px, 1vw + 7px, 14px); opacity:0.5;">▼</span>
+    </button>
+
+    <span class="tb-sep"></span>
+    <!-- v1.1 S2.1.2 — 메인 헤더 보강: 클라우드 접속 / 총 추출 / 타임존 -->
+    <span class="tb-stat" id="top-cloud" title="AWS 클라우드 접속 상태"><span class="tb-cloud-ico">📡</span><span class="tb-val">클라우드</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat" id="top-totalbrew" title="설치 후 누적 추출"><span class="tb-lbl">총 추출</span><span class="tb-val" id="top-totalbrew-val">—</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:2px; opacity:0.6;">회</span></span>
     <span class="tb-sep"></span>
     <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:3px; opacity:0.6;" id="top-tz">KST · UTC+9</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-live">연결됨</span>
+    <!-- 5/13 §1: 연결 정상 = 초록, 오류 = 빨강 -->
+    <span class="tb-live tb-live-ok" id="top-live"><span class="tb-live-dot"></span>연결됨</span>
     <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
@@ -62,22 +70,36 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // v1.1 S2.1.2 — 총 추출 합 (spouts.extractCount 누적)
+    function updateTotalBrew() {
+      fetch('/api/spouts').then(function (r) { return r.json(); }).then(function (sps) {
+        var total = (sps || []).reduce(function (s, sp) { return s + (sp.extractCount || 0); }, 0);
+        var el = document.getElementById('top-totalbrew-val');
+        if (el) el.textContent = total.toLocaleString();
+      }).catch(function () {});
+    }
+    setInterval(updateTotalBrew, 5000);
+    updateTotalBrew();
+
     document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
       // Shutdown flow per designs/02-shutdown-progress.html → 02-shutdown-complete.html.
       // STEP1: progress modal (blocking, no buttons) → STEP2: complete modal.
       if (!window.IRModal) return;
       window.IRModal.confirm({
-        title: '알림',
+        title: '장비 종료',
         body: '장비를 종료하시겠습니까?',
+        ok: '종료',
         onOk: function () {
-          // STEP1: progress (blocking 2.5s)
+          // STEP1: 종료 진행 (블로킹 2.5s)
           window.IRModal.info({
+            title: '장비 종료 진행 중',
             body: '<span class="ir-modal-ico">⏳</span>장비를 종료합니다.<br>기다려 주세요',
             buttons: []
           });
           setTimeout(function () {
-            // STEP2: complete (no buttons, waiting for physical power off)
+            // STEP2: 완료 (버튼 없음 — 물리 스위치 OFF 대기)
             window.IRModal.info({
+              title: '종료 완료',
               body: '장비 종료 완료<br>전원 스위치를 꺼<br>주세요.',
               buttons: []
             });
@@ -86,30 +108,54 @@
       });
     });
 
-    // Simple language toggle simulation
-    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
-       const lang = this.querySelector('span').textContent;
-       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
-       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    // 언어 토글 — i18n.js 와 연동 (회의 피드백 v1.2)
+    function syncLangLabel() {
+      var label = document.getElementById('tb-lang-label');
+      if (label && window.IRI18n) label.textContent = window.IRI18n.lang.toUpperCase();
+    }
+    syncLangLabel();
+    document.getElementById('tb-lang-btn')?.addEventListener('click', function () {
+      if (!window.IRI18n) return;
+      var next = window.IRI18n.lang === 'ko' ? 'en' : 'ko';
+      window.IRI18n.set(next);
+      syncLangLabel();
+      window.IRToast?.show(next === 'ko' ? '한국어로 변경되었습니다.' : 'Changed to English.');
     });
   })();
 </script>
 
     
     <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-      <!-- 설정 (S3.1) — designs/02-settings.html 정합. Topbar는 layout.ejs에서 렌더. -->
+      <!-- 설정 (S3.1) — 다른 설정 페이지와 동일한 settings-shell partial 사용 (디자인 통일) -->
 
-<div class="settings-tabs">
-  <a href="/irhea-design-2/settings/general" class="stab active">설정</a>
-  <a href="/irhea-design-2/settings/backup" class="stab">백업 / 복구</a>
-  <a href="/irhea-design-2/settings/engineering" class="stab">관리자 메뉴</a>
-  <a href="/irhea-design-2/settings/firmware" class="stab">펌웨어 업그레이드</a>
-  <span class="stab-spacer"></span>
-  <div class="stab-actions">
-    <button class="stab-btn primary" id="btn-save-settings">저장</button>
-    <button class="stab-btn ghost" onclick="history.back()">복귀</button>
+
+
+
+
+<div class="ir-shell">
+  <!-- 회의 v1.1: 탭 순서 — 사용자용 먼저, 관리자 메뉴는 맨 뒤
+       (일반 / 백업 / 펌웨어 → 🔒 관리자 메뉴) — v1.1 용어 통일 -->
+
+  <div class="ir-tabs">
+    <a class="ir-tab is-active"     href="/irhea-design-2/settings/general"     data-i18n="tab.general">장비 설정</a>
+    <a class="ir-tab "      href="/irhea-design-2/settings/backup"      data-i18n="tab.backup">백업 / 복구</a>
+    <a class="ir-tab "    href="/irhea-design-2/settings/firmware"    data-i18n="tab.firmware">펌웨어 업그레이드</a>
+    <a class="ir-tab is-admin " href="/irhea-design-2/settings/engineering" data-i18n="tab.engineering">🔒 관리자 메뉴</a>
+
+    <div style="flex:1;"></div>
+
+    <div class="ir-action-row" style="align-self:flex-start;margin-top:0;">
+      
+        <button class="ir-btn" data-ir-save>저장</button>
+      
+      <a class="ir-btn" href="/irhea-design-2/main">복귀</a>
+    </div>
   </div>
-</div>
+
+  <div class="ir-divider"></div>
+
+  <div class="ir-content" style="padding-top:0;">
+
 
 <div class="cards">
 
@@ -132,19 +178,18 @@
       </span>
     </div>
     <div class="cr"><span class="cr-k">기본 드립퍼</span><button class="cr-v cr-pick" id="sg-dripper">Kalita</button></div>
-    <div class="card-foot"><span>image12 정합</span></div>
+    <div class="card-foot"><span>일반 환경설정</span></div>
   </div>
 
-  <!-- Card 2: 보일러 -->
+  <!-- Card 2: 보일러 — 회의 피드백 v1.2: 웜업 상태 제거 (장비 켜진 시간과 동일) -->
   <div class="card">
     <div class="card-head">
       <span class="card-title">보일러</span>
       <span class="card-id">3.1.4</span>
     </div>
-    <div class="cr"><span class="cr-k">설정 온도</span><span class="cr-v" id="sg-boiler-set">95<span class="unit">°C</span></span></div>
+    <div class="cr"><span class="cr-k">설정 온도</span><button class="cr-v cr-pick" id="sg-boiler-set" data-pick="boiler-temp" data-min="80" data-max="95" data-unit="°C" data-label="보일러 설정 온도">95<span class="unit">°C</span></button></div>
     <div class="cr"><span class="cr-k">현재 온도</span><span class="cr-v muted" id="sg-boiler-cur">95.2<span class="unit">°C</span></span></div>
-    <div class="cr"><span class="cr-k">웜업 상태</span><span class="cr-v muted">정상 · 7m 12s</span></div>
-    <div class="card-foot"><span>보일러 단일 항목</span></div>
+    <div class="card-foot"><span>범위 · 80~95°C · 클릭하여 변경</span></div>
   </div>
 
   <!-- Card 3: 물붓기 범위 -->
@@ -154,128 +199,204 @@
       <span class="card-id">3.1.5</span>
     </div>
     <div id="sg-pour-rows"></div>
-    <div class="card-foot"><span>반지름 / mm</span></div>
+    <div class="card-foot"><span>범위 · 25~55 mm (반지름)</span></div>
   </div>
 
-  <!-- Card 4: 펌프 교정 -->
-  <div class="card">
-    <div class="card-head">
-      <span class="card-title">펌프 교정</span>
-      <span class="card-id">3.1.6</span>
-    </div>
-    <table class="ct">
-      <thead><tr><th>기존 유속</th><th>교정 유속</th></tr></thead>
-      <tbody id="sg-pump-rows"></tbody>
-    </table>
-    <div class="card-foot"><span>관리자 메뉴 이관 검토 中</span><a href="/irhea-design-2/settings/engineering">→</a></div>
-  </div>
-
-  <!-- Card 5: 워터 / 린스 -->
+  <!-- Card 4: 워터 / 린스 — 회의 피드백 v1.2: 항목/값 가독성 개선 (제목 볼딕 + 단위 명시) -->
   <div class="card">
     <div class="card-head">
       <span class="card-title">워터 / 린스</span>
-      <span class="card-id">3.1.7</span>
+      <span class="card-id">3.1.6</span>
     </div>
-    <table class="ct">
-      <thead><tr><th>항목</th><th>워터</th><th style="text-align:right;">린스</th></tr></thead>
+    <table class="ct wr-t">
+      <thead><tr><th>항목</th><th>워터</th><th>린스</th></tr></thead>
       <tbody id="sg-wr-rows">
-        <tr><td>속도</td><td class="wr-water" data-k="speed">— ml/s</td><td class="wr-rinse" data-k="speed">— ml/s</td></tr>
-        <tr><td>온도</td><td class="wr-water" data-k="temp">—°</td><td class="wr-rinse" data-k="temp">—°</td></tr>
-        <tr><td>온수량</td><td class="wr-water" data-k="amount">— ml</td><td class="wr-rinse" data-k="amount">— ml</td></tr>
+        <tr><th class="wr-row-h">유속<em>ml/s</em></th><td class="wr-water" data-k="speed">—</td><td class="wr-rinse" data-k="speed">—</td></tr>
+        <tr><th class="wr-row-h">온도<em>°C</em></th><td class="wr-water" data-k="temp">—</td><td class="wr-rinse" data-k="temp">—</td></tr>
+        <tr><th class="wr-row-h">온수량<em>ml</em></th><td class="wr-water" data-k="amount">—</td><td class="wr-rinse" data-k="amount">—</td></tr>
       </tbody>
     </table>
-    <div class="card-foot"><span>2 컬럼 비교</span></div>
+    <div class="card-foot"><span>유속 3~5 / 온도는 보일러 기준</span></div>
   </div>
 
-  <!-- Card 6: 즐겨찾기 정책 (v1.1 accent) -->
-  <div class="card accent">
+  <!-- Card 5: 레시피 기본값 — 회의 피드백 v1.2: 빠진 항목 추가 (가이드 디폴트) -->
+  <div class="card">
     <div class="card-head">
-      <span class="card-title">★ 즐겨찾기 정책</span>
-      <span class="card-badge">v1.1</span>
+      <span class="card-title">레시피 기본값</span>
+      <span class="card-id">3.1.7</span>
     </div>
-    <div class="cr"><span class="cr-k">추출구별 슬롯</span>
-      <span class="cr-v">2 <em>(v1.0: 5)</em></span></div>
-    <div class="cr"><span class="cr-k">슬롯 A</span>
-      <div class="fav-slots"><span class="fav-chip">★ 1초 = 추출</span></div></div>
-    <div class="cr"><span class="cr-k">슬롯 B</span>
-      <div class="fav-slots"><span class="fav-chip b">☆ 탭 전환</span></div></div>
-    <div class="cr"><span class="cr-k">매뉴얼 큐</span><span class="cr-v muted">별개 개념</span></div>
-    <div class="card-foot"><span>★ 활성 1 + ☆ 보조 1</span><a href="/irhea-design-2/favorites">즐겨찾기 매핑 →</a></div>
+    <div class="cr"><span class="cr-k">원두량</span><button class="cr-v cr-pick" id="sg-def-weight" data-pick="def-weight" data-min="10" data-max="40" data-unit="g" data-label="기본 원두량">20<span class="unit">g</span></button></div>
+    <div class="cr"><span class="cr-k">추출 비율</span><button class="cr-v cr-pick" id="sg-def-ratio" data-pick="def-ratio" data-label="기본 추출 비율" data-options="1:10,1:12,1:14,1:15,1:16,1:17,1:18,1:20">1:16</button></div>
+    <div class="cr"><span class="cr-k">물 온도</span><button class="cr-v cr-pick" id="sg-def-temp" data-pick="def-temp" data-min="80" data-max="95" data-unit="°C" data-label="기본 물 온도">93<span class="unit">°C</span></button></div>
+    <div class="cr"><span class="cr-k">기본 분쇄도</span><button class="cr-v cr-pick" id="sg-def-grind" data-pick="def-grind" data-min="1" data-max="40" data-label="기본 분쇄도">18</button></div>
+    <div class="card-foot"><span>레시피 추가 시 prefill · 클릭하여 변경</span></div>
+  </div>
+
+  <!-- 즐겨찾기 정책 카드 제거 (회의 피드백 v1.2: 의미 불명) -->
+  <!-- 펌프 교정 카드 제거 (회의 피드백 v1.2: 관리자 메뉴로 이관) -->
+
+  <!-- Card 6: 장비 제어 — 5/13 §3: 스피커 / LED Bar ON/OFF -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">장비 제어</span>
+      <span class="card-id">3.1.8</span>
+    </div>
+    <div class="cr"><span class="cr-k">태블릿 스피커</span>
+      <span class="seg" data-name="speaker-tablet">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="cr"><span class="cr-k">장비 스피커</span>
+      <span class="seg" data-name="speaker-device">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="cr"><span class="cr-k">LED Bar #1</span>
+      <span class="seg" data-name="led-1">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="cr"><span class="cr-k">LED Bar #2</span>
+      <span class="seg" data-name="led-2">
+        <span class="seg-i on" data-value="on">ON</span>
+        <span class="seg-i" data-value="off">OFF</span>
+      </span>
+    </div>
+    <div class="card-foot"><span>5/13 §3: 태블릿·장비 스피커 / LED Bar 2개</span></div>
   </div>
 
 </div>
 
+  </div>
+</div>
+
+
 <style>
-  /* settings-general specific layout — matches designs/02-settings.html */
-  .stab-spacer { flex: 1; }
-  .stab-actions { display: inline-flex; align-items: center; gap: 8px; padding: 0 24px; }
-  .stab-btn { font-size: 12px; padding: 8px 18px; font-weight: 600; cursor: pointer; line-height: 1; transition: all 0.15s; font-family: inherit; border: none; }
-  .stab-btn.primary { background: var(--brand); color: #fff; border: 1px solid var(--brand); }
-  .stab-btn.primary:hover { background: #c8000f; border-color: #c8000f; }
-  .stab-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
-  .stab-btn.ghost:hover { color: var(--ink); border-color: var(--ink); }
-
-  .cards { flex: 1; padding: 20px 24px; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; gap: 14px; min-height: 0; }
-  .card { background: var(--bg); border: 1px solid var(--hair); padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; position: relative; }
+  /* settings-general — 카드 그리드만 (탭/액션은 settings-shell partial 사용) */
+  .cards { flex: 1; padding: 16px 24px 14px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(0, 1fr); gap: 12px; min-height: 0; overflow-y: auto; }
+  /* breakpoint 1100→1023: 1024 베이스라인에서 3-col 유지 (6 카드 fit). */
+  @media (max-width: 1023px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px)  { .cards { grid-template-columns: 1fr; } }
+  .card { background: var(--bg); border: 1px solid var(--hair); padding: 14px 16px 12px; display: flex; flex-direction: column; gap: 8px; min-height: 0; position: relative; overflow: hidden; }
   .card.accent { border: 1px solid var(--brand); background: linear-gradient(180deg, #FFFAFA 0%, var(--bg) 30%); }
-  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .card-title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  /* 카드 위계: 제목(굵은 검정) / 라벨(작은 회색) / 값(굵은 검정 모노) */
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--hair); }
+  .card-title { font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .card.accent .card-title { color: var(--brand); }
-  .card-badge { font-size: 9px; font-weight: 600; color: var(--brand); letter-spacing: 1px; text-transform: uppercase; }
-  .card-id { font-size: 10px; font-weight: 500; color: var(--ink-3); letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
+  .card-badge { font-size: clamp(11px, 0.9vw + 7px, 13px); font-weight: 600; color: var(--brand); letter-spacing: 1px; text-transform: uppercase; }
+  .card-id { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 500; color: var(--ink-3); letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
-  .cr { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--hair); }
-  .cr:first-of-type { border-top: none; padding-top: 2px; }
-  .cr-k { font-size: 12px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
-  .cr-v { font-size: 13px; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
+  .cr { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--hair); }
+  .cr:first-of-type { border-top: none; padding-top: 4px; }
+  .cr-k { font-size: 11.5px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
+  .cr-v { font-size: 13px; color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.2px; }
   .cr-v.muted { color: var(--ink-2); font-weight: 500; }
-  .cr-v em { font-style: normal; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
-  .cr-v .unit { font-size: 11px; color: var(--ink-3); font-weight: 500; margin-left: 2px; }
+  .cr-v em { font-style: normal; color: var(--ink-3); font-weight: 400; margin-left: 4px; font-size: 11px; }
+  .cr-v .unit { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; margin-left: 2px; }
 
-  .seg { display: inline-flex; border: 1px solid var(--hair-2); height: 22px; align-items: stretch; user-select: none; }
-  .seg-i { padding: 0 8px; font-size: 11px; font-weight: 500; color: var(--ink-3); display: inline-flex; align-items: center; border-right: 1px solid var(--hair-2); cursor: pointer; }
+  /* 세그먼트 토글 — 터치 영역 (높이 28+) */
+  .seg { display: inline-flex; border: 1px solid var(--hair-2); height: 28px; align-items: stretch; user-select: none; }
+  .seg-i { padding: 0 10px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); display: inline-flex; align-items: center; border-right: 1px solid var(--hair-2); cursor: pointer; min-width: 44px; justify-content: center; }
   .seg-i:last-child { border-right: none; }
-  .seg-i.on { background: var(--ink); color: #fff; font-weight: 600; }
+  /* 활성 토글 — 검은 ink 대신 Cinema Gold 로 (brewing/탭/즐겨찾기 헤더와 톤 통일) */
+  .seg-i.on { background: var(--gold); color: #fff; font-weight: 700; }
 
   .ct { font-size: 11px; font-variant-numeric: tabular-nums; width: 100%; border-collapse: collapse; }
-  .ct th { text-align: left; font-weight: 500; color: var(--ink-3); padding: 4px 0; border-bottom: 1px solid var(--hair); font-size: 10px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .ct th { text-align: left; font-weight: 500; color: var(--ink-3); padding: 4px 0; border-bottom: 1px solid var(--hair); font-size: clamp(11.5px, 1vw + 7px, 14px); letter-spacing: 0.3px; text-transform: uppercase; }
   .ct td { padding: 3.5px 0; color: var(--ink); border-bottom: 1px solid var(--hair); font-weight: 500; }
   .ct td:last-child { text-align: right; }
   .ct tr:last-child td { border-bottom: none; }
-  .ct .delta-up { color: var(--brand); font-size: 9px; margin-left: 4px; font-weight: 600; }
-  .ct .delta-down { color: var(--ink-2); font-size: 9px; margin-left: 4px; font-weight: 600; }
+  .ct .delta-up { color: var(--brand); font-size: clamp(11px, 0.9vw + 7px, 13px); margin-left: 4px; font-weight: 600; }
+  .ct .delta-down { color: var(--ink-2); font-size: clamp(11px, 0.9vw + 7px, 13px); margin-left: 4px; font-weight: 600; }
 
-  .card-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: 10px; color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
+  /* 워터/린스 테이블 가독성 (회의 피드백 v1.2: 항목명 볼딕 + 단위 첨부) */
+  .wr-t th { padding: 5px 0; text-align: center; }
+  .wr-t th:first-child { text-align: left; }
+  .wr-t .wr-row-h {
+    text-transform: none; letter-spacing: -0.2px;
+    color: var(--ink); font-weight: 700; font-size: 11.5px;
+    padding-right: 8px; width: 70px;
+  }
+  .wr-t .wr-row-h em {
+    color: var(--ink-3); font-weight: 500; font-style: normal; font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left: 4px;
+  }
+  .wr-t td {
+    text-align: center !important;
+    font-weight: 600; color: var(--ink-2); font-size: 12px;
+  }
+
+  .card-foot { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--hair); font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; }
   .card-foot a { color: var(--brand); font-weight: 600; text-decoration: none; }
 
   .fav-slots { display: flex; gap: 6px; margin-top: 2px; }
-  .fav-chip { font-size: 10px; padding: 3px 8px; border: 1px solid var(--brand); color: var(--brand); font-weight: 600; }
+  .fav-chip { font-size: clamp(11.5px, 1vw + 7px, 14px); padding: 3px 8px; border: 1px solid var(--brand); color: var(--brand); font-weight: 600; }
   .fav-chip.b { border-color: var(--hair-2); color: var(--ink-3); }
 
   .cr-pick { background: transparent; border: 1px dashed var(--hair-2); padding: 4px 10px; cursor: pointer; font-family: inherit; color: var(--ink); font-size: 13px; font-weight: 600; letter-spacing: -0.2px; }
   .cr-pick:hover { border-color: var(--ink); border-style: solid; }
-  .cr-pick::after { content: ' ▾'; color: var(--ink-3); font-size: 9px; }
+  .cr-pick::after { content: ' ▾'; color: var(--ink-3); font-size: clamp(11px, 0.9vw + 7px, 13px); }
 
   .dripper-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 360px; }
-  .drp-i { padding: 12px 14px; border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink-2); text-align: left; }
+  .drp-i { padding: 12px 14px; border: 1px solid var(--hair-2); background: var(--bg); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink-2); text-align: center; }
   .drp-i:hover { border-color: var(--ink); color: var(--ink); }
   .drp-i.is-on { border: 2px solid var(--ink); color: var(--ink); background: #FAFAFA; padding: 11px 13px; }
+
+  /* 시안 매칭 picker — 다른 alert 모달과 같은 톤. v1.1 매칭 (회의 §15) */
+  .picker-range-hint {
+    font-size: 11.5px; color: var(--ink-3); font-weight: 500;
+    text-align: center; letter-spacing: -0.1px;
+    margin-bottom: 4px;
+  }
+  .picker-input-row {
+    display: inline-flex; align-items: center; gap: 8px;
+    align-self: center;
+  }
+  .picker-input {
+    /* 다른 폼 input 보다 약간 큼 (20px) — picker 의 단일 값 강조 */
+    font-size: 20px; font-weight: 700;
+    text-align: center; padding: 8px 12px;
+    border: 1px solid var(--hair-2); background: var(--bg);
+    width: 110px;
+    font-family: var(--font-mono);
+    color: var(--ink); letter-spacing: -0.5px;
+  }
+  .picker-input:focus { outline: none; border-color: var(--ink); }
+  .picker-unit {
+    font-size: 14px; color: var(--ink-3); font-weight: 600;
+  }
+  .picker-err {
+    font-size: 11.5px; color: #DC2626; font-weight: 700;
+    min-height: 14px; text-align: center; letter-spacing: -0.1px;
+  }
+  .picker-err:empty { min-height: 0; }
 </style>
 
 <script>
 (function () {
   var DRIPPERS = ['Kalita Wave', 'Hario V60', 'Chemex', 'Kono', 'Origami', 'Melita', 'December'];
 
-  // Hydrate from localStorage
+  // Hydrate from localStorage — 5/13 §3 장비 제어 4개도 포함
   function hydrate() {
     var s = window.IRState.getSettings();
     // Unit seg
     var unitSeg = document.querySelector('.seg[data-name=unit]');
-    unitSeg.querySelectorAll('.seg-i').forEach(function (i) { i.classList.toggle('on', i.dataset.value === s.unit); });
+    if (unitSeg) unitSeg.querySelectorAll('.seg-i').forEach(function (i) { i.classList.toggle('on', i.dataset.value === s.unit); });
     // Alarm seg
     var aSeg = document.querySelector('.seg[data-name=alarm]');
-    aSeg.querySelectorAll('.seg-i').forEach(function (i) {
+    if (aSeg) aSeg.querySelectorAll('.seg-i').forEach(function (i) {
       i.classList.toggle('on', (i.dataset.value === 'on') === !!s.alarm);
+    });
+    // 5/13 §3 장비 제어 — 기본 ON
+    ['speaker-tablet', 'speaker-device', 'led-1', 'led-2'].forEach(function (k) {
+      var seg = document.querySelector('.seg[data-name="' + k + '"]');
+      if (!seg) return;
+      var on = s[k] !== false; // 기본 true
+      seg.querySelectorAll('.seg-i').forEach(function (i) {
+        i.classList.toggle('on', (i.dataset.value === 'on') === on);
+      });
     });
     // Dripper
     document.getElementById('sg-dripper').textContent = s.dripper || 'Kalita Wave';
@@ -283,15 +404,22 @@
   hydrate();
 
   // Segmented controls — persist on click
+  var SEG_HANDLERS = {
+    'unit':           function (v) { window.IRState.setSetting('unit', v); },
+    'alarm':          function (v) { window.IRState.setSetting('alarm', v === 'on'); },
+    'speaker-tablet': function (v) { window.IRState.setSetting('speaker-tablet', v === 'on'); },
+    'speaker-device': function (v) { window.IRState.setSetting('speaker-device', v === 'on'); },
+    'led-1':          function (v) { window.IRState.setSetting('led-1', v === 'on'); },
+    'led-2':          function (v) { window.IRState.setSetting('led-2', v === 'on'); }
+  };
   document.querySelectorAll('.seg').forEach(function (seg) {
     var name = seg.dataset.name;
     seg.querySelectorAll('.seg-i').forEach(function (i) {
       i.addEventListener('click', function () {
         seg.querySelectorAll('.seg-i').forEach(function (x) { x.classList.remove('on'); });
         i.classList.add('on');
-        var v = i.dataset.value;
-        if (name === 'unit') window.IRState.setSetting('unit', v);
-        if (name === 'alarm') window.IRState.setSetting('alarm', v === 'on');
+        var handler = SEG_HANDLERS[name];
+        if (handler) handler(i.dataset.value);
       });
     });
   });
@@ -339,40 +467,129 @@
     document.getElementById('sg-pour-rows').innerHTML = html;
   });
 
-  // Pump calibration
-  fetch('/api/pump-calibration').then(r => r.json()).then(function (rows) {
-    var html = rows.map(function (r) {
-      var delta = (r.calibrated - r.base).toFixed(1);
-      var sign = delta >= 0 ? '+' : '';
-      var cls = delta >= 0 ? 'delta-up' : 'delta-down';
-      var deltaTxt = delta >= 0 ? sign + delta : '−' + Math.abs(delta).toFixed(1);
-      return '<tr><td>' + r.base.toFixed(1) + ' g/s</td>' +
-             '<td>' + r.calibrated.toFixed(1) + ' g/s<span class="' + cls + '">' + deltaTxt + '</span></td></tr>';
-    }).join('');
-    document.getElementById('sg-pump-rows').innerHTML = html;
-  });
+  // 펌프 교정 fetch 제거 — 회의 피드백 v1.2: 엔지니어링 메뉴로 이관
 
-  // Water / Rinse
+  // Water / Rinse — 회의 피드백 v1.2: 가독성 정리 (제목 별도, 값만 단위 없이)
   fetch('/api/water-rinse').then(r => r.json()).then(function (wr) {
     ['speed','temp','amount'].forEach(function (k) {
       var w = document.querySelector('.wr-water[data-k=' + k + ']');
       var r = document.querySelector('.wr-rinse[data-k=' + k + ']');
-      if (wr.water && wr.water[k] != null && w) w.textContent = wr.water[k] + (k === 'speed' ? ' ml/s' : k === 'temp' ? '°' : ' ml');
-      if (wr.rinse && wr.rinse[k] != null && r) r.textContent = wr.rinse[k] + (k === 'speed' ? ' ml/s' : k === 'temp' ? '°' : ' ml');
+      if (wr.water && wr.water[k] != null && w) w.textContent = wr.water[k];
+      if (wr.rinse && wr.rinse[k] != null && r) r.textContent = wr.rinse[k];
     });
   });
 
-  // Boiler
+  // Boiler — 표시 + state hydrate
   fetch('/api/boiler-info').then(r => r.json()).then(function (b) {
-    if (b.tempSet != null) document.getElementById('sg-boiler-set').innerHTML = b.tempSet + '<span class="unit">°C</span>';
+    if (b.tempSet != null) {
+      window.IRState.setSetting('boilerTemp', b.tempSet);
+      document.getElementById('sg-boiler-set').innerHTML = b.tempSet + '<span class="unit">°C</span>';
+    }
     if (b.tempMax != null) document.getElementById('sg-boiler-cur').innerHTML = b.tempMax + '<span class="unit">°C</span>';
   });
 
-  // Save
-  document.getElementById('btn-save-settings')?.addEventListener('click', function () {
+  // ─── 회의 v1.1 / 5/24 §10.5: 설정값 직접 편집 picker ──────────────
+  // 클릭 → 입력 모달 (min/max validation 메시지 포함)
+  function openValuePicker(btn) {
+    var key  = btn.dataset.pick;
+    var label = btn.dataset.label || key;
+    var unit = btn.dataset.unit || '';
+    var min  = btn.dataset.min  != null ? parseFloat(btn.dataset.min)  : null;
+    var max  = btn.dataset.max  != null ? parseFloat(btn.dataset.max)  : null;
+    var opts = btn.dataset.options ? btn.dataset.options.split(',') : null;
+
+    var current = (btn.textContent || '').replace(/[^0-9.:]/g, '');
+    var modal   = document.getElementById('ir-modal');
+    var overlay = document.getElementById('ir-modal-overlay');
+    var title   = document.getElementById('ir-modal-title');
+    var body    = document.getElementById('ir-modal-body');
+    var actions = document.getElementById('ir-modal-actions');
+
+    title.textContent = label;
+    // 시안 매칭: 다른 모달과 일관된 톤 — 알림형 default 색·가운데 정렬
+    // (picker 도 본질은 알림+선택. is-info 의 좌측 정렬·검은색은 큰 폼 모달용)
+    body.className = 'ir-modal-body';
+    body.style.padding = '14px 18px 8px';
+    body.style.gap = '8px';
+
+    if (opts) {
+      // 옵션 그리드 — 드립퍼 picker 와 동일 컴포넌트 (.drp-i) 재사용
+      var rangeOpts = '<div class="picker-range-hint">선택지: ' + opts.length + '개</div>';
+      body.innerHTML = rangeOpts +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:320px;">' +
+        opts.map(function (o) {
+          var on = o === current.trim() ? ' is-on' : '';
+          return '<button class="drp-i' + on + '" data-v="' + o + '">' + o + '</button>';
+        }).join('') + '</div>';
+    } else {
+      // 숫자 input + 범위 안내. 다른 모달 본문 폰트(14px)와 일관.
+      // input 은 본문 폰트 1.4배(20px)로 — 너무 크지 않게.
+      var rangeText = (min != null && max != null) ? '범위 ' + min + ' ~ ' + max + (unit ? ' ' + unit : '') : '';
+      body.innerHTML =
+        (rangeText ? '<div class="picker-range-hint">' + rangeText + '</div>' : '') +
+        '<div class="picker-input-row">' +
+          '<input type="number" id="val-input" value="' + current + '"' +
+            (min != null ? ' min="' + min + '"' : '') +
+            (max != null ? ' max="' + max + '"' : '') +
+            ' class="picker-input">' +
+          (unit ? '<span class="picker-unit">' + unit + '</span>' : '') +
+        '</div>' +
+        '<span id="val-err" class="picker-err"></span>';
+    }
+
+    actions.innerHTML = '';
+    var btnCancel = document.createElement('button');
+    btnCancel.className = 'ir-modal-btn';
+    btnCancel.textContent = '취소';
+    btnCancel.onclick = function () {
+      overlay.classList.remove('is-open');
+      body.style.cssText = '';
+    };
+
+    if (opts) {
+      body.querySelectorAll('.drp-i').forEach(function (b) {
+        b.addEventListener('click', function () {
+          btn.innerHTML = b.dataset.v;
+          window.IRState.setSetting(key, b.dataset.v);
+          overlay.classList.remove('is-open');
+          body.style.cssText = '';
+          window.IRToast?.show(label + ' = ' + b.dataset.v);
+        });
+      });
+      actions.appendChild(btnCancel);
+    } else {
+      var btnOk = document.createElement('button');
+      btnOk.className = 'ir-modal-btn is-primary';
+      btnOk.textContent = '저장';
+      btnOk.onclick = function () {
+        var v = parseFloat(document.getElementById('val-input').value);
+        var err = document.getElementById('val-err');
+        if (isNaN(v)) { err.textContent = '숫자를 입력해 주세요.'; return; }
+        if (max != null && v > max) { err.textContent = label + ' 최댓값은 ' + max + ' ' + unit + ' 입니다'; return; }
+        if (min != null && v < min) { err.textContent = label + ' 최솟값은 ' + min + ' ' + unit + ' 입니다'; return; }
+        btn.innerHTML = v + (unit ? '<span class="unit">' + unit + '</span>' : '');
+        window.IRState.setSetting(key, v);
+        overlay.classList.remove('is-open');
+        body.style.cssText = '';
+        window.IRToast?.show(label + ' = ' + v + ' ' + unit);
+      };
+      actions.appendChild(btnOk);
+      actions.appendChild(btnCancel);
+      setTimeout(function () { document.getElementById('val-input').select(); }, 50);
+    }
+    overlay.classList.add('is-open');
+  }
+  // 모든 cr-pick 버튼에 바인딩 (드립퍼 picker 는 기존 핸들러 우선 — id 'sg-dripper'는 이 위 위 ABOVE 핸들러)
+  document.querySelectorAll('.cr-pick[data-pick]').forEach(function (b) {
+    b.addEventListener('click', function () { openValuePicker(b); });
+  });
+
+  // Save — settings-shell 의 [data-ir-save] 셀렉터로 통일
+  document.querySelector('[data-ir-save]')?.addEventListener('click', function () {
     window.IRModal?.confirm({
       title: '설정 저장',
       body: '변경된 설정값을 저장하시겠습니까?',
+      ok: '저장',
       onOk: function () { window.IRModal.info({ body: '설정이 저장되었습니다.' }); }
     });
   });
@@ -381,11 +598,14 @@
 
     </main>
 
-    <nav class="nav">
-  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
-  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
-  <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
-  <a class="nav-item " href="/irhea-design-2/info">정보</a>
+    <!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
+<nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item " href="/irhea-design-2/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item " href="/irhea-design-2/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item " href="/irhea-design-2/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item active" href="/irhea-design-2/settings/general" data-i18n="nav.settings">설정</a>
 </nav>
 
   </div>
@@ -415,16 +635,33 @@
 
 <script>
 (function () {
-  // Standard preset alerts — name, body, buttons[], optional class
+  // Standard preset alerts — wireframe v6.0 9.2 + FLOW.3 팝업 12종(4종 신규) 매핑
+  // 회의 §14: O/X → 직관 텍스트. v1.1 신규는 P-RECIPE-*, P-WIFI-*, P-SERIAL-*.
   var PRESETS = {
-    'alert-password-error':     { body: '암호 오류',                                       bodyClass: 'is-error', buttons: [{ label: 'X' }] },
-    'alert-extract-press':      { body: '추출 진행<br>추출구의 버튼을 눌러주세요',         buttons: [{ label: 'X' }] },
-    'alert-shutdown':           { body: '장비를 종료합니다.<br>기다려 주세요',             buttons: [] },
-    'alert-shutdown-done':      { body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',        buttons: [{ label: '확인', primary: true }] },
-    'confirm-firmware':         { body: '펌웨어를 업그레이드 합니다.',                      buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-change':{ body: '장치 연결 설정을 변경 합니다.',                    buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-fail':  { body: '연결 실패<br>재시도?',                              bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-irreversible':     { body: '복구불가<br>진행하시겠습니까?',                    bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] }
+    // ─ v0.9 명세 원본 (image2/5/7/9/11/23/24/26/27) ─
+    'alert-password-error':     { title: '암호 오류',           body: '암호 오류<br><span style="font-size:11px;color:#666;">5회 실패 시 10분 잠금</span>', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-extract-press':      { title: '추출 진행',           body: '추출 진행<br>추출구의 버튼을 눌러주세요', buttons: [{ label: '닫기' }] },
+    'alert-shutdown':           { title: '알림',                body: '장비를 종료합니다.<br>기다려 주세요', buttons: [] },
+    'alert-shutdown-done':      { title: '알림',                body: '장비 종료 완료<br>전원 스위치를 꺼주세요.', buttons: [{ label: '확인', primary: true }] },
+    'confirm-firmware':         { title: '펌웨어 업그레이드',    body: '펌웨어를 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-change':{ title: '장치 연결 변경',       body: '장치 연결 설정을 변경 합니다.', buttons: [{ label: '변경', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-fail':  { title: '연결 실패',            body: '연결 실패<br>재시도하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '재검색', value: 'cancel' }] },
+    'confirm-irreversible':     { title: '복구불가',             body: '복구불가<br>진행하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+
+    // ─ v1.1 신규 (FLOW.3 12종 중 4종) ─
+    'alert-wifi-fail':          { title: 'WiFi 인증 실패',       body: '잘못된 비밀번호입니다.<br>PW를 다시 입력해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-serial-mismatch':    { title: '시리얼 불일치',         body: '시리얼 매칭 실패.<br>장비 시리얼 번호를 다시 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'confirm-recipe-validate-1':{ title: 'Stage 합계 불일치',     body: '스테이지 합계가 100%가 아닙니다.<br>자동 보정하시겠습니까?', buttons: [{ label: '자동 보정', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'alert-recipe-validate-2':  { title: '유속 한계 초과',        body: '유속이 펌프 한계를 초과합니다.<br>최대값으로 조정 후 저장합니다.', bodyClass: 'is-error', buttons: [{ label: '최대값 적용', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'confirm-recipe-conflict':  { title: '즐겨찾기 매핑 충돌',    body: '이미 즐겨찾기에 등록된 추출구가 있습니다.<br>어떻게 할까요?', buttons: [{ label: '덮어쓰기', primary: true, value: 'overwrite' }, { label: '기존 해제', value: 'release' }, { label: '취소', value: 'cancel' }] },
+    'confirm-recipe-runtime':   { title: '추출 결과 ±20% 초과',  body: '첫 추출 결과가 목표값 대비 ±20%를 벗어납니다.<br>레시피 보정을 권장합니다.', buttons: [{ label: '보정 (편집)', primary: true, value: 'edit' }, { label: '기록만', value: 'log' }, { label: '무시', value: 'cancel' }] },
+
+    // ─ 에러 다양화 (§14 통신끊김/응답없음/장비저장실패) ─
+    'alert-comms-lost':         { title: '통신 끊김',             body: '장비와의 통신이 끊겼습니다.<br>케이블·전원·WiFi를 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-device-timeout':     { title: '응답 없음',             body: '장비가 응답하지 않습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-save-failed':        { title: '장비 저장 실패',         body: '설정 저장에 실패했습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-usb-missing':        { title: 'USB 미인식',            body: 'USB가 연결되지 않았습니다.<br>USB를 꽂은 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-usb-no-space':       { title: 'USB 용량 부족',         body: 'USB 저장 공간이 부족합니다.<br>다른 USB를 사용해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] }
   };
 
   function el(id) { return document.getElementById(id); }
@@ -471,10 +708,10 @@
       });
     },
     confirm: function (opts) {
-      // opts: { title, body, bodyClass, ok = 'O', cancel = 'X', onOk, onCancel }
+      // opts: { title, body, bodyClass, ok = '확인', cancel = '취소', onOk, onCancel }
       var buttons = [
-        { label: opts.ok || 'O', primary: true, value: 'ok' },
-        { label: opts.cancel || 'X', value: 'cancel' }
+        { label: opts.ok || '확인', primary: true, value: 'ok' },
+        { label: opts.cancel || '취소', value: 'cancel' }
       ];
       openWith({
         title: opts.title || '알림',
@@ -570,23 +807,6 @@
 })();
 </script>
 
-
-  <!-- Shared fitscreen script for 1280x800 target -->
-  <script>
-    (function() {
-      const W = 1280, H = 800;
-      function fit() {
-        const sw = window.innerWidth / W;
-        const sh = window.innerHeight / H;
-        const s = Math.min(sw, sh);
-        // Only scale down if viewport is smaller, or scale to fit
-        document.body.style.transform = 'scale(' + s + ')';
-        document.body.style.transformOrigin = 'center center';
-      }
-      window.addEventListener('resize', fit);
-      fit();
-    })();
-  </script>
 
 </body>
 </html>

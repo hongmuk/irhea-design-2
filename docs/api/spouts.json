@@ -10,7 +10,10 @@
     "totalSec": 360,
     "extractCount": 1247,
     "progressPct": 39,
-    "favoriteRecipeIds": [3, 5, 1, 4, 8, 3],
+    "stageIdx": 2,
+    "stageTotal": 5,
+    "favoriteRecipeIds": [3, 5, 1, 4, 8],
+    "manualQueue": [5, 1, 3],
     "totalBrews": 1247,
     "calibration": { "pumpGain1": 1.000, "pumpGain2": 1.012, "pumpGain3": 0.998, "pumpGain4": 1.005, "pumpGain5": 0.995 }
   },
@@ -25,7 +28,8 @@
     "totalSec": 318,
     "extractCount": 985,
     "progressPct": 100,
-    "favoriteRecipeIds": [5, 8, 1, 7, 6, 12],
+    "favoriteRecipeIds": [5, 8, 1, 7, 6],
+    "manualQueue": [],
     "totalBrews": 985,
     "calibration": { "pumpGain1": 1.002, "pumpGain2": 1.008, "pumpGain3": 1.001, "pumpGain4": 0.997, "pumpGain5": 1.003 }
   },
@@ -40,7 +44,8 @@
     "totalSec": 12,
     "extractCount": 1102,
     "progressPct": 50,
-    "favoriteRecipeIds": [1, 5, 7, 1, 2, 9],
+    "favoriteRecipeIds": [1, 5, 7, 2, 9],
+    "manualQueue": [2, 7],
     "totalBrews": 1102,
     "calibration": { "pumpGain1": 0.999, "pumpGain2": 1.015, "pumpGain3": 1.003, "pumpGain4": 1.001, "pumpGain5": 0.998 }
   },
@@ -55,7 +60,8 @@
     "totalSec": 5,
     "extractCount": 876,
     "progressPct": 64,
-    "favoriteRecipeIds": [2, 4, 9, 7, 3, 10],
+    "favoriteRecipeIds": [2, 4, 9, 7, 3],
+    "manualQueue": [4, 4, 9, 3],
     "totalBrews": 876,
     "calibration": { "pumpGain1": 1.005, "pumpGain2": 0.992, "pumpGain3": 1.010, "pumpGain4": 1.002, "pumpGain5": 0.997 }
   },
@@ -70,7 +76,8 @@
     "totalSec": 420,
     "extractCount": 1340,
     "progressPct": 0,
-    "favoriteRecipeIds": [4, 5, 1, 11, 9, 11],
+    "favoriteRecipeIds": [4, 5, 1, 11, 9],
+    "manualQueue": [],
     "totalBrews": 1340,
     "calibration": { "pumpGain1": 0.998, "pumpGain2": 1.004, "pumpGain3": 1.001, "pumpGain4": 1.007, "pumpGain5": 1.000 }
   }

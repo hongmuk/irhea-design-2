@@ -14,6 +14,8 @@
 <link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
 <script src="/irhea-design-2/js/state.js"></script>
 <script src="/irhea-design-2/js/recipe-picker.js"></script>
+<script src="/irhea-design-2/js/i18n.js"></script>
+<script src="/irhea-design-2/js/error-handler.js"></script>
 
   <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
@@ -27,20 +29,26 @@
     <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
   <div class="topbar-right">
-    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
-    
-    <!-- Demo-style Language Switcher -->
-    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
-      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
-      <span style="font-size:10px; opacity:0.5;">▼</span>
-    </div>
+    <!-- 홈 아이콘은 사이드바로 이관 (회의 피드백: 다른 메뉴는 다 사이드바인데 홈만 위에 있으면 위화감) -->
 
+    <!-- 언어 토글 — 회의 피드백 v1.2: 실제 작동하도록 (i18n.js 연동) -->
+    <button class="tb-lang-wrap" id="tb-lang-btn" type="button" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:8px 12px; min-height:var(--tap-min); border-radius:var(--radius-sm); cursor:pointer; background:transparent; font-family:inherit;">
+      <span id="tb-lang-label" style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size: clamp(11.5px, 1vw + 7px, 14px); opacity:0.5;">▼</span>
+    </button>
+
+    <span class="tb-sep"></span>
+    <!-- v1.1 S2.1.2 — 메인 헤더 보강: 클라우드 접속 / 총 추출 / 타임존 -->
+    <span class="tb-stat" id="top-cloud" title="AWS 클라우드 접속 상태"><span class="tb-cloud-ico">📡</span><span class="tb-val">클라우드</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat" id="top-totalbrew" title="설치 후 누적 추출"><span class="tb-lbl">총 추출</span><span class="tb-val" id="top-totalbrew-val">—</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:2px; opacity:0.6;">회</span></span>
     <span class="tb-sep"></span>
     <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:3px; opacity:0.6;" id="top-tz">KST · UTC+9</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-live">연결됨</span>
+    <!-- 5/13 §1: 연결 정상 = 초록, 오류 = 빨강 -->
+    <span class="tb-live tb-live-ok" id="top-live"><span class="tb-live-dot"></span>연결됨</span>
     <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
@@ -62,22 +70,36 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // v1.1 S2.1.2 — 총 추출 합 (spouts.extractCount 누적)
+    function updateTotalBrew() {
+      fetch('/api/spouts').then(function (r) { return r.json(); }).then(function (sps) {
+        var total = (sps || []).reduce(function (s, sp) { return s + (sp.extractCount || 0); }, 0);
+        var el = document.getElementById('top-totalbrew-val');
+        if (el) el.textContent = total.toLocaleString();
+      }).catch(function () {});
+    }
+    setInterval(updateTotalBrew, 5000);
+    updateTotalBrew();
+
     document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
       // Shutdown flow per designs/02-shutdown-progress.html → 02-shutdown-complete.html.
       // STEP1: progress modal (blocking, no buttons) → STEP2: complete modal.
       if (!window.IRModal) return;
       window.IRModal.confirm({
-        title: '알림',
+        title: '장비 종료',
         body: '장비를 종료하시겠습니까?',
+        ok: '종료',
         onOk: function () {
-          // STEP1: progress (blocking 2.5s)
+          // STEP1: 종료 진행 (블로킹 2.5s)
           window.IRModal.info({
+            title: '장비 종료 진행 중',
             body: '<span class="ir-modal-ico">⏳</span>장비를 종료합니다.<br>기다려 주세요',
             buttons: []
           });
           setTimeout(function () {
-            // STEP2: complete (no buttons, waiting for physical power off)
+            // STEP2: 완료 (버튼 없음 — 물리 스위치 OFF 대기)
             window.IRModal.info({
+              title: '종료 완료',
               body: '장비 종료 완료<br>전원 스위치를 꺼<br>주세요.',
               buttons: []
             });
@@ -86,11 +108,18 @@
       });
     });
 
-    // Simple language toggle simulation
-    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
-       const lang = this.querySelector('span').textContent;
-       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
-       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    // 언어 토글 — i18n.js 와 연동 (회의 피드백 v1.2)
+    function syncLangLabel() {
+      var label = document.getElementById('tb-lang-label');
+      if (label && window.IRI18n) label.textContent = window.IRI18n.lang.toUpperCase();
+    }
+    syncLangLabel();
+    document.getElementById('tb-lang-btn')?.addEventListener('click', function () {
+      if (!window.IRI18n) return;
+      var next = window.IRI18n.lang === 'ko' ? 'en' : 'ko';
+      window.IRI18n.set(next);
+      syncLangLabel();
+      window.IRToast?.show(next === 'ko' ? '한국어로 변경되었습니다.' : 'Changed to English.');
     });
   })();
 </script>
@@ -99,19 +128,24 @@
     <main class="viewport-main" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
       <!-- 즐겨찾기 (S7.1) — designs/02-favorites.html 정합. Topbar는 layout.ejs. -->
 
+<!-- 즐겨찾기 — 회의 피드백 v1.2:
+     • 추출구당 2 슬롯 → 5 슬롯
+     • A/B 라벨 + 좌우 스왑 제거 (추출구별 고정 매핑)
+     • 별표 통일 (★ 만 사용)
+     • 슬롯에 원두 무게·비율·추출량 정보 표시
+     • "PORT-01" 라벨 제거 -->
 <div class="sub-h">
   <div class="sub-h-l">
-    <div class="sub-h-title">즐겨찾기 편집<em>S7.1 · 5 추출구 × 2 슬롯 = 10 슬롯</em></div>
-    <span class="sub-h-pill">v1.1 — 추출구당 2 슬롯</span>
+    <div class="sub-h-title">즐겨찾기 편집<em>추출구당 최대 5 슬롯</em></div>
   </div>
   <div class="sub-h-r">
-    <button class="sh-btn ghost" onclick="history.back()">취소</button>
+    <button class="sh-btn ghost" id="fav-cancel" type="button">취소</button>
     <button class="sh-btn primary" id="fav-save">저장</button>
   </div>
 </div>
 
 <div class="fav-body">
-  <!-- Left: 12 recipes with registration count -->
+  <!-- Left: 레시피 풀 + 등록 현황 -->
   <aside class="fav-col fav-left">
     <div class="col-h">
       <span>레시피 <b id="fav-total">--</b></span>
@@ -120,92 +154,242 @@
     <div id="fav-rail" class="fav-rail"></div>
   </aside>
 
-  <!-- Right: 5 ports × 2 slots -->
+  <!-- Right: 5 추출구 × 5 슬롯 -->
   <section class="fav-col">
     <div class="ports">
       
       <div class="port" data-spout="1">
-        <div class="port-h">추출구 1 <span class="port-id">PORT-01</span></div>
+        <div class="port-h">추출구 1</div>
         <div class="port-body">
-          <div class="slot a" data-slot="A">
-            <div class="slot-h"><span>★ 슬롯 A</span><span class="slot-action">1초 = 추출</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="0">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
-          <div class="slot-swap" title="A ↔ B 스왑">↑↓ A ↔ B</div>
-          <div class="slot b" data-slot="B">
-            <div class="slot-h"><span>☆ 슬롯 B</span><span class="slot-action">탭 전환</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="1">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
+          
+          <div class="slot empty" data-slot="2">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="3">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="4">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
         </div>
       </div>
       
       <div class="port" data-spout="2">
-        <div class="port-h">추출구 2 <span class="port-id">PORT-02</span></div>
+        <div class="port-h">추출구 2</div>
         <div class="port-body">
-          <div class="slot a" data-slot="A">
-            <div class="slot-h"><span>★ 슬롯 A</span><span class="slot-action">1초 = 추출</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="0">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
-          <div class="slot-swap" title="A ↔ B 스왑">↑↓ A ↔ B</div>
-          <div class="slot b" data-slot="B">
-            <div class="slot-h"><span>☆ 슬롯 B</span><span class="slot-action">탭 전환</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="1">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
+          
+          <div class="slot empty" data-slot="2">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="3">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="4">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
         </div>
       </div>
       
       <div class="port" data-spout="3">
-        <div class="port-h">추출구 3 <span class="port-id">PORT-03</span></div>
+        <div class="port-h">추출구 3</div>
         <div class="port-body">
-          <div class="slot a" data-slot="A">
-            <div class="slot-h"><span>★ 슬롯 A</span><span class="slot-action">1초 = 추출</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="0">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
-          <div class="slot-swap" title="A ↔ B 스왑">↑↓ A ↔ B</div>
-          <div class="slot b" data-slot="B">
-            <div class="slot-h"><span>☆ 슬롯 B</span><span class="slot-action">탭 전환</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="1">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
+          
+          <div class="slot empty" data-slot="2">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="3">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="4">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
         </div>
       </div>
       
       <div class="port" data-spout="4">
-        <div class="port-h">추출구 4 <span class="port-id">PORT-04</span></div>
+        <div class="port-h">추출구 4</div>
         <div class="port-body">
-          <div class="slot a" data-slot="A">
-            <div class="slot-h"><span>★ 슬롯 A</span><span class="slot-action">1초 = 추출</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="0">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
-          <div class="slot-swap" title="A ↔ B 스왑">↑↓ A ↔ B</div>
-          <div class="slot b" data-slot="B">
-            <div class="slot-h"><span>☆ 슬롯 B</span><span class="slot-action">탭 전환</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="1">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
+          
+          <div class="slot empty" data-slot="2">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="3">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="4">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
         </div>
       </div>
       
       <div class="port" data-spout="5">
-        <div class="port-h">추출구 5 <span class="port-id">PORT-05</span></div>
+        <div class="port-h">추출구 5</div>
         <div class="port-body">
-          <div class="slot a" data-slot="A">
-            <div class="slot-h"><span>★ 슬롯 A</span><span class="slot-action">1초 = 추출</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="0">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
-          <div class="slot-swap" title="A ↔ B 스왑">↑↓ A ↔ B</div>
-          <div class="slot b" data-slot="B">
-            <div class="slot-h"><span>☆ 슬롯 B</span><span class="slot-action">탭 전환</span></div>
-            <div class="slot-recipe">—</div>
-            <div class="slot-meta">—</div>
+          
+          <div class="slot empty" data-slot="1">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
           </div>
+          
+          <div class="slot empty" data-slot="2">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="3">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
+          <div class="slot empty" data-slot="4">
+            <div class="slot-mark">★</div>
+            <div class="slot-content">
+              <div class="slot-recipe">비어 있음</div>
+              <div class="slot-meta">탭하여 레시피 선택</div>
+            </div>
+          </div>
+          
         </div>
       </div>
       
@@ -213,63 +397,100 @@
   </section>
 </div>
 
-<!-- Info bar -->
+<!-- Info bar — 회의 피드백 따라 단순화 -->
 <div class="fav-info-bar">
-  <span><span class="star">★</span> = <b>1초 클릭 추출</b> · ☆ = <b>탭 전환</b> · 빈 슬롯 = 탭 → 12 레시피 모달 · 매뉴얼 큐와 별개</span>
+  <span>각 슬롯을 탭하면 레시피 선택 모달이 뜹니다. 비우려면 모달에서 [비우기] 선택.</span>
   <button class="fav-reset" id="fav-reset-all">↺ 전체 해제</button>
 </div>
 
 <style>
   /* favorites — designs/02-favorites.html 정합 */
-  .sub-h { height: 52px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; gap: 16px; background: var(--bg); }
+  /* 10인치 — 터치 영역(min-h 36) 유지, 폰트는 합리적 */
+  .sub-h { height: 48px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; gap: 16px; background: var(--bg); }
   .sub-h-l { display: inline-flex; align-items: baseline; gap: 14px; }
-  .sub-h-title { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; }
+  .sub-h-title { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .sub-h-title em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
-  .sub-h-pill { font-size: 10.5px; padding: 3px 9px; border: 1px solid var(--brand); color: var(--brand); font-weight: 600; letter-spacing: 0.3px; background: var(--brand-dim); }
+  .sub-h-pill { font-size: clamp(11.5px, 1vw + 7px, 14px); padding: 3px 9px; border: 1px solid var(--brand); color: var(--brand); font-weight: 700; letter-spacing: 0.3px; background: var(--brand-dim); }
   .sub-h-r { display: inline-flex; gap: 8px; }
-  .sh-btn { font-size: 12px; padding: 8px 16px; font-weight: 600; cursor: pointer; line-height: 1; transition: all 0.15s; font-family: inherit; border: none; }
+  .sh-btn { font-size: 12.5px; padding: 8px 18px; font-weight: 700; cursor: pointer; line-height: 1; transition: all 0.15s; font-family: inherit; border: none; min-height: 36px; }
   .sh-btn.ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--hair-2); }
   .sh-btn.ghost:hover { border-color: var(--ink); color: var(--ink); }
   .sh-btn.primary { background: var(--brand); color: #FFF; border: 1px solid var(--brand); }
   .sh-btn.primary:hover { background: #C8000F; border-color: #C8000F; }
 
   .fav-body { flex: 1; display: grid; grid-template-columns: 260px 1fr; min-height: 0; }
+  @media (max-width: 900px) { .fav-body { grid-template-columns: 200px 1fr; } }
   .fav-col { display: flex; flex-direction: column; min-height: 0; }
   .fav-left { border-right: 1px solid var(--hair); }
-  .col-h { padding: 10px 16px; font-size: 11px; color: var(--ink-3); font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; }
-  .col-h b { color: var(--ink); font-weight: 600; }
+  .col-h { padding: 10px 16px; font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; }
+  .col-h b { color: var(--ink); font-weight: 700; }
   .fav-rail { flex: 1; overflow-y: auto; }
-  .rl-i { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--hair); font-size: 12.5px; position: relative; cursor: pointer; }
+  /* 빈 상태 */
+  .rl-empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 36px 16px; gap: 6px; color: var(--ink-3);
+    text-align: center;
+  }
+  .rl-empty-ico { font-size: 30px; opacity: 0.4; margin-bottom: 4px; }
+  .rl-empty-msg { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+  .rl-empty-sub { font-size: 11.5px; color: var(--ink-3); }
+
+  /* 리스트 행 — min-height 40 (터치), 폰트는 12.5 */
+  .rl-i { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--hair); font-size: 12.5px; position: relative; cursor: pointer; min-height: 40px; }
   .rl-i:hover { background: #FAFAFA; }
   .rl-i.unset { color: var(--ink-3); }
   .rl-i.highlight { background: var(--brand-dim); }
   .rl-i.highlight::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--brand); }
-  .rl-name { flex: 1; font-weight: 500; letter-spacing: -0.1px; }
-  .rl-i.highlight .rl-name { font-weight: 600; color: var(--ink); }
-  .rl-count { font-size: 11px; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; letter-spacing: 0.2px; }
+  .rl-name { flex: 1; font-weight: 600; letter-spacing: -0.1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rl-i.highlight .rl-name { font-weight: 700; color: var(--ink); }
+  .rl-count { font-size: 11px; font-weight: 700; color: var(--ink-3); font-variant-numeric: tabular-nums; letter-spacing: 0.2px; }
   .rl-count .star { color: var(--brand); }
   .rl-count .moon { color: var(--ink-2); }
 
-  .ports { padding: 18px 18px 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; flex: 1; min-height: 0; }
+  .ports { padding: 16px 16px 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; flex: 1; min-height: 0; }
+  @media (max-width: 1100px) { .ports { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px)  { .ports { grid-template-columns: repeat(2, 1fr); } }
   .port { display: flex; flex-direction: column; border: 1px solid var(--hair); background: var(--bg); overflow: hidden; min-height: 0; }
-  .port-h { padding: 8px 12px; background: var(--ink); color: #FFF; font-size: 12px; font-weight: 600; letter-spacing: -0.1px; display: flex; align-items: center; justify-content: space-between; }
-  .port-h .port-id { font-size: 10px; opacity: 0.5; font-weight: 500; letter-spacing: 0.5px; }
-  .port-body { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+  /* 추출구 헤더 — inverted block 대신 카드 시스템과 통일: 화이트 + ink + 좌측 골드 hairline */
+  .port-h { padding: 10px 12px 10px 16px; background: var(--bg); color: var(--ink); font-size: 12.5px; font-weight: 700; letter-spacing: -0.1px; text-align: left; border-bottom: 1px solid var(--hair); border-left: 4px solid var(--gold); }
+  .port-body { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 0; overflow-y: auto; }
 
-  .slot { padding: 10px 11px; border: 1px solid var(--hair); display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: all 0.15s; }
-  .slot:hover { border-color: var(--ink-3); }
-  .slot.a { border: 2px solid var(--brand); background: linear-gradient(180deg, #FFFAFA 0%, var(--bg) 100%); }
-  .slot.b { border: 1px solid var(--hair-2); background: #FAFAFA; }
-  .slot.empty { border-style: dashed; background: transparent; color: var(--ink-3); align-items: center; justify-content: center; min-height: 60px; }
-  .slot-h { display: flex; align-items: baseline; justify-content: space-between; font-size: 10.5px; letter-spacing: 0.4px; font-weight: 600; }
-  .slot.a .slot-h { color: var(--brand); }
-  .slot.b .slot-h { color: var(--ink-3); }
-  .slot-action { font-size: 8.5px; opacity: 0.7; }
-  .slot-recipe { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.2px; line-height: 1.2; }
-  .slot.b .slot-recipe { font-weight: 600; color: var(--ink-2); }
-  .slot-meta { font-size: 10px; color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px; }
-  .slot-swap { display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--ink-3); padding: 1px 0; cursor: pointer; letter-spacing: 0.5px; }
-  .slot-swap:hover { color: var(--brand); }
+  /* 5 슬롯 컴팩트 (회의 피드백 v1.2: abc 라벨 제거, 별표 통일) */
+  .slot {
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 8px;
+    border: 1px solid var(--hair);
+    background: var(--bg);
+    cursor: pointer; transition: all 0.15s;
+    min-height: 50px;
+  }
+  .slot:hover { border-color: var(--ink-2); background: #FAFAFA; }
+  .slot.is-filled { border-color: var(--hair-2); background: #FFFDF7; }
+  .slot.is-filled:hover { border-color: var(--brand); }
+  .slot.empty {
+    border-style: dashed;
+    background: transparent;
+    color: var(--ink-3);
+  }
+  .slot-mark {
+    flex-shrink: 0;
+    font-size: 14px; line-height: 1; color: rgba(0,0,0,0.15);
+    transition: color 0.15s;
+  }
+  .slot.is-filled .slot-mark { color: #C28200; }
+  .slot-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  /* 위계: 레시피명(검정 굵게) + 메타(회색 작게) */
+  .slot-recipe {
+    font-size: 12.5px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px;
+    line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .slot.empty .slot-recipe { color: var(--ink-3); font-weight: 500; font-style: italic; }
+  .slot-meta {
+    font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; letter-spacing: -0.1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .slot.is-filled .slot-meta b { color: var(--ink); font-weight: 700; }
 
   .fav-info-bar { padding: 10px 24px; border-top: 1px solid var(--hair); background: #FCFCFC; display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; color: var(--ink-3); flex-shrink: 0; gap: 16px; }
   .fav-info-bar b { color: var(--ink-2); font-weight: 600; }
@@ -282,62 +503,77 @@
 (function () {
   var recipes = [];
   var spouts = [];
+  var FAV_SLOTS = 5;
 
   function render() {
     var fav = window.IRState.getFavorites(spouts);
 
-    // Build mapping: recipeId -> { a, b }
+    // Build mapping: recipeId -> 등록 카운트 (어느 슬롯이든 합산)
     var map = {};
-    recipes.forEach(function (r) { map[r.id] = { a: 0, b: 0 }; });
+    recipes.forEach(function (r) { map[r.id] = 0; });
     Object.keys(fav).forEach(function (sid) {
       var ids = fav[sid] || [];
-      if (ids[0] != null && map[ids[0]]) map[ids[0]].a += 1;
-      if (ids[1] != null && map[ids[1]]) map[ids[1]].b += 1;
+      ids.forEach(function (rid) {
+        if (rid != null && map[rid] != null) map[rid] += 1;
+      });
     });
 
     // Left rail
     var rail = document.getElementById('fav-rail');
     var reg = 0, unreg = 0;
-    var html = recipes.map(function (r) {
-      var m = map[r.id] || { a: 0, b: 0 };
-      var registered = (m.a + m.b) > 0;
-      if (registered) reg += 1; else unreg += 1;
-      var countParts = [];
-      if (m.a) countParts.push('<span class="star">★</span> ×' + m.a);
-      if (m.b) countParts.push('<span class="moon">☆</span> ×' + m.b);
-      var countHtml = registered ? countParts.join(' ') : '미등록';
-      var cls = 'rl-i' + (registered ? '' : ' unset');
-      return '<div class="' + cls + '" data-rid="' + r.id + '">' +
-             '<span class="rl-name">레시피 ' + r.id + '</span>' +
-             '<span class="rl-count">' + countHtml + '</span></div>';
-    }).join('');
+    var html;
+    if (recipes.length === 0) {
+      html = '<div class="rl-empty"><span class="rl-empty-ico">☕</span>' +
+             '<span class="rl-empty-msg">레시피가 없습니다</span>' +
+             '<span class="rl-empty-sub">먼저 <a href="/irhea-design-2/recipes" style="color:var(--brand);text-decoration:underline;">레시피</a>를 추가하세요</span></div>';
+    } else {
+      html = recipes.map(function (r) {
+        var count = map[r.id] || 0;
+        var registered = count > 0;
+        if (registered) reg += 1; else unreg += 1;
+        var countHtml = registered
+          ? '<span class="star">★</span> ×' + count
+          : '미등록';
+        var cls = 'rl-i' + (registered ? '' : ' unset');
+        var displayName = r.name || ('레시피 ' + r.id);
+        return '<div class="' + cls + '" data-rid="' + r.id + '" title="' + displayName.replace(/"/g, '&quot;') + '">' +
+               '<span class="rl-name">' + displayName + '</span>' +
+               '<span class="rl-count">' + countHtml + '</span></div>';
+      }).join('');
+    }
     rail.innerHTML = html;
     document.getElementById('fav-total').textContent = recipes.length;
     document.getElementById('fav-reg').textContent = reg;
     document.getElementById('fav-unreg').textContent = unreg;
 
-    // Slots
+    // Slots — 추출구당 5개
     spouts.forEach(function (s) {
       var port = document.querySelector('.port[data-spout="' + s.id + '"]');
       if (!port) return;
       var ids = fav[s.id] || [];
       var slots = port.querySelectorAll('.slot');
-      [0, 1].forEach(function (idx) {
+      for (var idx = 0; idx < FAV_SLOTS; idx++) {
         var slot = slots[idx];
+        if (!slot) continue;
         var rid = ids[idx];
-        var r = rid != null ? recipes.find(x => x.id === rid) : null;
-        if (!slot) return;
-        slot.classList.remove('empty');
+        var r = rid != null ? recipes.find(function (x) { return x.id === rid; }) : null;
+        var recipeEl = slot.querySelector('.slot-recipe');
+        var metaEl = slot.querySelector('.slot-meta');
+        slot.classList.remove('empty', 'is-filled');
         if (r) {
-          slot.querySelector('.slot-recipe').textContent = '레시피 ' + r.id;
-          slot.querySelector('.slot-meta').textContent =
-            '원두 ' + r.id + ' · ' + (r.ratio || '--');
+          slot.classList.add('is-filled');
+          recipeEl.textContent = r.name || ('레시피 ' + r.id);
+          // 회의 피드백: 원두 무게 · 비율 · 추출 전체 무게
+          metaEl.innerHTML =
+            '<b>' + (r.coffeeWeight || '--') + 'g</b> · ' +
+            '<b>' + (r.ratio || '--') + '</b> · ' +
+            '<b>' + (r.waterWeight || '--') + 'g</b>';
         } else {
           slot.classList.add('empty');
-          slot.querySelector('.slot-recipe').textContent = '비어 있음';
-          slot.querySelector('.slot-meta').textContent = '탭하여 레시피 선택';
+          recipeEl.textContent = '비어 있음';
+          metaEl.textContent = '탭하여 레시피 선택';
         }
-      });
+      }
     });
   }
 
@@ -346,8 +582,8 @@
       sl.addEventListener('click', function () {
         var port = sl.closest('.port');
         var spoutId = parseInt(port.dataset.spout, 10);
-        var slotLabel = sl.dataset.slot;
-        var slotIdx = slotLabel === 'A' ? 0 : 1;
+        var slotIdx = parseInt(sl.dataset.slot, 10);
+        var slotLabel = String(slotIdx + 1);
         var fav = window.IRState.getFavorites(spouts);
         var currentId = (fav[spoutId] || [])[slotIdx];
         window.IRRecipePicker.open({
@@ -364,16 +600,15 @@
     });
   }
 
-  function bindSwaps() {
-    document.querySelectorAll('.slot-swap').forEach(function (sw) {
-      sw.addEventListener('click', function () {
-        var port = sw.closest('.port');
-        var spoutId = parseInt(port.dataset.spout, 10);
-        window.IRState.swapFavorites(spoutId);
-        window.IRToast?.show('추출구 ' + spoutId + ' · A ↔ B 스왑');
-        render();
-      });
-    });
+  // bindSwaps 제거 — 회의 피드백 v1.2: A↔B 스왑 개념 폐기 (추출구별 고정 매핑)
+
+  // 회의 피드백 v1.2: 변경 사항 있을 때 무조건 confirm
+  var initialSnapshot = null;
+  function snapshot() {
+    return JSON.stringify(window.IRState.getFavorites(spouts));
+  }
+  function isDirty() {
+    return initialSnapshot && snapshot() !== initialSnapshot;
   }
 
   Promise.all([
@@ -384,17 +619,47 @@
     recipes = window.IRState.applyOverlay(rcps);
     render();
     bindSlotClicks();
-    bindSwaps();
+    initialSnapshot = snapshot();
   });
 
   document.getElementById('fav-save').onclick = function () {
-    window.IRToast?.show('즐겨찾기 매핑이 저장되었습니다.');
+    if (!isDirty()) {
+      window.IRToast?.show('변경 사항이 없습니다.');
+      return;
+    }
+    // 회의 피드백: 저장 시 무조건 confirm
+    window.IRModal.confirm({
+      title: '즐겨찾기 저장',
+      body: '변경된 즐겨찾기 매핑을 저장합니다.<br>장비에도 적용됩니다.',
+      ok: '저장',
+      onOk: function () {
+        initialSnapshot = snapshot();
+        window.IRToast?.show('즐겨찾기 매핑이 저장되었습니다.');
+      }
+    });
   };
+
+  // 회의 피드백: 취소(이전) 시 변경 있으면 confirm
+  document.getElementById('fav-cancel').addEventListener('click', function () {
+    if (isDirty()) {
+      window.IRModal.confirm({
+        title: '저장하지 않은 변경 사항',
+        body: '저장하지 않은 변경 사항이 있습니다.<br>이전 화면으로 돌아가시겠습니까?',
+        bodyClass: 'is-error',
+        ok: '돌아가기',
+        cancel: '계속 편집',
+        onOk: function () { history.back(); }
+      });
+    } else {
+      history.back();
+    }
+  });
   document.getElementById('fav-reset-all').onclick = function () {
     window.IRModal?.confirm({
       title: '전체 해제',
       bodyClass: 'is-error',
       body: '모든 추출구의 즐겨찾기를 해제하시겠습니까?',
+      ok: '해제',
       onOk: function () {
         window.IRState.clearAllFavorites();
         // Re-seed empty mapping so render() shows all slots empty
@@ -409,11 +674,14 @@
 
     </main>
 
-    <nav class="nav">
-  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
-  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
-  <a class="nav-item active" href="/irhea-design-2/favorites">즐겨찾기</a>
-  <a class="nav-item " href="/irhea-design-2/info">정보</a>
+    <!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
+<nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item " href="/irhea-design-2/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item active" href="/irhea-design-2/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item " href="/irhea-design-2/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item " href="/irhea-design-2/settings/general" data-i18n="nav.settings">설정</a>
 </nav>
 
   </div>
@@ -443,16 +711,33 @@
 
 <script>
 (function () {
-  // Standard preset alerts — name, body, buttons[], optional class
+  // Standard preset alerts — wireframe v6.0 9.2 + FLOW.3 팝업 12종(4종 신규) 매핑
+  // 회의 §14: O/X → 직관 텍스트. v1.1 신규는 P-RECIPE-*, P-WIFI-*, P-SERIAL-*.
   var PRESETS = {
-    'alert-password-error':     { body: '암호 오류',                                       bodyClass: 'is-error', buttons: [{ label: 'X' }] },
-    'alert-extract-press':      { body: '추출 진행<br>추출구의 버튼을 눌러주세요',         buttons: [{ label: 'X' }] },
-    'alert-shutdown':           { body: '장비를 종료합니다.<br>기다려 주세요',             buttons: [] },
-    'alert-shutdown-done':      { body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',        buttons: [{ label: '확인', primary: true }] },
-    'confirm-firmware':         { body: '펌웨어를 업그레이드 합니다.',                      buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-change':{ body: '장치 연결 설정을 변경 합니다.',                    buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-fail':  { body: '연결 실패<br>재시도?',                              bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-irreversible':     { body: '복구불가<br>진행하시겠습니까?',                    bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] }
+    // ─ v0.9 명세 원본 (image2/5/7/9/11/23/24/26/27) ─
+    'alert-password-error':     { title: '암호 오류',           body: '암호 오류<br><span style="font-size:11px;color:#666;">5회 실패 시 10분 잠금</span>', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-extract-press':      { title: '추출 진행',           body: '추출 진행<br>추출구의 버튼을 눌러주세요', buttons: [{ label: '닫기' }] },
+    'alert-shutdown':           { title: '알림',                body: '장비를 종료합니다.<br>기다려 주세요', buttons: [] },
+    'alert-shutdown-done':      { title: '알림',                body: '장비 종료 완료<br>전원 스위치를 꺼주세요.', buttons: [{ label: '확인', primary: true }] },
+    'confirm-firmware':         { title: '펌웨어 업그레이드',    body: '펌웨어를 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-change':{ title: '장치 연결 변경',       body: '장치 연결 설정을 변경 합니다.', buttons: [{ label: '변경', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-fail':  { title: '연결 실패',            body: '연결 실패<br>재시도하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '재검색', value: 'cancel' }] },
+    'confirm-irreversible':     { title: '복구불가',             body: '복구불가<br>진행하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+
+    // ─ v1.1 신규 (FLOW.3 12종 중 4종) ─
+    'alert-wifi-fail':          { title: 'WiFi 인증 실패',       body: '잘못된 비밀번호입니다.<br>PW를 다시 입력해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-serial-mismatch':    { title: '시리얼 불일치',         body: '시리얼 매칭 실패.<br>장비 시리얼 번호를 다시 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'confirm-recipe-validate-1':{ title: 'Stage 합계 불일치',     body: '스테이지 합계가 100%가 아닙니다.<br>자동 보정하시겠습니까?', buttons: [{ label: '자동 보정', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'alert-recipe-validate-2':  { title: '유속 한계 초과',        body: '유속이 펌프 한계를 초과합니다.<br>최대값으로 조정 후 저장합니다.', bodyClass: 'is-error', buttons: [{ label: '최대값 적용', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'confirm-recipe-conflict':  { title: '즐겨찾기 매핑 충돌',    body: '이미 즐겨찾기에 등록된 추출구가 있습니다.<br>어떻게 할까요?', buttons: [{ label: '덮어쓰기', primary: true, value: 'overwrite' }, { label: '기존 해제', value: 'release' }, { label: '취소', value: 'cancel' }] },
+    'confirm-recipe-runtime':   { title: '추출 결과 ±20% 초과',  body: '첫 추출 결과가 목표값 대비 ±20%를 벗어납니다.<br>레시피 보정을 권장합니다.', buttons: [{ label: '보정 (편집)', primary: true, value: 'edit' }, { label: '기록만', value: 'log' }, { label: '무시', value: 'cancel' }] },
+
+    // ─ 에러 다양화 (§14 통신끊김/응답없음/장비저장실패) ─
+    'alert-comms-lost':         { title: '통신 끊김',             body: '장비와의 통신이 끊겼습니다.<br>케이블·전원·WiFi를 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-device-timeout':     { title: '응답 없음',             body: '장비가 응답하지 않습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-save-failed':        { title: '장비 저장 실패',         body: '설정 저장에 실패했습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-usb-missing':        { title: 'USB 미인식',            body: 'USB가 연결되지 않았습니다.<br>USB를 꽂은 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-usb-no-space':       { title: 'USB 용량 부족',         body: 'USB 저장 공간이 부족합니다.<br>다른 USB를 사용해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] }
   };
 
   function el(id) { return document.getElementById(id); }
@@ -499,10 +784,10 @@
       });
     },
     confirm: function (opts) {
-      // opts: { title, body, bodyClass, ok = 'O', cancel = 'X', onOk, onCancel }
+      // opts: { title, body, bodyClass, ok = '확인', cancel = '취소', onOk, onCancel }
       var buttons = [
-        { label: opts.ok || 'O', primary: true, value: 'ok' },
-        { label: opts.cancel || 'X', value: 'cancel' }
+        { label: opts.ok || '확인', primary: true, value: 'ok' },
+        { label: opts.cancel || '취소', value: 'cancel' }
       ];
       openWith({
         title: opts.title || '알림',
@@ -598,23 +883,6 @@
 })();
 </script>
 
-
-  <!-- Shared fitscreen script for 1280x800 target -->
-  <script>
-    (function() {
-      const W = 1280, H = 800;
-      function fit() {
-        const sw = window.innerWidth / W;
-        const sh = window.innerHeight / H;
-        const s = Math.min(sw, sh);
-        // Only scale down if viewport is smaller, or scale to fit
-        document.body.style.transform = 'scale(' + s + ')';
-        document.body.style.transformOrigin = 'center center';
-      }
-      window.addEventListener('resize', fit);
-      fit();
-    })();
-  </script>
 
 </body>
 </html>

@@ -14,6 +14,8 @@
 <link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
 <script src="/irhea-design-2/js/state.js"></script>
 <script src="/irhea-design-2/js/recipe-picker.js"></script>
+<script src="/irhea-design-2/js/i18n.js"></script>
+<script src="/irhea-design-2/js/error-handler.js"></script>
 
   <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
@@ -27,20 +29,26 @@
     <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
   </div>
   <div class="topbar-right">
-    <a href="/irhea-design-2/main" class="tb-home" style="text-decoration:none; color:inherit; font-size:18px;" title="홈 (메인)">⌂</a>
-    
-    <!-- Demo-style Language Switcher -->
-    <div class="tb-lang-wrap" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:2px 6px; border-radius:var(--radius-sm); cursor:pointer;">
-      <span style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
-      <span style="font-size:10px; opacity:0.5;">▼</span>
-    </div>
+    <!-- 홈 아이콘은 사이드바로 이관 (회의 피드백: 다른 메뉴는 다 사이드바인데 홈만 위에 있으면 위화감) -->
 
+    <!-- 언어 토글 — 회의 피드백 v1.2: 실제 작동하도록 (i18n.js 연동) -->
+    <button class="tb-lang-wrap" id="tb-lang-btn" type="button" style="display:flex; align-items:center; gap:4px; border:1px solid var(--hair-2); padding:8px 12px; min-height:var(--tap-min); border-radius:var(--radius-sm); cursor:pointer; background:transparent; font-family:inherit;">
+      <span id="tb-lang-label" style="font-weight:700; font-size:12px; color:var(--ink);">KO</span>
+      <span style="font-size: clamp(11.5px, 1vw + 7px, 14px); opacity:0.5;">▼</span>
+    </button>
+
+    <span class="tb-sep"></span>
+    <!-- v1.1 S2.1.2 — 메인 헤더 보강: 클라우드 접속 / 총 추출 / 타임존 -->
+    <span class="tb-stat" id="top-cloud" title="AWS 클라우드 접속 상태"><span class="tb-cloud-ico">📡</span><span class="tb-val">클라우드</span></span>
+    <span class="tb-sep"></span>
+    <span class="tb-stat" id="top-totalbrew" title="설치 후 누적 추출"><span class="tb-lbl">총 추출</span><span class="tb-val" id="top-totalbrew-val">—</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:2px; opacity:0.6;">회</span></span>
     <span class="tb-sep"></span>
     <span class="tb-stat"><span class="tb-lbl">Boiler</span><span class="tb-val">95.0°</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size:10px; margin-left:3px; opacity:0.6;">KST</span></span>
+    <span class="tb-stat"><span class="tb-val" id="top-clock">--:--</span><span class="tb-tz" style="font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left:3px; opacity:0.6;" id="top-tz">KST · UTC+9</span></span>
     <span class="tb-sep"></span>
-    <span class="tb-live">연결됨</span>
+    <!-- 5/13 §1: 연결 정상 = 초록, 오류 = 빨강 -->
+    <span class="tb-live tb-live-ok" id="top-live"><span class="tb-live-dot"></span>연결됨</span>
     <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18.36 6.64a9 9 0 11-12.73 0"/>
@@ -62,22 +70,36 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // v1.1 S2.1.2 — 총 추출 합 (spouts.extractCount 누적)
+    function updateTotalBrew() {
+      fetch('/api/spouts').then(function (r) { return r.json(); }).then(function (sps) {
+        var total = (sps || []).reduce(function (s, sp) { return s + (sp.extractCount || 0); }, 0);
+        var el = document.getElementById('top-totalbrew-val');
+        if (el) el.textContent = total.toLocaleString();
+      }).catch(function () {});
+    }
+    setInterval(updateTotalBrew, 5000);
+    updateTotalBrew();
+
     document.getElementById('btn-shutdown-top')?.addEventListener('click', function() {
       // Shutdown flow per designs/02-shutdown-progress.html → 02-shutdown-complete.html.
       // STEP1: progress modal (blocking, no buttons) → STEP2: complete modal.
       if (!window.IRModal) return;
       window.IRModal.confirm({
-        title: '알림',
+        title: '장비 종료',
         body: '장비를 종료하시겠습니까?',
+        ok: '종료',
         onOk: function () {
-          // STEP1: progress (blocking 2.5s)
+          // STEP1: 종료 진행 (블로킹 2.5s)
           window.IRModal.info({
+            title: '장비 종료 진행 중',
             body: '<span class="ir-modal-ico">⏳</span>장비를 종료합니다.<br>기다려 주세요',
             buttons: []
           });
           setTimeout(function () {
-            // STEP2: complete (no buttons, waiting for physical power off)
+            // STEP2: 완료 (버튼 없음 — 물리 스위치 OFF 대기)
             window.IRModal.info({
+              title: '종료 완료',
               body: '장비 종료 완료<br>전원 스위치를 꺼<br>주세요.',
               buttons: []
             });
@@ -86,11 +108,18 @@
       });
     });
 
-    // Simple language toggle simulation
-    document.querySelector('.tb-lang-wrap')?.addEventListener('click', function() {
-       const lang = this.querySelector('span').textContent;
-       this.querySelector('span').textContent = (lang === 'KO' ? 'EN' : 'KO');
-       window.IRToast?.show((lang === 'KO' ? 'English' : '한국어') + '로 변경되었습니다.');
+    // 언어 토글 — i18n.js 와 연동 (회의 피드백 v1.2)
+    function syncLangLabel() {
+      var label = document.getElementById('tb-lang-label');
+      if (label && window.IRI18n) label.textContent = window.IRI18n.lang.toUpperCase();
+    }
+    syncLangLabel();
+    document.getElementById('tb-lang-btn')?.addEventListener('click', function () {
+      if (!window.IRI18n) return;
+      var next = window.IRI18n.lang === 'ko' ? 'en' : 'ko';
+      window.IRI18n.set(next);
+      syncLangLabel();
+      window.IRToast?.show(next === 'ko' ? '한국어로 변경되었습니다.' : 'Changed to English.');
     });
   })();
 </script>
@@ -116,14 +145,14 @@
           <path d="M30,18 C35,18 35,26 30,26" fill="none" stroke="var(--ir-orange)" stroke-width="2"/>
           <path d="M8,15 L32,15" stroke="var(--ir-orange)" stroke-width="1.5"/>
         </svg>
-        <div class="ov-title">BREWING <span class="accent">COMPLETE</span></div>
+        <div class="ov-title">추출 <span class="accent">완료</span></div>
       </div>
       <div class="ov-time">
         <span class="ov-time-big">03:42</span>
-        <span class="ov-time-unit">SEC</span>
-        <span class="ov-delta">▲ 3s</span>
+        <span class="ov-time-unit">소요</span>
+        <span class="ov-delta">▲ 3초</span>
       </div>
-      <div class="ov-time-target">TARGET: 03:45 · RECIPE 03</div>
+      <div class="ov-time-target">목표 03:45 · Ethiopia Yirgacheffe</div>
     </div>
 
     <div class="ov-right">
@@ -134,17 +163,17 @@
         </svg>
         <div class="ov-donut-num">
           <span class="pct">100</span>
-          <span class="lbl">PERCENT</span>
+          <span class="lbl">%</span>
         </div>
       </div>
       <div class="ov-meta">
-        <div class="ov-meta-row">YIELD: <b>312.4g</b></div>
-        <div class="ov-meta-row">AVG TEMP: <b>93.2°C</b></div>
+        <div class="ov-meta-row">추출량 <b>312g</b> <span class="ov-meta-sub">(추정)</span></div>
+        <div class="ov-meta-row">평균 온도 <b>93.2°C</b></div>
       </div>
     </div>
 
     <div class="ov-progress-bar-gold"></div>
-    <div class="ov-close-hint">5초 후 자동 닫힘 · 호출 화면(S6.2)으로 복귀</div>
+    <div class="ov-close-hint">5초 후 자동으로 메인 화면 복귀</div>
   </div>
 
   <footer class="ir-action-bar-gold">
@@ -180,31 +209,33 @@
 
   .ov-time { display: flex; align-items: baseline; gap: 12px; }
   .ov-time-big { font-size: 72px; font-weight: 300; font-family: var(--ir-font-mono); color: #FFF; letter-spacing: -0.02em; }
-  .ov-time-unit { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 0.2em; text-transform: uppercase; }
-  .ov-time-target { font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 600; font-family: var(--ir-font-mono); }
+  .ov-time-unit { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; }
+  .ov-time-target { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500; }
   .ov-delta { font-size: 12px; padding: 4px 12px; background: rgba(197,160,89,0.2); color: var(--ir-orange); font-weight: 800; border-radius: 2px; }
+  .ov-meta-sub { color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 500; margin-left: 4px; }
 
   .ov-right { width: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; position: relative; }
   .ov-donut { width: 170px; height: 170px; position: relative; }
   .ov-donut svg { width: 100%; height: 100%; }
   .ov-donut-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .ov-donut-num .pct { font-size: 52px; font-weight: 400; color: #FFF; font-family: var(--ir-font-mono); }
-  .ov-donut-num .lbl { font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.3); letter-spacing: 0.25em; text-transform: uppercase; }
+  .ov-donut-num .lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 800; color: rgba(255,255,255,0.3); letter-spacing: 0.25em; text-transform: uppercase; }
   
   .ov-meta { display: flex; flex-direction: column; gap: 10px; align-items: center; }
   .ov-meta-row { font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 0.05em; }
   .ov-meta-row b { color: #FFF; font-weight: 800; }
 
   .ov-progress-bar-gold { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,0.05); }
-  .ov-progress-bar-gold::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ir-orange); animation: ir-countdown 5s linear forwards; }
-  .ov-close-hint { position: absolute; right: 28px; bottom: 12px; font-size: 10px; color: rgba(255,255,255,0.3); font-weight: 800; letter-spacing: 0.1em; }
+  .ov-progress-bar-gold::after { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: var(--ir-orange); animation: ir-countdown 10s linear forwards; }
+  .ov-close-hint { position: absolute; right: 28px; bottom: 12px; font-size: clamp(11.5px, 1vw + 7px, 14px); color: rgba(255,255,255,0.3); font-weight: 800; letter-spacing: 0.1em; }
 
   .ir-action-bar-gold { height: 72px; padding: 0 32px; border-top: 1px solid var(--ir-line); display: flex; align-items: center; gap: 10px; background: var(--ir-bg-2); position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; }
 </style>
 
 <script>
 (function() {
-  var autoTimer = setTimeout(function () { window.location.href = '/main'; }, 5000);
+  /* 자동 메인 복귀 — 5s → 10s (데모 시 시연 시간 확보 + 사용자 인지 시간). */
+  var autoTimer = setTimeout(function () { window.location.href = '/main'; }, 10000);
   function cancelAuto() { clearTimeout(autoTimer); var hint = document.querySelector('.ov-close-hint'); if (hint) hint.style.display = 'none'; var bar = document.querySelector('.ov-progress-bar-gold'); if (bar) bar.style.display = 'none'; }
 
   document.getElementById('bc-cancel').onclick = function () { cancelAuto(); window.location.href = '/main'; };
@@ -216,11 +247,14 @@
 
     </main>
 
-    <nav class="nav">
-  <a class="nav-item " href="/irhea-design-2/settings/general">설정</a>
-  <a class="nav-item " href="/irhea-design-2/recipes">레시피</a>
-  <a class="nav-item " href="/irhea-design-2/favorites">즐겨찾기</a>
-  <a class="nav-item " href="/irhea-design-2/info">정보</a>
+    <!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
+<nav class="nav">
+  <a class="nav-item " href="/irhea-design-2/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item " href="/irhea-design-2/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item " href="/irhea-design-2/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item " href="/irhea-design-2/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item " href="/irhea-design-2/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item " href="/irhea-design-2/settings/general" data-i18n="nav.settings">설정</a>
 </nav>
 
   </div>
@@ -250,16 +284,33 @@
 
 <script>
 (function () {
-  // Standard preset alerts — name, body, buttons[], optional class
+  // Standard preset alerts — wireframe v6.0 9.2 + FLOW.3 팝업 12종(4종 신규) 매핑
+  // 회의 §14: O/X → 직관 텍스트. v1.1 신규는 P-RECIPE-*, P-WIFI-*, P-SERIAL-*.
   var PRESETS = {
-    'alert-password-error':     { body: '암호 오류',                                       bodyClass: 'is-error', buttons: [{ label: 'X' }] },
-    'alert-extract-press':      { body: '추출 진행<br>추출구의 버튼을 눌러주세요',         buttons: [{ label: 'X' }] },
-    'alert-shutdown':           { body: '장비를 종료합니다.<br>기다려 주세요',             buttons: [] },
-    'alert-shutdown-done':      { body: '장비 종료 완료<br>전원 스위치를 꺼주세요.',        buttons: [{ label: '확인', primary: true }] },
-    'confirm-firmware':         { body: '펌웨어를 업그레이드 합니다.',                      buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-change':{ body: '장치 연결 설정을 변경 합니다.',                    buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-connection-fail':  { body: '연결 실패<br>재시도?',                              bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] },
-    'confirm-irreversible':     { body: '복구불가<br>진행하시겠습니까?',                    bodyClass: 'is-error', buttons: [{ label: 'O', primary: true, value: 'ok' }, { label: 'X', value: 'cancel' }] }
+    // ─ v0.9 명세 원본 (image2/5/7/9/11/23/24/26/27) ─
+    'alert-password-error':     { title: '암호 오류',           body: '암호 오류<br><span style="font-size:11px;color:#666;">5회 실패 시 10분 잠금</span>', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-extract-press':      { title: '추출 진행',           body: '추출 진행<br>추출구의 버튼을 눌러주세요', buttons: [{ label: '닫기' }] },
+    'alert-shutdown':           { title: '알림',                body: '장비를 종료합니다.<br>기다려 주세요', buttons: [] },
+    'alert-shutdown-done':      { title: '알림',                body: '장비 종료 완료<br>전원 스위치를 꺼주세요.', buttons: [{ label: '확인', primary: true }] },
+    'confirm-firmware':         { title: '펌웨어 업그레이드',    body: '펌웨어를 업그레이드 합니다.<br>업그레이드 중 전원을 끄지 마세요.', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-change':{ title: '장치 연결 변경',       body: '장치 연결 설정을 변경 합니다.', buttons: [{ label: '변경', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+    'confirm-connection-fail':  { title: '연결 실패',            body: '연결 실패<br>재시도하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '재검색', value: 'cancel' }] },
+    'confirm-irreversible':     { title: '복구불가',             body: '복구불가<br>진행하시겠습니까?', bodyClass: 'is-error', buttons: [{ label: '진행', primary: true, value: 'ok' }, { label: '취소', value: 'cancel' }] },
+
+    // ─ v1.1 신규 (FLOW.3 12종 중 4종) ─
+    'alert-wifi-fail':          { title: 'WiFi 인증 실패',       body: '잘못된 비밀번호입니다.<br>PW를 다시 입력해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-serial-mismatch':    { title: '시리얼 불일치',         body: '시리얼 매칭 실패.<br>장비 시리얼 번호를 다시 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'confirm-recipe-validate-1':{ title: 'Stage 합계 불일치',     body: '스테이지 합계가 100%가 아닙니다.<br>자동 보정하시겠습니까?', buttons: [{ label: '자동 보정', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'alert-recipe-validate-2':  { title: '유속 한계 초과',        body: '유속이 펌프 한계를 초과합니다.<br>최대값으로 조정 후 저장합니다.', bodyClass: 'is-error', buttons: [{ label: '최대값 적용', primary: true, value: 'ok' }, { label: '직접 수정', value: 'cancel' }] },
+    'confirm-recipe-conflict':  { title: '즐겨찾기 매핑 충돌',    body: '이미 즐겨찾기에 등록된 추출구가 있습니다.<br>어떻게 할까요?', buttons: [{ label: '덮어쓰기', primary: true, value: 'overwrite' }, { label: '기존 해제', value: 'release' }, { label: '취소', value: 'cancel' }] },
+    'confirm-recipe-runtime':   { title: '추출 결과 ±20% 초과',  body: '첫 추출 결과가 목표값 대비 ±20%를 벗어납니다.<br>레시피 보정을 권장합니다.', buttons: [{ label: '보정 (편집)', primary: true, value: 'edit' }, { label: '기록만', value: 'log' }, { label: '무시', value: 'cancel' }] },
+
+    // ─ 에러 다양화 (§14 통신끊김/응답없음/장비저장실패) ─
+    'alert-comms-lost':         { title: '통신 끊김',             body: '장비와의 통신이 끊겼습니다.<br>케이블·전원·WiFi를 확인해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-device-timeout':     { title: '응답 없음',             body: '장비가 응답하지 않습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-save-failed':        { title: '장비 저장 실패',         body: '설정 저장에 실패했습니다.<br>잠시 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '재시도', primary: true, value: 'ok' }, { label: '닫기', value: 'cancel' }] },
+    'alert-usb-missing':        { title: 'USB 미인식',            body: 'USB가 연결되지 않았습니다.<br>USB를 꽂은 후 다시 시도해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] },
+    'alert-usb-no-space':       { title: 'USB 용량 부족',         body: 'USB 저장 공간이 부족합니다.<br>다른 USB를 사용해 주세요.', bodyClass: 'is-error', buttons: [{ label: '닫기' }] }
   };
 
   function el(id) { return document.getElementById(id); }
@@ -306,10 +357,10 @@
       });
     },
     confirm: function (opts) {
-      // opts: { title, body, bodyClass, ok = 'O', cancel = 'X', onOk, onCancel }
+      // opts: { title, body, bodyClass, ok = '확인', cancel = '취소', onOk, onCancel }
       var buttons = [
-        { label: opts.ok || 'O', primary: true, value: 'ok' },
-        { label: opts.cancel || 'X', value: 'cancel' }
+        { label: opts.ok || '확인', primary: true, value: 'ok' },
+        { label: opts.cancel || '취소', value: 'cancel' }
       ];
       openWith({
         title: opts.title || '알림',
@@ -405,23 +456,6 @@
 })();
 </script>
 
-
-  <!-- Shared fitscreen script for 1280x800 target -->
-  <script>
-    (function() {
-      const W = 1280, H = 800;
-      function fit() {
-        const sw = window.innerWidth / W;
-        const sh = window.innerHeight / H;
-        const s = Math.min(sw, sh);
-        // Only scale down if viewport is smaller, or scale to fit
-        document.body.style.transform = 'scale(' + s + ')';
-        document.body.style.transformOrigin = 'center center';
-      }
-      window.addEventListener('resize', fit);
-      fit();
-    })();
-  </script>
 
 </body>
 </html>

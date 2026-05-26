@@ -29,11 +29,23 @@
   /* Sizing */
   --radius-sm: 4px;
   --radius: 8px;
-  
+
   /* Fonts */
   --font-main: 'Pretendard Variable', -apple-system, sans-serif;
   --font-display: 'Playfair Display', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
+
+  /* Phase 1 반응형 — 폰트 스케일 토큰 (Phase 2 에서 페이지별 px 값 교체 예정).
+     큰 화면에서는 clamp() 로 자연 확대. */
+  --fs-xs:    clamp(10px,  0.65vw + 8px,  12px);   /* 메타 라벨 */
+  --fs-sm:    clamp(11px,  0.75vw + 9px,  13px);   /* 라벨/태그 */
+  --fs-base:  clamp(13px,  0.9vw + 10px,  16px);   /* 본문 */
+  --fs-lg:    clamp(15px,  1.1vw + 12px,  19px);   /* 카드 제목 */
+  --fs-xl:    clamp(18px,  1.6vw + 14px,  24px);   /* 페이지 제목 */
+  --fs-2xl:   clamp(22px,  2.2vw + 16px,  32px);   /* 강조 제목 */
+
+  /* 터치 타겟 최소값 (WCAG 2.5.5 권장 44px) */
+  --tap-min:  44px;
 
   /* Legacy --ir-* aliases — pages authored before the Cinema Gold rename
      still reference these tokens. Keeping them mapped avoids a sweep of
@@ -77,25 +89,28 @@
 /* ── Base ── */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  background: #1A1A1A; /* Outer backdrop */
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  height: 100vh;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .viewport {
-  width: 1280px;
-  height: 800px;
+  /* Phase 1 반응형 — fixed 1024×768 → full-screen flex.
+     디바이스 크기 따라 자연스럽게 채움. 10인치~14인치 태블릿/노트북 모두 지원. */
+  width: 100%;
+  height: 100vh;
   background: var(--bg);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.4);
   display: flex;
   flex-direction: column;
   position: relative;
+  /* 너무 넓은 화면(데스크탑 24"+)에선 1600px 까지만 — 너무 늘어지는 것 방지 */
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* ── Topbar ─────────────────────────────────── */
@@ -121,21 +136,45 @@ body {
 .tb-sep { width: 1px; height: 12px; background: var(--hair); }
 .tb-live { display: inline-flex; align-items: center; gap: 7px; color: var(--st-done); font-weight: 600; font-size: 12px; }
 .tb-live::before { content: ''; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
+/* 5/13 §1: 정상=초록 / 오류=빨강 */
+.tb-live.tb-live-err { color: var(--brand); }
+.tb-live.tb-live-err::before { animation: pulse-err 1s ease-in-out infinite; }
+@keyframes pulse-err { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* v1.1 S2.1.2 — 클라우드 접속 인디케이터 */
+.tb-cloud-ico { font-size: 12px; opacity: 0.85; margin-right: 4px; }
+#top-cloud .tb-val { color: var(--st-done); font-weight: 600; }
+#top-cloud.is-offline .tb-val { color: var(--ink-3); }
+#top-cloud.is-offline .tb-cloud-ico { filter: grayscale(1); opacity: 0.45; }
+
+/* 반응형 — 좁은 화면에서 topbar 메타 정보 일부 hide (텍스트 줄바꿈 방지) */
+@media (max-width: 1023px) {
+  .topbar { padding: 0 16px; }
+  .topbar-right { gap: 10px; }
+  .brand-sub, #top-totalbrew, #top-cloud + .tb-sep, #top-totalbrew + .tb-sep { display: none; }
+}
+@media (max-width: 767px) {
+  #top-cloud, .tb-sep { display: none; }
+  .tb-live { display: none; }
+}
 
 .btn-shutdown {
-  width: 32px;
-  height: 32px;
+  width: var(--tap-min);
+  height: var(--tap-min);
   border: 1px solid var(--hair-2);
   background: transparent;
   color: var(--ink-2);
   display: grid;
   place-items: center;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
 }
 
-/* ── 5-Column Stations ───────────────────────── */
+/* ── 5-Column Stations (반응형 grid Phase 2) ───────────────────────── */
 .stations { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 0; }
+/* 작은 태블릿/세로 회전 — 5칸은 너무 빡빡, 3칸 + 자동 줄바꿈 */
+@media (max-width: 1023px) { .stations { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 767px)  { .stations { grid-template-columns: repeat(2, 1fr); } }
 .st {
   padding: 18px 18px 16px;
   display: flex;
@@ -155,13 +194,13 @@ body {
 .st.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--brand); }
 
 .st-head { display: flex; align-items: flex-start; justify-content: space-between; }
-.st-num { font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 40px; line-height: 0.8; color: var(--ink); opacity: 0.2; }
-.st.active .st-num { opacity: 1; color: var(--brand); }
+/* .st-num / .st.active .st-num — 옛 디자인 룰 제거.
+   현재는 main.ejs 의 `.st-num { color: var(--gold) }` 가 정식 룰 (Cinema Gold). */
 .st-head-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .st-state { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; color: var(--ink-3); }
 .st.active .st-state { color: var(--brand); }
 .st-state .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.st-count { font-size: 10px; color: var(--ink-3); font-weight: 500; }
+.st-count { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; }
 .st-count b { color: var(--ink-2); font-weight: 700; }
 
 .st-vis { display: flex; justify-content: center; align-items: center; padding: 4px 0; }
@@ -177,7 +216,7 @@ body {
 .prog { position: absolute; inset: 0; transform: rotate(-90deg); }
 .prog-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #FFF; line-height: 1; }
 .prog-pct { font-size: 36px; font-weight: 700; font-family: var(--font-mono); }
-.prog-sub { font-size: 10px; font-weight: 700; opacity: 0.8; margin-top: 4px; letter-spacing: 0.05em; }
+.prog-sub { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; opacity: 0.8; margin-top: 4px; letter-spacing: 0.05em; }
 
 .st-info { display: flex; flex-direction: column; gap: 4px; }
 .st-info-row { display: flex; justify-content: space-between; align-items: baseline; }
@@ -191,16 +230,24 @@ body {
 
 .st-slots { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
 .st-slot { display: flex; flex-direction: column; gap: 2px; }
-.st-slot-top { display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 600; }
+.st-slot-top { display: flex; align-items: center; justify-content: space-between; font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 600; }
 .st-slot-recipe { font-size: 12px; font-weight: 600; color: var(--ink-2); }
 .st-slot.active .st-slot-recipe { color: var(--brand); }
-.st-slot-desc { font-size: 9px; color: var(--ink-3); }
+.st-slot-desc { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); }
 
-/* ── Navigation ─────────────────────────────── */
-.nav { height: 48px; display: flex; align-items: center; justify-content: center; gap: 40px; border-top: 1px solid var(--hair); background: var(--bg); flex-shrink: 0; }
-.nav-item { font-size: 13px; color: var(--ink-3); font-weight: 500; text-decoration: none; padding: 14px 4px; position: relative; }
-.nav-item.active { color: var(--ink); font-weight: 600; }
-.nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 4px; right: 4px; height: 2px; background: var(--brand); }
+/* ── Navigation — 6 항목 · 터치 영역 보장 (높이 50, 폰트 13) ── */
+.nav { height: 50px; display: flex; align-items: stretch; justify-content: center; border-top: 1px solid var(--hair); background: var(--bg); flex-shrink: 0; }
+.nav-item {
+  flex: 1; max-width: 180px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: var(--ink-3); font-weight: 600;
+  text-decoration: none; padding: 0 8px; position: relative;
+  letter-spacing: -0.1px;
+  transition: color 0.12s;
+}
+.nav-item:hover { color: var(--ink); }
+.nav-item.active { color: var(--ink); font-weight: 700; }
+.nav-item.active::after { content: ''; position: absolute; bottom: 0; left: 16px; right: 16px; height: 2px; background: var(--gold); }
 
 /* ── Shared shell scaffolding (used across recipes, brewing, info, settings) ── */
 .ir-shell { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--bg); }
@@ -540,6 +587,34 @@ body {
   padding: 14px 0;
   align-self: stretch;
 }
+/* 좁은 화면(≤900) — 사이드 메뉴를 가로 탭으로 변환 (hide 대신).
+   사이드 hide 시 사용자가 sub 페이지로 클릭 이동 불가 — 가로 탭 유지로 내비 보존. */
+@media (max-width: 900px) {
+  .ir-side-menu {
+    width: 100%;
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--hair);
+    padding: 0;
+    overflow-x: auto;
+    flex-shrink: 0;
+    align-self: auto;
+  }
+  .ir-side-menu .ir-tab {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 12px;
+    border-left: none;
+  }
+  .ir-side-menu .ir-tab.is-active {
+    border-left: none;
+    border-bottom: 2px solid var(--brand);
+  }
+  /* 부모 .ir-row 도 column 으로 stack (사이드 위 + 본문 아래) */
+  .ir-row:has(.ir-side-menu) {
+    flex-direction: column;
+  }
+}
 .ir-side-menu .ir-tab {
   padding: 12px 18px;
   font-size: 13px;
@@ -571,8 +646,8 @@ body {
 }
 .ir-input:focus { outline: none; border-color: var(--gold); }
 
-/* Modal — designs/02-popups.html 정합
-   황색 헤더 (#F5E040) + 주황 본문 (#E89E2D) + 잉크 캡슐 O/X 버튼 */
+/* Modal — 페이지 전체 디자인과 톤 통일 (v2, 회의 사용자 피드백 반영)
+   화이트 헤더 + 좌측 골드 strip + 검정 본문 + 직각 사각 버튼 (페이지 .ir-btn 과 동일 톤) */
 .ir-modal-overlay {
   position: fixed;
   inset: 0;
@@ -581,67 +656,71 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 24px;
 }
 .ir-modal-overlay.is-open { display: flex; }
 .ir-modal {
   background: var(--bg);
   border: 1px solid var(--hair-2);
   min-width: 280px;
-  max-width: 560px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.05);
+  max-width: min(560px, 95vw);            /* Phase 2: 작은 화면 잘림 방지 */
+  max-height: calc(100vh - 48px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
-/* Forms / picker grids need more horizontal room than the 280px standard popup */
 .ir-modal:has(.ir-modal-body.is-info) { min-width: 360px; }
+/* 헤더 — 화이트 배경 + 좌측 골드 strip (페이지 카드와 동일 보더 톤) */
 .ir-modal-header {
-  padding: 8px 12px;
+  padding: 12px 16px 11px;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--ink);
-  background: #F5E040;
-  letter-spacing: 0.5px;
+  background: var(--bg);
+  letter-spacing: -0.1px;
+  border-bottom: 1px solid var(--hair);
+  border-left: 3px solid var(--gold);
 }
+/* error 톤 헤더 — 좌측 strip 빨강 */
+.ir-modal:has(.ir-modal-body.is-error) .ir-modal-header { border-left-color: var(--brand); }
 .ir-modal-header::before {
-  content: '!';
-  width: 18px;
-  height: 18px;
-  background: var(--ink);
-  color: #F5E040;
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
   border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
   flex-shrink: 0;
+  margin-right: 2px;
 }
+.ir-modal:has(.ir-modal-body.is-error) .ir-modal-header::before { background: var(--brand); }
+/* 본문 — 검정 (default), 빨강 (error), 회색 좌측 (info 폼) */
 .ir-modal-body {
-  flex: 1;
-  padding: 18px 14px 14px;
+  padding: 18px 18px 14px;
   font-size: 14px;
-  font-weight: 700;
-  color: #E89E2D;
-  line-height: 1.4;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.55;
   text-align: center;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.1px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100px;
+  min-height: 80px;
   gap: 8px;
+  overflow-y: auto;    /* 긴 본문 스크롤 */
+  overflow-x: hidden;
 }
-.ir-modal-body.is-error { color: var(--brand); }
+.ir-modal-body.is-error { color: var(--brand); font-weight: 600; }
 .ir-modal-body .ir-modal-ico { display: block; font-size: 26px; line-height: 1; margin-bottom: 4px; }
 .ir-modal-body.is-info {
   text-align: left;
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 13px;
   align-items: stretch;
   justify-content: flex-start;
@@ -649,29 +728,39 @@ body {
 .ir-modal-actions {
   display: flex;
   gap: 8px;
-  justify-content: center;
-  padding: 8px 12px 12px;
+  justify-content: flex-end;
+  padding: 10px 14px 14px;
+  border-top: 1px solid var(--hair);
+  background: #FAFAFA;
+  flex-shrink: 0;     /* 액션 영역 항상 보이도록 */
 }
+/* 버튼 — 페이지 .ir-btn 과 같은 직각 사각 (둥근 알약 제거) */
 .ir-modal-btn {
-  min-width: 56px;
-  height: 32px;
+  min-width: 72px;
+  height: 36px;
   padding: 0 18px;
-  border: 1.5px solid var(--ink);
-  border-radius: 16px;
+  border: 1px solid var(--hair-2);
+  border-radius: 0;
   background: var(--bg);
   color: var(--ink);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12.5px;
+  font-weight: 600;
   cursor: pointer;
   font-family: inherit;
 }
-.ir-modal-btn:hover { background: #FAFAFA; }
+.ir-modal-btn:hover { background: #FAFAFA; border-color: var(--ink); }
 .ir-modal-btn.is-primary {
   background: var(--ink);
   border-color: var(--ink);
   color: #fff;
 }
-.ir-modal-btn.is-primary:hover { background: #333; }
+.ir-modal-btn.is-primary:hover { background: #333; border-color: #333; }
+/* error 톤일 때 primary 는 빨강 */
+.ir-modal:has(.ir-modal-body.is-error) .ir-modal-btn.is-primary {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.ir-modal:has(.ir-modal-body.is-error) .ir-modal-btn.is-primary:hover { background: #C8000F; border-color: #C8000F; }
 
 /* Toggle segments (used by backup, firmware) */
 .ir-toggle {

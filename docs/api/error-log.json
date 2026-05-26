@@ -1,9 +1,23 @@
 [
-  { "date": "2025-11-23", "code": "37RDF", "source": "Spout1", "message": "No working motor.", "highlight": true },
-  { "date": "2025-10-11", "code": "33RDF", "source": "Spout3", "message": "Flow timeout" },
-  { "date": "2025-10-10", "code": "34RDF", "source": "Spout2", "message": "Boiler temp drift" },
-  { "date": "2025-10-09", "code": "37RDF", "source": "Spout1", "message": "No working motor." },
-  { "date": "2025-09-03", "code": "37RDF", "source": "Spout5", "message": "No working motor." },
-  { "date": "2025-08-21", "code": "33RDF", "source": "Spout4", "message": "Flow timeout" },
-  { "date": "2025-03-23", "code": "32RDF", "source": "Spout2", "message": "Pump under-current" }
+  { "date": "2025-11-23 14:32:18", "code": "37RDF", "source": "Spout1", "severity": "FATAL", "message": "No working motor.", "highlight": true,
+    "surrounding": { "spouts": [
+      { "id": 1, "status": "error", "recipeId": 3 },
+      { "id": 2, "status": "extracting", "recipeId": 5 },
+      { "id": 3, "status": "idle", "recipeId": null },
+      { "id": 4, "status": "rinsing", "recipeId": null },
+      { "id": 5, "status": "extracting", "recipeId": 1 }
+    ], "boilerTemp": 95.1, "ambientTemp": 23.4 } },
+  { "date": "2025-10-11 09:18:02", "code": "33RDF", "source": "Spout3", "severity": "ERROR", "message": "Flow timeout",
+    "surrounding": { "spouts": [
+      { "id": 1, "status": "idle", "recipeId": null },
+      { "id": 2, "status": "idle", "recipeId": null },
+      { "id": 3, "status": "error", "recipeId": 7 },
+      { "id": 4, "status": "complete", "recipeId": 4 },
+      { "id": 5, "status": "idle", "recipeId": null }
+    ], "boilerTemp": 94.8, "ambientTemp": 22.1 } },
+  { "date": "2025-10-10 17:45:09", "code": "34RDF", "source": "Spout2", "severity": "WARN",  "message": "Boiler temp drift" },
+  { "date": "2025-10-09 11:02:33", "code": "37RDF", "source": "Spout1", "severity": "FATAL", "message": "No working motor." },
+  { "date": "2025-09-03 16:18:45", "code": "37RDF", "source": "Spout5", "severity": "FATAL", "message": "No working motor." },
+  { "date": "2025-08-21 13:09:22", "code": "33RDF", "source": "Spout4", "severity": "ERROR", "message": "Flow timeout" },
+  { "date": "2025-03-23 10:55:01", "code": "32RDF", "source": "Spout2", "severity": "WARN",  "message": "Pump under-current" }
 ]
