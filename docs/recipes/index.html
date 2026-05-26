@@ -144,7 +144,7 @@
 <div class="recipes-body">
   <!-- Left: 12 recipes -->
   <div class="rcp-col rcp-left">
-    <div class="col-h"><span>레시피 <b id="rcp-total">12</b></span><span id="rcp-counts">★ ×5  ☆ ×4</span></div>
+    <div class="col-h"><span>레시피 <b id="rcp-total">12</b></span><span id="rcp-counts">즐겨찾기 ×—</span></div>
     <div id="rcp-rail" class="rl"></div>
   </div>
 
@@ -267,7 +267,7 @@
   .stage-t td { padding: 7px 4px; color: var(--ink); font-weight: 500; text-align: right; border-bottom: 1px solid var(--hair); }
   .stage-t td:first-child { text-align: left; font-weight: 600; }
   .stage-t .row-head td { background: #FAFAFA; color: var(--ink-3); font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 600; padding: 5px 4px; text-align: left; }
-  .stage-t .star { color: var(--brand); font-weight: 700; }
+  .stage-t .lead { color: var(--brand); font-weight: 700; }
 
   .rcp-action-bar { height: 60px; padding: 0 18px; border-top: 1px solid var(--hair); display: flex; align-items: center; gap: 8px; flex-shrink: 0; background: #FCFCFC; }
   .ab-divider { width: 1px; height: 24px; background: var(--hair-2); margin: 0 4px; }
@@ -438,9 +438,8 @@
       var sups = ['st', 'nd', 'rd', 'th', 'th'];
       var sup = sups[i] || 'th';
       var ratio = Math.round((p.waterAmount || 0) / totalWater * 100);
-      var flowStr = i === 0 ? p.flowRate + ' <span class="star">★</span>' : p.flowRate;
       html += '<tr><td>' + ord + '<sup>' + sup + '</sup></td><td>' + ratio + '%</td><td>' + (p.time || 0) + ' s</td>' +
-              '<td' + (i === 0 ? ' class="star"' : '') + '>' + flowStr + '</td><td>' + (p.waterAmount || 0) + '</td></tr>';
+              '<td' + (i === 0 ? ' class="lead"' : '') + '>' + p.flowRate + '</td><td>' + (p.waterAmount || 0) + '</td></tr>';
     });
     document.querySelector('#rcp-stage-t tbody').innerHTML = html;
   }
@@ -456,13 +455,12 @@
   }
   function recomputeCounts() {
     var fav = window.IRState.getFavorites(spouts);
-    var star = 0, moon = 0;
+    var registered = 0;
     Object.keys(fav).forEach(function (sid) {
       var ids = fav[sid] || [];
-      if (ids[0] != null) star += 1;
-      if (ids[1] != null) moon += 1;
+      ids.forEach(function (rid) { if (rid != null) registered += 1; });
     });
-    document.getElementById('rcp-counts').textContent = '★ ×' + star + '  ☆ ×' + moon;
+    document.getElementById('rcp-counts').textContent = '즐겨찾기 ×' + registered;
   }
 
   Promise.all([
