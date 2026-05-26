@@ -1,4 +1,9 @@
-name: Deploy docs/ to GitHub Pages
+name: Deploy docs/ to GitHub Pages (gh-pages branch)
+
+# actions/configure-pages, actions/upload-pages-artifact, actions/deploy-pages
+# 모두 codeload.github.com CDN 장애로 다운로드 실패함. 우회: 직접 git push
+# 로 docs/ 내용을 gh-pages 브랜치에 미러링하고 Pages 가 거기서 서빙.
+# actions/checkout 만 동작하면 됨 (이건 받아짐 확인).
 
 on:
   push:
@@ -9,32 +14,37 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: pages-deploy
   cancel-in-progress: false
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      # actions/configure-pages 는 codeload CDN 장애로 다운 안 되어서 생략.
-      # base URL 설정용일 뿐 정적 사이트엔 필수 아님.
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          fetch-depth: 0
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy docs/ → gh-pages branch
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          set -e
+          # docs/ 만 별도 work dir 로 분리
+          WORK=$(mktemp -d)
+          cp -a docs/. "$WORK"/
+          cd "$WORK"
+          git init -q
+          git checkout -q -b gh-pages
+          git add -A
+          git commit -q -m "deploy: $GITHUB_SHA"
+          git push -q --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            gh-pages
