@@ -31,6 +31,7 @@
 <script src="/irhea-design-2/js/i18n.js"></script>
 <script src="/irhea-design-2/js/error-handler.js"></script>
 <script src="/irhea-design-2/js/fullscreen.js" defer></script>
+<script src="/irhea-design-2/js/install.js" defer></script>
 
   <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
@@ -542,6 +543,13 @@
 })();
 </script>
 
+
+  <!-- PWA install banner — 브라우저 모드일 때만 표시 (install.js 가 토글) -->
+  <div id="pwa-install-banner" class="pib" role="status" aria-live="polite" hidden>
+    <span class="pib-msg">풀스크린 모드로 사용하려면 홈 화면에 추가하세요.</span>
+    <button class="pib-install" type="button" hidden>홈 화면에 추가</button>
+    <button class="pib-close" type="button" aria-label="닫기" title="닫기">✕</button>
+  </div>
 
 </body>
 </html>

@@ -766,6 +766,64 @@ body {
 }
 .ir-modal:has(.ir-modal-body.is-error) .ir-modal-btn.is-primary:hover { background: #C8000F; border-color: #C8000F; }
 
+/* PWA install banner — 브라우저 모드일 때만 표시 (install.js 가 hidden 토글).
+   하단 고정, Cinema Gold cream 배경 + 골드 좌측 strip — 페이지 카드 시스템과 동일 모티프. */
+.pib {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px 12px 18px;
+  background: var(--paper);
+  border: 1px solid var(--hair-2);
+  border-left: 4px solid var(--gold);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  font-size: 13px;
+  color: var(--ink);
+  letter-spacing: -0.1px;
+}
+.pib[hidden] { display: none; }
+.pib .pib-msg { font-weight: 500; line-height: 1.4; }
+.pib .pib-msg b { color: var(--gold-deep); font-weight: 700; }
+.pib .pib-install {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 14px;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+.pib .pib-install:hover { background: var(--gold-deep); border-color: var(--gold-deep); }
+.pib .pib-install[hidden] { display: none; }
+.pib .pib-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--hair-2);
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  display: grid;
+  place-items: center;
+}
+.pib .pib-close:hover { color: var(--ink); border-color: var(--ink-2); }
+@media (max-width: 600px) {
+  .pib { font-size: 12px; padding: 10px 12px 10px 14px; gap: 10px; }
+  .pib .pib-install { height: 30px; padding: 0 10px; font-size: 11.5px; }
+}
+
 /* Toggle segments (used by backup, firmware) */
 .ir-toggle {
   display: inline-flex;

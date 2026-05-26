@@ -158,6 +158,9 @@ copyDirSync(path.join(SRC, 'public', 'js'), path.join(DOCS, 'js'));
 // 매니페스트 URL 기준 상대(./main/, img/app-icon.svg)라 BASE_PATH 보정 불필요.
 const manifestSrc = path.join(SRC, 'public', 'manifest.json');
 if (fs.existsSync(manifestSrc)) fs.copyFileSync(manifestSrc, path.join(DOCS, 'manifest.json'));
+// Service Worker — 사이트 루트에 있어야 scope 가 전체 사이트. /js/ 에 두면 scope 가 /js/ 로 제한됨.
+const swSrc = path.join(SRC, 'public', 'sw.js');
+if (fs.existsSync(swSrc)) fs.copyFileSync(swSrc, path.join(DOCS, 'sw.js'));
 
 // Copy mock data as API JSON files
 console.log('Copying mock data as API endpoints...');
