@@ -261,9 +261,9 @@
 <style>
   /* 10인치 태블릿 — 위계 + 공백 중심 (폰트 자체보단 차이/대비/공백으로 가독성) */
   .sub-h { height: 48px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
-  .sub-h-l { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
-  .sub-h-l em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: 12px; }
-  .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-3); }
+  .sub-h-l { font-size: var(--fs-lg); font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
+  .sub-h-l em { font-style: normal; color: var(--ink-3); font-weight: 500; margin-left: 8px; font-size: var(--fs-sm); }
+  .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: var(--fs-sm); color: var(--ink-3); }
   .sub-h-r b { color: var(--ink-2); font-weight: 700; }
 
   /* v1.1 5행 그리드 — auto 행이 content 합산보다 작게 잠기는 문제 → max-content 명시 */
@@ -282,12 +282,12 @@
   .hist-rt-wrap { max-height: 200px; overflow-y: auto; }
   .hist-period { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
   /* 검색 input (v1.1 S8.3.2) */
-  .hist-search { flex: 1; max-width: 280px; height: 36px; padding: 0 12px; border: 1px solid var(--hair-2); background: var(--bg); font-size: 12.5px; color: var(--ink); font-family: inherit; outline: none; }
+  .hist-search { flex: 1; max-width: 320px; min-height: var(--tap-min); padding: 0 14px; border: 1px solid var(--hair-2); background: var(--bg); font-size: var(--fs-sm); color: var(--ink); font-family: inherit; outline: none; }
   .hist-search:focus { border-color: var(--ink); }
   .hist-search::placeholder { color: var(--ink-3); }
   .hist-period-spacer { flex: 1; }
   /* 터치 타겟은 min-height 36 유지 (회의: "한국 사람 손가락"), 폰트는 합리적으로 */
-  .hist-pbtn { padding: 8px 16px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--hair-2); background: var(--bg); color: var(--ink-3); cursor: pointer; letter-spacing: -0.1px; min-height: 36px; }
+  .hist-pbtn { padding: 10px 18px; font-size: var(--fs-sm); font-weight: 700; border: 1px solid var(--hair-2); background: var(--bg); color: var(--ink-3); cursor: pointer; letter-spacing: -0.1px; min-height: var(--tap-min); }
   .hist-pbtn:hover { color: var(--ink); }
   /* 활성 — 검정 ink 대신 Cinema Gold (settings 토글과 톤 통일). 폰트 12.5px 굵게 → 대비 충분. */
   .hist-pbtn.is-active { background: var(--gold); color: #fff; border-color: var(--gold); }
@@ -295,7 +295,7 @@
   /* 패널: 공백으로 분리 (padding 키움, 폰트는 그대로) */
   .panel { border: 1px solid var(--hair); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 0; background: var(--bg); }
   .panel-h { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--hair); gap: 12px; }
-  .panel-title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
+  .panel-title { font-size: var(--fs-base); font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
   .panel-title .ico { margin-right: 6px; font-weight: 400; }
   .panel-id { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; letter-spacing: 0.4px; font-variant-numeric: tabular-nums; }
 
@@ -309,58 +309,69 @@
   /* v1.1 KPI 4개 — flex(grid)로 행 안에 4 cell + 명시적 자기 padding 없음 (panel padding 사용) */
   .metric-grid {
     display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px; align-items: start;
-    padding: 4px 0;
+    gap: 16px; align-items: start;
+    padding: 10px 0 6px;
   }
   @media (max-width: 768px) { .metric-grid { grid-template-columns: repeat(2, 1fr); } }
-  .metric-cell { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; min-width: 0; }
-  .metric-cell + .metric-cell { border-left: 1px solid rgba(0,0,0,0.06); padding-left: 14px; }
-  .metric-num { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: -0.8px; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .metric-cell { display: flex; flex-direction: column; gap: 6px; padding: 0 8px; min-width: 0; }
+  .metric-cell + .metric-cell { border-left: 1px solid rgba(0,0,0,0.06); padding-left: 18px; }
+  /* KPI 숫자 — 한 눈 스캐닝이 핵심. 24 → 44 (2x 가까이) (5/27) */
+  .metric-num {
+    font-size: clamp(36px, 3.5vw + 22px, 56px);
+    font-weight: 700; color: var(--ink); letter-spacing: -1.5px;
+    line-height: 1; font-variant-numeric: tabular-nums;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
   .metric-num.brand { color: var(--brand); }
-  .metric-lbl { font-size: 11px; color: var(--ink-3); font-weight: 700; letter-spacing: -0.1px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .metric-comp { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 500; margin-top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .metric-lbl {
+    font-size: var(--fs-sm); color: var(--ink-2); font-weight: 700;
+    letter-spacing: -0.1px; margin-top: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .metric-comp { font-size: var(--fs-sm); color: var(--ink-3); font-weight: 500; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .metric-comp.up { color: #15803D; font-weight: 700; }
   .metric-comp.down { color: var(--brand); font-weight: 700; }
 
-  /* 일별 막대 차트 (v1.1 S8.3) — 최근 14일. min-height 늘려 라벨 영역까지 보장 */
-  .hist-daily { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; align-items: end; min-height: 108px; padding-top: 6px; }
-  .hist-daily-col { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
-  .hist-daily-bar { width: 100%; background: var(--gold); min-height: 2px; transition: filter 0.15s; }
+  /* 일별 막대 차트 (v1.1 S8.3) — 최근 14일. 5/27 가독성 ↑ — 높이 + 폰트. */
+  .hist-daily { display: grid; grid-template-columns: repeat(14, 1fr); gap: 5px; align-items: end; min-height: 140px; padding-top: 8px; }
+  .hist-daily-col { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+  .hist-daily-bar { width: 100%; background: var(--gold); min-height: 3px; transition: filter 0.15s; }
   .hist-daily-bar:hover { filter: brightness(1.1); }
-  /* 오늘 강조 — 골드보다 진한 톤(brand)으로 차별화. 데이터 시각화의 빨강 남용 해소 (Cinema Gold 일관성). */
+  /* 오늘 강조 — 골드보다 진한 톤(brand)으로 차별화. */
   .hist-daily-col.today .hist-daily-bar { background: var(--brand); }
-  .hist-daily-val { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .hist-daily-lbl { font-size: clamp(11px, 0.9vw + 7px, 13px); color: var(--ink-3); font-weight: 600; padding-top: 3px; border-top: 1px solid var(--hair); width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
-  .hist-daily-col.today .hist-daily-lbl { color: #C28200; font-weight: 700; }
+  .hist-daily-val { font-size: var(--fs-sm); color: var(--ink-2); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .hist-daily-lbl { font-size: var(--fs-sm); color: var(--ink-3); font-weight: 600; padding-top: 4px; border-top: 1px solid var(--hair); width: 100%; text-align: center; font-variant-numeric: tabular-nums; }
+  .hist-daily-col.today .hist-daily-lbl { color: var(--gold-deep); font-weight: 700; }
 
   /* 레시피별 막대 — 클릭 가능. 터치 영역(min-h 36)만 보장, 폰트는 합리적 */
   .hist-bars { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; flex: 1; padding-top: 4px; }
   .hist-bar-row {
     display: grid; grid-template-columns: 1.6fr 3fr 0.5fr;
-    gap: 10px; align-items: center; font-size: 12px;
-    padding: 6px 8px; cursor: pointer; transition: background 0.12s;
+    gap: 12px; align-items: center; font-size: var(--fs-sm);
+    padding: 8px 10px; cursor: pointer; transition: background 0.12s;
     background: transparent; border: none; text-align: left; font-family: inherit; width: 100%;
-    min-height: 36px;
+    min-height: var(--tap-min);
   }
   .hist-bar-row:hover { background: rgba(0,0,0,0.03); }
   .hist-bar-row.is-active { background: var(--brand-dim); }
   .hist-bar-name { color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hist-bar-row.is-active .hist-bar-name { color: var(--brand); font-weight: 700; }
-  .hist-bar-track { height: 14px; background: rgba(0,0,0,0.06); position: relative; }
+  .hist-bar-track { height: 18px; background: rgba(0,0,0,0.06); position: relative; }
   /* 막대 기본 — 골드 (Cinema Gold 일관). 선택된 행만 brand red 강조(.is-active). */
   .hist-bar-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--gold); transition: width 0.3s; }
   .hist-bar-row.is-active .hist-bar-fill { background: var(--brand); }
-  .hist-bar-val { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 700; font-size: 11.5px; }
-  .panel-hint { color: var(--ink-3); font-weight: 500; font-size: clamp(11.5px, 1vw + 7px, 14px); margin-left: 6px; font-style: italic; }
+  .hist-bar-val { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 700; font-size: var(--fs-base); }
+  .panel-hint { color: var(--ink-3); font-weight: 500; font-size: var(--fs-sm); margin-left: 6px; font-style: italic; }
 
   /* 정렬 토글 */
   .hist-sort { display: inline-flex; border: 1px solid var(--hair-2); }
   .hist-sort-i {
-    padding: 4px 10px; font-size: 11px; font-weight: 700;
+    padding: 0 14px; font-size: var(--fs-sm); font-weight: 700;
     border: none; border-right: 1px solid var(--hair-2);
     background: var(--bg); color: var(--ink-3); cursor: pointer;
     font-family: inherit; letter-spacing: -0.1px;
-    min-height: 28px;
+    min-height: 36px;
   }
   .hist-sort-i:last-child { border-right: none; }
   .hist-sort-i.is-active { background: var(--gold); color: #fff; }
@@ -369,17 +380,17 @@
   .hist-dist { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding-top: 6px; min-height: 0; flex: 1; }
   @media (max-width: 900px) { .hist-dist { grid-template-columns: 1fr; } }
   .hist-dist-col { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-  .hist-dist-lbl { font-size: clamp(11.5px, 1vw + 7px, 14px); font-weight: 700; color: var(--ink-3); letter-spacing: 0.3px; text-transform: uppercase; }
+  .hist-dist-lbl { font-size: var(--fs-sm); font-weight: 700; color: var(--ink-2); letter-spacing: 0.3px; text-transform: uppercase; }
   /* 6 그룹화 (4시간 단위): 새벽/오전/낮/오후/저녁/심야 */
-  .hist-hour { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-items: end; min-height: 100px; }
-  .hist-hour-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-  .hist-hour-val { font-size: 11px; color: var(--ink-3); font-weight: 700; font-variant-numeric: tabular-nums; }
-  /* 시간대별 막대 — 골드 기본, peak 만 brand red 강조 (오늘 차트의 강조 패턴과 일관) */
-  .hist-hour-bar { width: 100%; background: var(--gold); min-height: 2px; transition: filter 0.15s; }
+  .hist-hour { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; align-items: end; min-height: 120px; }
+  .hist-hour-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .hist-hour-val { font-size: var(--fs-sm); color: var(--ink-2); font-weight: 700; font-variant-numeric: tabular-nums; }
+  /* 시간대별 막대 — 골드 기본, peak 만 brand red 강조 */
+  .hist-hour-bar { width: 100%; background: var(--gold); min-height: 3px; transition: filter 0.15s; }
   .hist-hour-bar:hover { filter: brightness(1.1); }
   .hist-hour-col[data-peak="true"] .hist-hour-bar { background: var(--brand); }
-  .hist-hour-lbl { font-size: 11px; color: var(--ink-3); font-weight: 700; padding-top: 6px; border-top: 1px solid var(--hair); width: 100%; text-align: center; }
-  .hist-hour-col[data-peak="true"] .hist-hour-lbl { color: #C28200; }
+  .hist-hour-lbl { font-size: var(--fs-sm); color: var(--ink-3); font-weight: 700; padding-top: 6px; border-top: 1px solid var(--hair); width: 100%; text-align: center; }
+  .hist-hour-col[data-peak="true"] .hist-hour-lbl { color: var(--gold-deep); }
 
   /* 빈 상태 — 친절한 안내 */
   .hist-empty {
@@ -394,12 +405,12 @@
   /* 인사이트 — 요약 panel 헤더 우측 (한 줄, 골드 톤). 별도 panel 차지 안 함. */
   .hist-insight {
     flex: 1; text-align: right;
-    font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-2); font-weight: 500; line-height: 1.4;
+    font-size: var(--fs-sm); color: var(--ink-2); font-weight: 500; line-height: 1.4;
     padding-left: 12px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .hist-insight b { color: var(--ink); font-weight: 700; }
-  .hist-insight em { font-style: normal; color: #C28200; font-weight: 700; }
+  .hist-insight em { font-style: normal; color: var(--gold-deep); font-weight: 700; }
 
   /* 요일별 차트 */
   .hist-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; align-items: end; padding-top: 8px; min-height: 90px; }
