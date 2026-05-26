@@ -99,9 +99,11 @@
     if (sc.firmwareDate) document.getElementById('setup-fw-date').textContent = sc.firmwareDate;
   });
   document.getElementById('btn-setup-save').addEventListener('click', function () {
-    fetch('/api/system-config/configure', { method: 'POST' }).then(function () {
-      window.location.href = '/connect';
-    });
+    // 정적 mock 배포에서는 POST 가 405/404 — 그래도 then 진입하여 이동.
+    var base = window.BASE_PATH || '';
+    fetch('/api/system-config/configure', { method: 'POST' })
+      .catch(function () { /* static 환경 fetch 실패는 무시 */ })
+      .finally(function () { window.location.href = base + '/connect'; });
   });
 })();
 </script>

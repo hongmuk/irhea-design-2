@@ -1,5 +1,25 @@
 <!-- Main Dashboard — 5-spout stations + 매뉴얼 큐 (v1.1 S2.1.7).
      Aligned with designs/02-cinema-gold.html (시안 ② Light · S2.1 메인 모니터링). -->
+<script>
+// PWA First-run guard — PWA standalone/fullscreen 모드일 때만 적용.
+// 브라우저 모드에서는 demo 그대로 /main 표시. (5/27)
+// 첫 실행 시 setup → connect 플로우 강제, 완료 시 firstRunComplete 영구화.
+(function () {
+  var isStandalone = window.matchMedia && (
+    window.matchMedia('(display-mode: fullscreen)').matches ||
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia('(display-mode: minimal-ui)').matches
+  ) || window.navigator.standalone === true;
+  if (!isStandalone) return;
+  try {
+    var state = JSON.parse(localStorage.getItem('irhea.state.v1') || '{}');
+    if (!state.firstRunComplete) {
+      var base = window.BASE_PATH || '';
+      window.location.replace(base + '/setup/');
+    }
+  } catch (e) {}
+})();
+</script>
 <div class="stations">
   <% for (let i = 1; i <= 5; i++) { %>
     <div class="st st-<%= i %> spout-card" data-spout="<%= i %>">
