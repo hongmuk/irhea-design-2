@@ -175,6 +175,14 @@
     <button class="hist-pbtn" data-p="today">오늘</button>
   </div>
 
+  <!-- 5/27: 한 화면에 5개 panel 안 들어감 → 한눈에 / 상세 2탭 분할 -->
+  <div class="hist-tabs" role="tablist">
+    <button type="button" class="hist-tabs-i is-active" data-tab="overview" role="tab" aria-selected="true">한눈에</button>
+    <button type="button" class="hist-tabs-i" data-tab="detail" role="tab" aria-selected="false">상세</button>
+  </div>
+
+  <div class="hist-tab-pane is-active" data-tab="overview">
+
   <!-- Panel 1: KPI 4 카드 (회의 v1.1 S8.3.3) -->
   <div class="panel metric">
     <div class="panel-h">
@@ -213,6 +221,10 @@
     </div>
     <div class="hist-daily" id="hist-daily"></div>
   </div>
+
+  </div><!-- /hist-tab-pane overview -->
+
+  <div class="hist-tab-pane" data-tab="detail" hidden>
 
   <!-- Panel 2: 레시피별 (클릭 → drill-down) -->
   <div class="panel">
@@ -256,9 +268,40 @@
     </div>
   </div>
 
+  </div><!-- /hist-tab-pane detail -->
+
 </div>
 
 <style>
+  /* 한눈에 / 상세 탭 (5/27) — 한 화면에 5 panel 안 들어가 분할.
+     Cinema Gold 톤 일관: 골드 underline + base 폰트, 직각 사각. */
+  .hist-tabs {
+    display: flex; gap: 0;
+    border-bottom: 1px solid var(--hair);
+    background: var(--bg);
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .hist-tabs-i {
+    padding: 14px 28px;
+    min-height: var(--tap-min);
+    font-size: var(--fs-base);
+    font-weight: 700;
+    color: var(--ink-3);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: -0.1px;
+    transition: color 0.12s;
+  }
+  .hist-tabs-i:hover { color: var(--ink-2); }
+  .hist-tabs-i.is-active {
+    color: var(--gold-deep);
+    border-bottom-color: var(--gold);
+  }
+
   /* 10인치 태블릿 — 위계 + 공백 중심 (폰트 자체보단 차이/대비/공백으로 가독성) */
   .sub-h { height: 48px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); flex-shrink: 0; background: var(--bg); }
   .sub-h-l { font-size: var(--fs-lg); font-weight: 700; color: var(--ink); letter-spacing: -0.2px; }
@@ -266,21 +309,24 @@
   .sub-h-r { display: inline-flex; gap: 16px; align-items: center; font-size: var(--fs-sm); color: var(--ink-3); }
   .sub-h-r b { color: var(--ink-2); font-weight: 700; }
 
-  /* v1.1 5행 그리드 — auto 행이 content 합산보다 작게 잠기는 문제 → max-content 명시 */
+  /* 5/27 탭 분할 후 layout — flex column. 각 탭 pane 안에서 자체 layout. */
   .hist-body {
-    flex: 1; padding: 14px 24px 18px;
-    display: grid; grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto max-content max-content minmax(220px, 1fr) auto;
-    gap: 12px; min-height: 0;
-    overflow-y: auto;
+    flex: 1; padding: 0;
+    display: flex; flex-direction: column;
+    min-height: 0;
   }
-  /* 명시적 전폭 패널들 — 클래스 기반 (nth-of-type 충돌 회피) */
-  .hist-body > .panel.metric,
-  .hist-body > .panel-daily,
-  .hist-body > .panel:last-child { grid-column: 1 / -1; }
-  /* 최근 추출 표 — viewport 짧을 때도 최대 5행만 노출 (스크롤) */
+  .hist-period { display: flex; gap: 8px; align-items: center; padding: 14px 24px 0; }
+  .hist-tab-pane { padding: 12px 24px 18px; flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .hist-tab-pane[hidden] { display: none; }
+  /* 상세 pane: 레시피별 + 요일·시간대 좌우 분할 */
+  .hist-tab-pane[data-tab="detail"] .panel:nth-child(1),
+  .hist-tab-pane[data-tab="detail"] .panel:nth-child(2) {
+    flex: 1; min-height: 0;
+  }
+  .hist-tab-pane[data-tab="detail"] .panel:nth-child(3) {
+    flex-shrink: 0;
+  }
   .hist-rt-wrap { max-height: 200px; overflow-y: auto; }
-  .hist-period { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; }
   /* 검색 input (v1.1 S8.3.2) */
   .hist-search { flex: 1; max-width: 320px; min-height: var(--tap-min); padding: 0 14px; border: 1px solid var(--hair-2); background: var(--bg); font-size: var(--fs-sm); color: var(--ink); font-family: inherit; outline: none; }
   .hist-search:focus { border-color: var(--ink); }
@@ -699,6 +745,21 @@
       btn.classList.add('is-active');
       recipeSortMode = btn.dataset.sort;
       render();
+    });
+  });
+
+  // 한눈에 / 상세 탭 토글 (5/27)
+  document.querySelectorAll('.hist-tabs-i').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.dataset.tab;
+      document.querySelectorAll('.hist-tabs-i').forEach(function (b) {
+        var on = b.dataset.tab === target;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      document.querySelectorAll('.hist-tab-pane').forEach(function (p) {
+        p.hidden = (p.dataset.tab !== target);
+      });
     });
   });
 
