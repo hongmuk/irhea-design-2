@@ -120,6 +120,31 @@
     });
   }
 
+  // Spout status overrides — /main 의 "서빙 완료" + "추출 시작" 모달용 (5/27).
+  // mock spouts.json 의 status 를 localStorage 로 덮어쓴다. idle 강제 시 진행도/시간 리셋.
+  function getSpoutStatusOverrides() { return get('spoutStatusOverrides', {}); }
+  function setSpoutStatus(spoutId, status) {
+    var ov = getSpoutStatusOverrides();
+    if (status == null) delete ov[spoutId];
+    else ov[spoutId] = status;
+    set('spoutStatusOverrides', ov);
+  }
+  function applySpoutStatusOverrides(spouts) {
+    var ov = getSpoutStatusOverrides();
+    return spouts.map(function (s) {
+      if (ov[s.id] != null) {
+        var patched = Object.assign({}, s, { status: ov[s.id] });
+        if (ov[s.id] === 'idle') {
+          patched.progressPct = 0;
+          patched.elapsedSec = 0;
+          patched.stageIdx = null;
+        }
+        return patched;
+      }
+      return s;
+    });
+  }
+
   // Brewing — current run state
   function getBrewing() { return get('brewing', null); }
   function startBrewing(spoutId, recipeId) {
@@ -142,6 +167,7 @@
     getSettings: getSettings, setSetting: setSetting,
     getRecipeOverlay: getRecipeOverlay, setRecipeOverlay: setRecipeOverlay, applyOverlay: applyOverlay,
     getSpoutOverrides: getSpoutOverrides, setSpoutOverride: setSpoutOverride, applySpoutOverrides: applySpoutOverrides,
+    getSpoutStatusOverrides: getSpoutStatusOverrides, setSpoutStatus: setSpoutStatus, applySpoutStatusOverrides: applySpoutStatusOverrides,
     getBrewing: getBrewing, startBrewing: startBrewing, updateBrewing: updateBrewing, endBrewing: endBrewing
   };
 })();

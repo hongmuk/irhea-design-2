@@ -352,7 +352,11 @@
       .then(([spoutsRaw, recipes]) => {
         // BUG #1 fix: 매뉴얼 레시피 변경은 localStorage override 로 영구화
         // (실 환경에서는 API PUT /api/spouts/:id 가 백엔드에 쓰므로 이 layer 불필요)
-        const spouts = window.IRState ? window.IRState.applySpoutOverrides(spoutsRaw) : spoutsRaw;
+        // 5/27: 서빙완료/추출시작 모달도 동일 패턴 — status override 추가 적용
+        let spouts = window.IRState ? window.IRState.applySpoutOverrides(spoutsRaw) : spoutsRaw;
+        if (window.IRState && window.IRState.applySpoutStatusOverrides) {
+          spouts = window.IRState.applySpoutStatusOverrides(spouts);
+        }
         spouts.forEach(s => {
           const card = document.querySelector('.spout-card[data-spout="' + s.id + '"]');
           if (!card) return;
@@ -497,7 +501,57 @@
     if (recipeBox) {
       ev.stopPropagation();
       pickRecipeForSpout(spoutId, null);
+      return;
     }
+
+    // 카드 본체 클릭 (슬롯/레시피버튼 아님) — status 따라 모달 분기 (5/27)
+    Promise.all([
+      fetch('/api/spouts').then(r => r.json()),
+      fetch('/api/recipes').then(r => r.json())
+    ]).then(function (rs) {
+      var rawSp = rs[0].find(function (x) { return x.id === spoutId; });
+      if (!rawSp) return;
+      // 로컬 override 적용 (display 와 일관)
+      var withRecipe = window.IRState ? window.IRState.applySpoutOverrides([rawSp])[0] : rawSp;
+      var sp = window.IRState && window.IRState.applySpoutStatusOverrides
+        ? window.IRState.applySpoutStatusOverrides([withRecipe])[0]
+        : withRecipe;
+      var recipe = rs[1].find(function (r) { return r.id === sp.currentRecipeId; });
+      var recipeName = recipe ? (recipe.name || ('레시피 ' + recipe.id)) : '레시피 없음';
+
+      if (sp.status === 'complete') {
+        // 완료 카드 클릭 → 서빙 완료 확인
+        window.IRModal.confirm({
+          title: '서빙 완료',
+          body: '추출구 ' + spoutId + ' 의 서빙을 완료 처리할까요?<br>완료 후 추출구는 <b>대기</b> 상태로 돌아갑니다.',
+          ok: '서빙 완료',
+          onOk: function () {
+            window.IRState.setSpoutStatus(spoutId, 'idle');
+            spoutCard.classList.remove('is-complete-flash');
+            clearTimeout(spoutCard._flashTimer);
+            window.IRToast && window.IRToast.show('추출구 ' + spoutId + ' 서빙 완료');
+            update();
+          }
+        });
+      } else if (sp.status === 'idle') {
+        // idle 카드 클릭 → 추출 시작 확인
+        if (!recipe) {
+          window.IRToast && window.IRToast.show('추출 시작 불가 — 먼저 레시피를 선택하세요.');
+          return;
+        }
+        window.IRModal.confirm({
+          title: '추출 시작',
+          body: '추출구 ' + spoutId + ' 에서 <b>' + recipeName + '</b><br>(' + (recipe.coffeeWeight || '--') + 'g · ' + (recipe.ratio || '--') + ' · ' + (recipe.waterWeight || '--') + 'g) 로 추출을 시작합니다.',
+          ok: '시작',
+          onOk: function () {
+            window.IRState.setSpoutStatus(spoutId, 'extracting');
+            window.IRToast && window.IRToast.show('추출구 ' + spoutId + ' 추출 시작');
+            update();
+          }
+        });
+      }
+      // brewing/rinsing/watering 중 카드 클릭은 무시 (진행 중 — 별도 액션 없음)
+    });
   });
 
   // ─── v1.1 S2.1.7 매뉴얼 큐 클릭 인터랙션 ───────────────
