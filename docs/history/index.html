@@ -316,15 +316,25 @@
     min-height: 0;
   }
   .hist-period { display: flex; gap: 8px; align-items: center; padding: 14px 24px 0; }
-  .hist-tab-pane { padding: 12px 24px 18px; flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .hist-tab-pane { padding: 12px 24px 18px; flex: 1; min-height: 0; overflow-y: auto; }
   .hist-tab-pane[hidden] { display: none; }
-  /* 상세 pane: 레시피별 + 요일·시간대 좌우 분할 */
-  .hist-tab-pane[data-tab="detail"] .panel:nth-child(1),
-  .hist-tab-pane[data-tab="detail"] .panel:nth-child(2) {
-    flex: 1; min-height: 0;
+  /* 한눈에 pane: 세로 stack (KPI + 일별) */
+  .hist-tab-pane[data-tab="overview"] { display: flex; flex-direction: column; gap: 12px; }
+  /* 상세 pane: 레시피별 + 요일·시간대 좌우 2-col grid + 최근 추출 하단 전폭.
+     원래 디자인 의도(좌우 분할) 회복 — 1024×768 에서 한 화면 안에 들어가게. */
+  .hist-tab-pane[data-tab="detail"] {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(180px, 1fr) auto;
+    gap: 12px;
   }
-  .hist-tab-pane[data-tab="detail"] .panel:nth-child(3) {
-    flex-shrink: 0;
+  .hist-tab-pane[data-tab="detail"] .panel:nth-child(3) { grid-column: 1 / -1; }
+  @media (max-width: 900px) {
+    .hist-tab-pane[data-tab="detail"] {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+    }
+    .hist-tab-pane[data-tab="detail"] .panel:nth-child(3) { grid-column: auto; }
   }
   .hist-rt-wrap { max-height: 200px; overflow-y: auto; }
   /* 검색 input (v1.1 S8.3.2) */
