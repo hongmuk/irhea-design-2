@@ -2,8 +2,22 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- viewport-fit=cover: 노치/안전영역까지 화면 활용 (풀스크린 PWA 모드 대비) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>iRHEA-Light | 추출 완료</title>
+
+<!-- ── PWA / 풀스크린 kiosk 메타 ─────────────────────────────────────────
+     태블릿 홈 화면에 추가하면 manifest 의 display: fullscreen 으로 실행.
+     iOS Safari (PWA standalone) + Android Chrome (fullscreen) 모두 커버. -->
+<link rel="manifest" href="/irhea-design-2/manifest.json">
+<meta name="theme-color" content="#C5A059">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="iRHEA">
+<link rel="apple-touch-icon" href="/irhea-design-2/img/app-icon.svg">
+<link rel="icon" type="image/svg+xml" href="/irhea-design-2/img/app-icon.svg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -16,6 +30,7 @@
 <script src="/irhea-design-2/js/recipe-picker.js"></script>
 <script src="/irhea-design-2/js/i18n.js"></script>
 <script src="/irhea-design-2/js/error-handler.js"></script>
+<script src="/irhea-design-2/js/fullscreen.js" defer></script>
 
   <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
@@ -49,6 +64,16 @@
     <span class="tb-sep"></span>
     <!-- 5/13 §1: 연결 정상 = 초록, 오류 = 빨강 -->
     <span class="tb-live tb-live-ok" id="top-live"><span class="tb-live-dot"></span>연결됨</span>
+    <!-- 풀스크린 토글 — fullscreen.js 가 PWA standalone/fullscreen 모드일 땐 hide.
+         페이지 로드 시 자동 풀스크린은 브라우저 보안상 불가, 사용자 1탭 필요. -->
+    <button class="btn-fullscreen" id="btn-fullscreen-top" aria-label="전체화면" title="전체화면" type="button" hidden>
+      <svg class="fs-ico-enter" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 9V4h5"/><path d="M20 9V4h-5"/><path d="M4 15v5h5"/><path d="M20 15v5h-5"/>
+      </svg>
+      <svg class="fs-ico-exit" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <path d="M9 4v5H4"/><path d="M15 4v5h5"/><path d="M9 20v-5H4"/><path d="M15 20v-5h5"/>
+      </svg>
+    </button>
     <button class="btn-shutdown" id="btn-shutdown-top" aria-label="종료" title="종료">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M18.36 6.64a9 9 0 11-12.73 0"/>

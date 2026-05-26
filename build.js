@@ -154,6 +154,10 @@ copyDirSync(path.join(SRC, 'public', 'js'), path.join(DOCS, 'js'));
   const src = path.join(SRC, 'public', sub);
   if (fs.existsSync(src)) copyDirSync(src, path.join(DOCS, sub));
 });
+// PWA manifest — 별도 파일이라 디렉토리 복사에 안 잡힘. 매니페스트 내부 경로는
+// 매니페스트 URL 기준 상대(./main/, img/app-icon.svg)라 BASE_PATH 보정 불필요.
+const manifestSrc = path.join(SRC, 'public', 'manifest.json');
+if (fs.existsSync(manifestSrc)) fs.copyFileSync(manifestSrc, path.join(DOCS, 'manifest.json'));
 
 // Copy mock data as API JSON files
 console.log('Copying mock data as API endpoints...');

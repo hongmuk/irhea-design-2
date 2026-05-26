@@ -158,7 +158,8 @@ body {
   .tb-live { display: none; }
 }
 
-.btn-shutdown {
+.btn-shutdown,
+.btn-fullscreen {
   width: var(--tap-min);
   height: var(--tap-min);
   border: 1px solid var(--hair-2);
@@ -169,6 +170,9 @@ body {
   font-size: 16px;
   cursor: pointer;
 }
+.btn-fullscreen { margin-right: 4px; }
+.btn-fullscreen:hover { background: var(--cream); color: var(--ink); }
+.btn-fullscreen[hidden] { display: none; }
 
 /* ── 5-Column Stations (반응형 grid Phase 2) ───────────────────────── */
 .stations { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 0; }

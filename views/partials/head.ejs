@@ -1,6 +1,20 @@
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- viewport-fit=cover: 노치/안전영역까지 화면 활용 (풀스크린 PWA 모드 대비) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>iRHEA-Light | <%= title %></title>
+
+<!-- ── PWA / 풀스크린 kiosk 메타 ─────────────────────────────────────────
+     태블릿 홈 화면에 추가하면 manifest 의 display: fullscreen 으로 실행.
+     iOS Safari (PWA standalone) + Android Chrome (fullscreen) 모두 커버. -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#C5A059">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="iRHEA">
+<link rel="apple-touch-icon" href="/img/app-icon.svg">
+<link rel="icon" type="image/svg+xml" href="/img/app-icon.svg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -13,3 +27,4 @@
 <script src="/js/recipe-picker.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/error-handler.js"></script>
+<script src="/js/fullscreen.js" defer></script>

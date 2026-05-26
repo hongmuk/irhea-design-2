@@ -1,0 +1,21 @@
+{
+  "name": "iRHEA-Light",
+  "short_name": "iRHEA",
+  "description": "iRHEA-Light 5-spout 추출 모니터링 — Cinema Gold UI",
+  "start_url": "./main/",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "landscape",
+  "background_color": "#FDFCFA",
+  "theme_color": "#C5A059",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "img/app-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}
