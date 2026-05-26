@@ -9,14 +9,14 @@
 <!-- ── PWA / 풀스크린 kiosk 메타 ─────────────────────────────────────────
      태블릿 홈 화면에 추가하면 manifest 의 display: fullscreen 으로 실행.
      iOS Safari (PWA standalone) + Android Chrome (fullscreen) 모두 커버. -->
-<link rel="manifest" href="/irhea-design-2/manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#C5A059">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="iRHEA">
-<link rel="apple-touch-icon" href="/irhea-design-2/img/app-icon.svg">
-<link rel="icon" type="image/svg+xml" href="/irhea-design-2/img/app-icon.svg">
+<link rel="apple-touch-icon" href="/img/app-icon.svg">
+<link rel="icon" type="image/svg+xml" href="/img/app-icon.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,22 +24,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/irhea-design-2/css/app.css">
-<link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
-<script src="/irhea-design-2/js/state.js"></script>
-<script src="/irhea-design-2/js/recipe-picker.js"></script>
-<script src="/irhea-design-2/js/i18n.js"></script>
-<script src="/irhea-design-2/js/error-handler.js"></script>
-<script src="/irhea-design-2/js/fullscreen.js" defer></script>
-<script src="/irhea-design-2/js/install.js" defer></script>
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/theme-irhea.css">
+<script src="/js/state.js"></script>
+<script src="/js/recipe-picker.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/error-handler.js"></script>
+<script src="/js/fullscreen.js" defer></script>
+<script src="/js/install.js" defer></script>
 
-  <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = ""; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
 <body class="ir-theme">
   <div class="viewport">
     <div class="topbar">
   <div class="brand">
-    <img class="brand-logo" src="/irhea-design-2/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <img class="brand-logo" src="/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
     <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
     <span class="brand-divider"></span>
     <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
@@ -212,10 +212,10 @@
   /* setup — designs/02-initial-setup.html 정합 */
   .setup-shell { flex: 1; display: flex; flex-direction: column; background: #F4F4F2; overflow-y: auto; }
   .heading-bar { padding: 22px 0 12px; text-align: center; flex-shrink: 0; }
-  .heading-kicker { font-size: 11px; color: var(--brand); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
-  .heading-title { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.5px; margin-top: 6px; }
+  .heading-kicker { font-size: var(--fs-sm); color: var(--brand); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+  .heading-title { font-size: var(--fs-xl); font-weight: 700; color: var(--ink); letter-spacing: -0.5px; margin-top: 8px; }
   .heading-title em { font-style: normal; font-weight: 500; color: var(--ink-3); }
-  .heading-sub { font-size: 12px; color: var(--ink-3); font-weight: 500; margin-top: 4px; }
+  .heading-sub { font-size: var(--fs-base); color: var(--ink-3); font-weight: 500; margin-top: 6px; }
 
   .card-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
   .card { width: 640px; background: var(--bg); border: 1px solid var(--hair-2); padding: 38px 44px 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04); }
@@ -224,23 +224,23 @@
   .card-id { font-size: clamp(11.5px, 1vw + 7px, 14px); color: var(--ink-3); font-weight: 600; letter-spacing: 0.5px; font-variant-numeric: tabular-nums; }
 
   .rows { display: flex; flex-direction: column; gap: 4px; }
-  .row { display: grid; grid-template-columns: 200px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--hair); }
+  .row { display: grid; grid-template-columns: 220px 1fr auto; gap: 14px; align-items: center; padding: 18px 0; min-height: var(--tap-min); border-top: 1px solid var(--hair); }
   .row:first-of-type { border-top: none; }
   /* 위계: 라벨(작은 회색) ↔ 값(굵은 검정 모노) — 차이로 가독성 */
-  .row-k { font-size: 12.5px; color: var(--ink-3); font-weight: 600; letter-spacing: -0.1px; }
-  .row-v { font-size: 15px; font-weight: 700; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
+  .row-k { font-size: var(--fs-base); color: var(--ink-3); font-weight: 600; letter-spacing: -0.1px; }
+  .row-v { font-size: var(--fs-lg); font-weight: 700; color: var(--ink); font-family: var(--font-mono); letter-spacing: 0.3px; }
   .row-v.kr { font-family: var(--font-main); letter-spacing: -0.2px; }
-  .row.edit .row-v { color: var(--brand); border: none; border-bottom: 1.5px dashed var(--brand); padding: 0 0 2px; background: transparent; outline: none; width: 100%; font-family: var(--font-mono); }
+  .row.edit .row-v { color: var(--brand); border: none; border-bottom: 1.5px dashed var(--brand); padding: 4px 0 6px; background: transparent; outline: none; width: 100%; font-family: var(--font-mono); min-height: 40px; }
   .row.edit select.row-v { -webkit-appearance: none; appearance: none; cursor: pointer; }
   .row.edit .row-v:focus { border-bottom-style: solid; }
-  .row-tag { font-size: clamp(11px, 0.9vw + 7px, 13px); padding: 3px 7px; font-weight: 700; letter-spacing: 0.4px; }
+  .row-tag { font-size: var(--fs-sm); padding: 5px 10px; font-weight: 700; letter-spacing: 0.4px; }
   .row-tag.edit { background: var(--brand); color: #FFF; }
   .row-tag.ro { background: transparent; color: var(--ink-3); border: 1px solid var(--hair-2); }
 
   .setup-ab { padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 12px; }
   .ab-l { font-size: 11px; color: var(--ink-3); font-weight: 500; }
   .ab-l b { color: var(--ink-2); font-weight: 700; }
-  .save-btn { padding: 14px 42px; font-size: 13px; font-weight: 700; background: var(--brand); color: #FFF; border: 1px solid var(--brand); cursor: pointer; letter-spacing: 0.3px; transition: all 0.15s; box-shadow: 0 6px 20px rgba(230,0,18,0.18); font-family: inherit; }
+  .save-btn { padding: 18px 48px; min-height: var(--tap-min); font-size: var(--fs-base); font-weight: 700; background: var(--brand); color: #FFF; border: 1px solid var(--brand); cursor: pointer; letter-spacing: 0.3px; transition: all 0.15s; box-shadow: 0 6px 20px rgba(230,0,18,0.18); font-family: inherit; }
   .save-btn:hover { background: #C8000F; box-shadow: 0 8px 24px rgba(230,0,18,0.28); }
 </style>
 
@@ -264,12 +264,12 @@
 
     <!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
 <nav class="nav">
-  <a class="nav-item " href="/irhea-design-2/main" data-i18n="nav.home">홈</a>
-  <a class="nav-item " href="/irhea-design-2/recipes" data-i18n="nav.recipes">레시피</a>
-  <a class="nav-item " href="/irhea-design-2/favorites" data-i18n="nav.favorites">즐겨찾기</a>
-  <a class="nav-item " href="/irhea-design-2/history" data-i18n="nav.history">추출 실적</a>
-  <a class="nav-item " href="/irhea-design-2/info" data-i18n="nav.info">정보</a>
-  <a class="nav-item " href="/irhea-design-2/settings/general" data-i18n="nav.settings">설정</a>
+  <a class="nav-item " href="/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item " href="/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item " href="/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item " href="/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item " href="/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item " href="/settings/general" data-i18n="nav.settings">설정</a>
 </nav>
 
   </div>

@@ -9,14 +9,14 @@
 <!-- ── PWA / 풀스크린 kiosk 메타 ─────────────────────────────────────────
      태블릿 홈 화면에 추가하면 manifest 의 display: fullscreen 으로 실행.
      iOS Safari (PWA standalone) + Android Chrome (fullscreen) 모두 커버. -->
-<link rel="manifest" href="/irhea-design-2/manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#C5A059">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="iRHEA">
-<link rel="apple-touch-icon" href="/irhea-design-2/img/app-icon.svg">
-<link rel="icon" type="image/svg+xml" href="/irhea-design-2/img/app-icon.svg">
+<link rel="apple-touch-icon" href="/img/app-icon.svg">
+<link rel="icon" type="image/svg+xml" href="/img/app-icon.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,22 +24,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/irhea-design-2/css/app.css">
-<link rel="stylesheet" href="/irhea-design-2/css/theme-irhea.css">
-<script src="/irhea-design-2/js/state.js"></script>
-<script src="/irhea-design-2/js/recipe-picker.js"></script>
-<script src="/irhea-design-2/js/i18n.js"></script>
-<script src="/irhea-design-2/js/error-handler.js"></script>
-<script src="/irhea-design-2/js/fullscreen.js" defer></script>
-<script src="/irhea-design-2/js/install.js" defer></script>
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/theme-irhea.css">
+<script src="/js/state.js"></script>
+<script src="/js/recipe-picker.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/error-handler.js"></script>
+<script src="/js/fullscreen.js" defer></script>
+<script src="/js/install.js" defer></script>
 
-  <script> window.BASE_PATH = "/irhea-design-2"; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
+  <script> window.BASE_PATH = ""; window.STATIC_MODE = true; (function(){ var orig = window.fetch; window.fetch = function(input, init){ try { var url = (typeof input === 'string') ? input : (input && input.url) || ''; var method = (init && init.method ? init.method : (input && input.method) || 'GET').toUpperCase(); if (method === 'GET' && /^\/api\//.test(url) && !/\.json(\?|$)/.test(url)) { input = (window.BASE_PATH || '') + url.replace(/^\/api\//, '/api/') + '.json'; } } catch(e) {} return orig.call(this, input, init); }; })(); </script>
 </head>
 <body class="ir-theme">
   <div class="viewport">
     <div class="topbar">
   <div class="brand">
-    <img class="brand-logo" src="/irhea-design-2/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <img class="brand-logo" src="/img/irhea-logo.png" alt="iRhea" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
     <span class="logo-fallback" style="display:none; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--gold);">iRHEA</span>
     <span class="brand-divider"></span>
     <span class="brand-sub"><b>M5 PRO</b> · 1호기</span>
@@ -162,16 +162,16 @@
        (일반 / 백업 / 펌웨어 → 🔒 관리자 메뉴) — v1.1 용어 통일 -->
 
   <div class="ir-tabs">
-    <a class="ir-tab "     href="/irhea-design-2/settings/general"     data-i18n="tab.general">장비 설정</a>
-    <a class="ir-tab "      href="/irhea-design-2/settings/backup"      data-i18n="tab.backup">백업 / 복구</a>
-    <a class="ir-tab is-active"    href="/irhea-design-2/settings/firmware"    data-i18n="tab.firmware">펌웨어 업그레이드</a>
-    <a class="ir-tab is-admin " href="/irhea-design-2/settings/engineering" data-i18n="tab.engineering">🔒 관리자 메뉴</a>
+    <a class="ir-tab "     href="/settings/general"     data-i18n="tab.general">장비 설정</a>
+    <a class="ir-tab "      href="/settings/backup"      data-i18n="tab.backup">백업 / 복구</a>
+    <a class="ir-tab is-active"    href="/settings/firmware"    data-i18n="tab.firmware">펌웨어 업그레이드</a>
+    <a class="ir-tab is-admin " href="/settings/engineering" data-i18n="tab.engineering">🔒 관리자 메뉴</a>
 
     <div style="flex:1;"></div>
 
     <div class="ir-action-row" style="align-self:flex-start;margin-top:0;">
       
-      <a class="ir-btn" href="/irhea-design-2/main">복귀</a>
+      <a class="ir-btn" href="/main">복귀</a>
     </div>
   </div>
 
@@ -422,12 +422,12 @@
 
     <!-- 회의 피드백 v1.2: 홈·추출 실적 추가, "메뉴는 모두 하단" 일관성 -->
 <nav class="nav">
-  <a class="nav-item " href="/irhea-design-2/main" data-i18n="nav.home">홈</a>
-  <a class="nav-item " href="/irhea-design-2/recipes" data-i18n="nav.recipes">레시피</a>
-  <a class="nav-item " href="/irhea-design-2/favorites" data-i18n="nav.favorites">즐겨찾기</a>
-  <a class="nav-item " href="/irhea-design-2/history" data-i18n="nav.history">추출 실적</a>
-  <a class="nav-item " href="/irhea-design-2/info" data-i18n="nav.info">정보</a>
-  <a class="nav-item " href="/irhea-design-2/settings/general" data-i18n="nav.settings">설정</a>
+  <a class="nav-item " href="/main" data-i18n="nav.home">홈</a>
+  <a class="nav-item " href="/recipes" data-i18n="nav.recipes">레시피</a>
+  <a class="nav-item " href="/favorites" data-i18n="nav.favorites">즐겨찾기</a>
+  <a class="nav-item " href="/history" data-i18n="nav.history">추출 실적</a>
+  <a class="nav-item " href="/info" data-i18n="nav.info">정보</a>
+  <a class="nav-item " href="/settings/general" data-i18n="nav.settings">설정</a>
 </nav>
 
   </div>
